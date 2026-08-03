@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+/* =============================================================================
+   Teron Design System — Tailwind v4 @theme Tokens
+   Premium dark theme with yellow accent
+   Benchmark: Clerk / Vercel / Linear / Stripe
+   ============================================================================= */
+
+@theme inline {
+  /* --- Fonts --- */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono, ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace);
+
+  /* --- Background Layers --- */
+  --color-bg-primary: #09090b;
+  --color-bg-secondary: #111113;
+  --color-bg-tertiary: #18181b;
+
+  /* --- Surface Layers --- */
+  --color-surface-primary: #1c1c20;
+  --color-surface-secondary: #222226;
+  --color-surface-tertiary: #2a2a2e;
+
+  /* --- Borders --- */
+  --color-border-primary: #27272a;
+  --color-border-secondary: #3f3f46;
+  --color-border-focus: #facc15;
+
+  /* --- Text --- */
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+  --color-text-disabled: #52525b;
+
+  /* --- Yellow Accent --- */
+  --color-accent: #facc15;
+  --color-accent-hover: #fbbf24;
+  --color-accent-active: #f59e0b;
+  --color-accent-disabled: oklch(0.554 0.135 66.442 / 0.5);
+  --color-accent-subtle: oklch(0.855 0.167 91.678 / 0.06);
+  --color-accent-text: #422006;
+
+  /* --- Semantic --- */
+  --color-success: #22c55e;
+  --color-success-subtle: oklch(0.723 0.219 149.579 / 0.1);
+  --color-error: #ef4444;
+  --color-error-subtle: oklch(0.637 0.237 25.331 / 0.1);
+  --color-warning: #f59e0b;
+  --color-warning-subtle: oklch(0.769 0.188 70.08 / 0.1);
+  --color-info: #3b82f6;
+  --color-info-subtle: oklch(0.623 0.214 259.815 / 0.1);
+}
+
+/* =============================================================================
+   Base Styles
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  border-color: var(--color-border-primary);
+}
+
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =============================================================================
+   Scrollbar Styling
+   ============================================================================= */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* =============================================================================
+   Selection
+   ============================================================================= */
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+/* =============================================================================
+   Focus Ring
+   ============================================================================= */
+
+*:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   Reduced Motion
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
