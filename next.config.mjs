@@ -22,6 +22,9 @@ const nextConfig = {
     };
     return config;
   },
+
+  // Add empty turbopack config to silence Next.js 16 error
+  turbopack: {},
 };
 
 export default nextConfig;

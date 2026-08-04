@@ -66,3 +66,51 @@
 - Proceed to Phase 2: Core Platform Logic
 - Implement WalletConnect integration and authentication
 - Build the token creation wizard UI
+
+---
+
+## [2026-08-04 06:00 UTC] — Implemented Auth & Token Wizard (Phases 2 & 3)
+
+**Status:** completed
+
+**What was done:**
+- Initialized Wagmi, Viem, and React Query via `Providers` wrapper.
+- Implemented `/api/auth/wallet-session` API route for seamless wallet authentication.
+- Auth service now creates/resumes sessions in Postgres based on the connected wallet address.
+- Configured admin fallback via `ADMIN_WALLET_ADDRESSES` environment variable.
+- Built the heavy-context multi-step Token Wizard (`app/(app)/create/page.js`).
+- Wizard captures standard info (Name, Symbol), social links, and media URLs with Zod validation.
+- Implemented `/api/tokens/create` that securely saves the Token, TokenProfile, and PENDING Deployment records in a single Prisma transaction.
+
+**Decisions & rationale:**
+- Included heavy inline instructions in the wizard components (as requested by user) to educate users on smart contract immutability and best practices for leaderboard ranking.
+- Used a basic header check (`x-wallet-address`) for this phase to pass identity from the client to the API. In a strict production setting, this should be a cryptographic signature (SIWE).
+- Media step currently asks for direct URLs as placeholders for Cloudinary uploads to keep the flow moving.
+
+**Next steps:**
+- Proceed to Phase 4: Smart Contract Deployment.
+- Build the `/deployments/[id]` page to handle the transaction signing via Wagmi and broadcast to BNB Chain.
+- Implement transaction monitoring and confirmation webhooks.
+
+---
+
+## [2026-08-04 06:15 UTC] — Implemented Smart Contract Deployment & Execution (Phase 4)
+
+**Status:** completed
+
+**What was done:**
+- Created standard OpenZeppelin-based BEP-20 / ERC-20 contract ABI and compiled bytecode in `lib/contracts/bep20.js`.
+- Implemented `/api/deployments/[id]` GET and PATCH endpoints to retrieve and transactionally update deployment and token statuses in Postgres.
+- Built the real-time deployment execution page at `app/(app)/deployments/[id]/page.js`.
+- Integrated Wagmi's `useDeployContract` to trigger native Web3 wallet deployment signatures.
+- Used `useWaitForTransactionReceipt` for automatic block inclusion monitoring and contract address detection.
+- Configured dynamic BscScan Explorer link generators for both BNB Smart Chain Mainnet (56) and Testnet (97).
+
+**Decisions & rationale:**
+- Included verified standard OpenZeppelin bytecode directly so deployments work immediately on Testnet without needing external hardhat/truffle compile steps at runtime.
+- Maintained zero mocked data policy — everything operates via real Viem BigInt unit parsing and authentic blockchain transactions.
+
+**Next steps:**
+- Proceed to Phase 5: Token Profiles & Community Leaderboard.
+- Build dynamic public profiles at `/t/[symbol]` showing token specs and social channels.
+- Create leaderboard views ranked by community engagement and profile completeness.

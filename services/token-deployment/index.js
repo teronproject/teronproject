@@ -1,25 +1,98 @@
+import prisma from "@/lib/prisma";
+
 /**
  * Token Deployment Service
  *
  * Owns: Wizard state, contract deployment, transaction simulation, deployment history.
  */
 
-export async function createToken(tokenData) {
-  throw new Error("Not implemented");
-}
+/**
+ * Initiate a new token deployment session.
+ * Creates the Token, TokenProfile, and a PENDING Deployment record.
+ * 
+ * @param {string} userId - The ID of the deploying user
+ * @param {object} data - The validated token data
+ * @returns {Promise<object>} The created Deployment record with nested Token
+ */
+export async function initiateDeployment(userId, data) {
+  const {
+    name,
+    symbol,
+    decimals,
+    totalSupply,
+    chain,
+    shortDescription,
+    description,
+    website,
+    twitter,
+    telegram,
+    discord,
+    logoUrl,
+    bannerUrl
+  } = data;
 
-export async function simulateDeployment(tokenId) {
-  throw new Error("Not implemented");
-}
+  // Use a transaction to ensure all records are created together
+  const deployment = await prisma.$transaction(async (tx) => {
+    // 1. Create the base Token record
+    const token = await tx.token.create({
+      data: {
+        deployerId: userId,
+        name,
+        symbol,
+        decimals,
+        totalSupply,
+        chain: chain || "BSC",
+        deploymentStatus: "PENDING",
+      }
+    });
 
-export async function deployToken(tokenId) {
-  throw new Error("Not implemented");
+    // 2. Create the TokenProfile
+    await tx.tokenProfile.create({
+      data: {
+        tokenId: token.id,
+        shortDescription,
+        description,
+        website,
+        twitter,
+        telegram,
+        discord,
+        logoUrl,
+        bannerUrl,
+      }
+    });
+
+    // 3. Create the Deployment attempt record
+    const newDeployment = await tx.deployment.create({
+      data: {
+        tokenId: token.id,
+        userId: userId,
+        status: "PENDING",
+      }
+    });
+
+    return newDeployment;
+  });
+
+  return deployment;
 }
 
 export async function getDeploymentHistory(userId) {
-  throw new Error("Not implemented");
+  return prisma.deployment.findMany({
+    where: { userId },
+    include: {
+      token: {
+        include: {
+          profile: true
+        }
+      }
+    },
+    orderBy: { createdAt: "desc" }
+  });
 }
 
 export async function getTokenById(tokenId) {
-  throw new Error("Not implemented");
+  return prisma.token.findUnique({
+    where: { id: tokenId },
+    include: { profile: true }
+  });
 }
