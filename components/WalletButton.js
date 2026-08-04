@@ -40,7 +40,7 @@ export default function WalletButton() {
 
   const handleSwitchChain = () => {
     switchChain(
-      { chainId: bscTestnet.id },
+      { chainId: bsc.id },
       {
         onSuccess: () =>
           addToast({ variant: "success", message: "Switched to BNB Chain" }),

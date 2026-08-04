@@ -51,9 +51,7 @@ export default function TokenProfilePage({ params }) {
   };
 
   const getBscScanUrl = (targetAddress, isTx = false) => {
-    // If testing on testnet or explicitly deployed on testnet
-    const isTestnet = token?.chain?.toLowerCase().includes("testnet") || chain?.id === 97;
-    const baseUrl = isTestnet ? "https://testnet.bscscan.com" : "https://bscscan.com";
+    const baseUrl = "https://bscscan.com";
     return `${baseUrl}/${isTx ? "tx" : "address"}/${targetAddress}`;
   };
 

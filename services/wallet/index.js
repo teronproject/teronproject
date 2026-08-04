@@ -20,5 +20,5 @@ export async function getBalance(walletAddress) {
  * @returns {boolean}
  */
 export function isBnbChain(chainId) {
-  return chainId === 56 || chainId === 97; // mainnet or testnet
+  return chainId === 56; // mainnet only
 }

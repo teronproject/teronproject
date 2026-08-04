@@ -137,6 +137,7 @@ export default function DeploymentStatusPage({ params }) {
           token.decimals,
           address, // initialOwner
         ],
+        gas: 3000000n, // Hardcoded gas limit to bypass wallet estimation issues
       });
     } catch (err) {
       addToast({ variant: "error", message: "Failed to format contract arguments: " + err.message });
@@ -144,7 +145,7 @@ export default function DeploymentStatusPage({ params }) {
   };
 
   const getBscScanUrl = (targetAddress, isTx = false) => {
-    const baseUrl = chain?.id === 97 ? "https://testnet.bscscan.com" : "https://bscscan.com";
+    const baseUrl = "https://bscscan.com";
     return `${baseUrl}/${isTx ? "tx" : "address"}/${targetAddress}`;
   };
 
@@ -311,7 +312,7 @@ export default function DeploymentStatusPage({ params }) {
           <div className="py-3 flex justify-between items-center text-sm">
             <span className="text-text-secondary">Target Network</span>
             <span className="font-mono text-xs bg-surface-tertiary px-2 py-1 rounded text-accent">
-              {chain?.id === 97 ? "BNB Smart Chain Testnet (97)" : "BNB Smart Chain Mainnet (56)"}
+              BNB Smart Chain Mainnet (56)
             </span>
           </div>
           <div className="py-3 flex justify-between items-center text-sm">

@@ -16,8 +16,7 @@ export function useWallet() {
   const [userProfile, setUserProfile] = useState(null);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
 
-  const isBnbChain =
-    chain?.id === BNB_CHAIN_ID || chain?.id === BNB_TESTNET_CHAIN_ID;
+  const isBnbChain = chain?.id === BNB_CHAIN_ID;
   const isWrongChain = isConnected && !isBnbChain;
   const isAdmin = userProfile?.role === "ADMIN";
 
