@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useWallet } from "@/hooks/useWallet";
 import { useToastContext } from "@/components/ToastProvider";
-import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { bsc, bscTestnet } from "wagmi/chains";
 
@@ -28,7 +27,6 @@ export default function WalletButton() {
   } = useWallet();
 
   const { addToast } = useToastContext();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleConnect = (connector) => {
     try {
@@ -37,7 +35,6 @@ export default function WalletButton() {
         {
           onSuccess: () => {
             addToast({ variant: "success", message: "Wallet connected!" });
-            setIsModalOpen(false);
           },
           onError: (err) => {
             addToast({
@@ -92,57 +89,14 @@ export default function WalletButton() {
   // If not connected — show "Connect Wallet" button
   if (!isConnected) {
     return (
-      <>
-        <Button
-          variant="primary"
-          size="md"
-          onClick={() => setIsModalOpen(true)}
-          isLoading={isConnecting}
-        >
-          Connect Wallet
-        </Button>
-
-        <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title="Connect Wallet"
-        >
-          <div className="space-y-3">
-            <p className="text-sm text-text-secondary mb-4">
-              Connect your BNB Chain wallet to start using Teron. A profile will be
-              automatically created for your wallet address.
-            </p>
-
-            {connectors.map((connector) => (
-              <button
-                key={connector.uid}
-                onClick={() => handleConnect(connector)}
-                disabled={isConnecting}
-                className="w-full flex items-center gap-4 p-4 rounded-lg border border-border-secondary bg-surface-primary hover:bg-surface-secondary hover:border-accent transition-all text-left group disabled:opacity-50"
-              >
-                <span className="text-2xl">{getConnectorIcon(connector)}</span>
-                <div className="flex-1">
-                  <span className="font-semibold text-text-primary group-hover:text-accent transition-colors">
-                    {getConnectorLabel(connector)}
-                  </span>
-                  <p className="text-xs text-text-tertiary mt-0.5">
-                    {connector.name === "WalletConnect"
-                      ? "Scan QR code with any mobile wallet"
-                      : "Connect via your browser extension"}
-                  </p>
-                </div>
-                <span className="text-text-tertiary group-hover:text-accent transition-colors">
-                  →
-                </span>
-              </button>
-            ))}
-
-            <p className="text-xs text-text-disabled text-center pt-3">
-              By connecting, you agree to Teron's Terms of Service.
-            </p>
-          </div>
-        </Modal>
-      </>
+      <Button
+        variant="primary"
+        size="md"
+        onClick={() => handleConnect(connectors[0])}
+        isLoading={isConnecting}
+      >
+        Connect Wallet
+      </Button>
     );
   }
 
