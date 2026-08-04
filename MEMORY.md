@@ -39,3 +39,30 @@
 - `MEMORY.md` (created)
 - `jsconfig.json` (modified — path alias updated)
 - `src/` (deleted — moved to root-level `app/`)
+
+---
+
+## [2026-08-04 04:00 UTC] — Completed scaffold and Prisma schema
+
+**Status:** completed
+
+**What was done:**
+- Scaffolded all page routes (`/`, `/(marketing)`, `/(app)`, `/t/[token_name]`, `/admin`)
+- Scaffolded all API routes for tokens, payments, admin, auth, and webhooks
+- Created service files (`auth`, `wallet`, `token-deployment`, etc.) to isolate business logic
+- Created custom React hooks (`useWallet`, `useBalance`, `useDeployment`, `useFeatureFlag`)
+- Created Reusable UI components (`Button`, `Card`, `Input`, `Select`, `Table`, `Modal`, `Toast`, `Tooltip`, etc.)
+- Created Zod schemas for validation
+- Initialized Prisma schema with all 14 models (User, Token, TokenProfile, Deployment, Payment, RewardGrant, Task, etc.)
+- Set up Viem/Wagmi and Cloudinary singletons
+- Updated `.gitignore` and `next.config.mjs`
+
+**Decisions & rationale:**
+- API routes are strictly thin wrappers calling service functions
+- Zod schemas are shared between client and server
+- Prices are not hardcoded; they will be driven by the `PricingConfig` table
+
+**Next steps:**
+- Proceed to Phase 2: Core Platform Logic
+- Implement WalletConnect integration and authentication
+- Build the token creation wizard UI

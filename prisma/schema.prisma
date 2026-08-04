@@ -1,0 +1,474 @@
+// =============================================================================
+// Teron — Prisma Schema
+// =============================================================================
+// Database: PostgreSQL
+// 14 models per ANTIGRAVITY_PROMPT.md Section 6
+// All prices stored in PricingConfig — never hardcoded
+// =============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// User — wallet-based identity
+// =============================================================================
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  walletAddress String    @unique
+  displayName   String?
+  avatar        String?
+  email         String?
+  role          Role      @default(USER)
+  terrBalance   Float     @default(0)
+
+  // Socials (optional profile fields)
+  website       String?
+  twitter       String?
+  telegram      String?
+  discord       String?
+  github        String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  tokens             Token[]
+  deployments        Deployment[]
+  payments           Payment[]
+  rewardGrants       RewardGrant[]
+  taskCompletions    TaskCompletion[]
+  assistanceRequests AssistanceRequest[]
+  swapTransactions   SwapTransaction[]
+  auditLogs          AuditLog[]          @relation("ActorLogs")
+  monitoringEvents   MonitoringEvent[]
+
+  @@map("users")
+}
+
+// =============================================================================
+// Token — deployed BEP-20 token record
+// =============================================================================
+
+enum DeploymentStatus {
+  PENDING
+  SIMULATING
+  DEPLOYING
+  CONFIRMED
+  FAILED
+}
+
+enum VerificationStatus {
+  NONE
+  PENDING
+  VERIFIED
+  FAILED
+}
+
+enum MetadataStatus {
+  NONE
+  PENDING
+  PUBLISHED
+  FAILED
+}
+
+model Token {
+  id                String             @id @default(cuid())
+  deployerId        String
+  deployer          User               @relation(fields: [deployerId], references: [id])
+
+  name              String
+  symbol            String
+  decimals          Int
+  totalSupply       String             // Stored as string to handle BigInt safely
+  contractAddress   String?            @unique
+  chain             String             @default("BSC")
+
+  deploymentTxHash  String?
+  deploymentStatus  DeploymentStatus   @default(PENDING)
+  verificationStatus VerificationStatus @default(NONE)
+  metadataStatus    MetadataStatus     @default(NONE)
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  // Relations
+  profile           TokenProfile?
+  deployments       Deployment[]
+  payments          Payment[]
+  rewardGrants      RewardGrant[]
+
+  @@index([deployerId])
+  @@index([symbol])
+  @@index([deploymentStatus])
+  @@map("tokens")
+}
+
+// =============================================================================
+// TokenProfile — public page content
+// =============================================================================
+
+model TokenProfile {
+  id             String   @id @default(cuid())
+  tokenId        String   @unique
+  token          Token    @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+
+  logoUrl        String?
+  bannerUrl      String?
+  description    String?  @db.Text
+  shortDescription String?
+
+  // Socials
+  website        String?
+  twitter        String?
+  telegram       String?
+  discord        String?
+  github         String?
+
+  // Extended content
+  roadmap        String?  @db.Text
+  tokenomics     String?  @db.Text
+  contactEmail   String?
+  contactName    String?
+
+  // SEO
+  metaTitle      String?
+  metaDescription String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("token_profiles")
+}
+
+// =============================================================================
+// Deployment — deployment attempt record
+// =============================================================================
+
+model Deployment {
+  id            String           @id @default(cuid())
+  tokenId       String
+  token         Token            @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User             @relation(fields: [userId], references: [id])
+
+  status        DeploymentStatus @default(PENDING)
+  txHash        String?
+  gasUsed       String?          // BigInt as string
+  gasPrice      String?          // BigInt as string
+  blockNumber   Int?
+  errorMessage  String?          @db.Text
+  errorCode     String?
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([tokenId])
+  @@index([userId])
+  @@index([status])
+  @@map("deployments")
+}
+
+// =============================================================================
+// Payment — service payments (verification / metadata)
+// =============================================================================
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  REFUNDED
+}
+
+enum ServiceType {
+  VERIFICATION
+  METADATA
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  tokenId         String
+  token           Token         @relation(fields: [tokenId], references: [id])
+
+  serviceType     ServiceType
+  amountBnb       Float
+  txHash          String?       @unique
+  status          PaymentStatus @default(PENDING)
+  coldWalletAddress String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([tokenId])
+  @@index([status])
+  @@map("payments")
+}
+
+// =============================================================================
+// RewardGrant — TERR reward record
+// =============================================================================
+
+enum RewardReason {
+  DEPLOYMENT
+  TASK
+  REFERRAL
+  BONUS
+}
+
+model RewardGrant {
+  id              String       @id @default(cuid())
+  userId          String
+  user            User         @relation(fields: [userId], references: [id])
+
+  amount          Float
+  reason          RewardReason
+  relatedTokenId  String?
+  relatedToken    Token?       @relation(fields: [relatedTokenId], references: [id])
+  relatedTaskId   String?
+
+  createdAt       DateTime     @default(now())
+
+  @@index([userId])
+  @@index([reason])
+  @@map("reward_grants")
+}
+
+// =============================================================================
+// Task — admin-managed community tasks
+// =============================================================================
+
+enum TaskVerificationMethod {
+  MANUAL
+  LINK_CHECK
+  SOCIAL_FOLLOW
+  REFERRAL
+}
+
+model Task {
+  id                  String                 @id @default(cuid())
+  title               String
+  description         String                 @db.Text
+  verificationMethod  TaskVerificationMethod
+  rewardAmount        Float
+  active              Boolean                @default(true)
+  externalUrl         String?
+
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  // Relations
+  completions         TaskCompletion[]
+
+  @@map("tasks")
+}
+
+// =============================================================================
+// TaskCompletion — user task completion records
+// =============================================================================
+
+enum TaskCompletionStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model TaskCompletion {
+  id         String               @id @default(cuid())
+  userId     String
+  user       User                 @relation(fields: [userId], references: [id])
+  taskId     String
+  task       Task                 @relation(fields: [taskId], references: [id])
+
+  status     TaskCompletionStatus @default(PENDING)
+  proof      String?
+  verifiedAt DateTime?
+  rejectedAt DateTime?
+
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  @@unique([userId, taskId])
+  @@index([userId])
+  @@index([taskId])
+  @@map("task_completions")
+}
+
+// =============================================================================
+// AssistanceRequest — BNB assistance requests
+// =============================================================================
+
+enum AssistanceStatus {
+  PENDING
+  REVIEWING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+model AssistanceRequest {
+  id            String           @id @default(cuid())
+  userId        String
+  user          User             @relation(fields: [userId], references: [id])
+
+  walletAddress String
+  description   String           @db.Text
+  contactEmail  String?
+  status        AssistanceStatus @default(PENDING)
+  adminNotes    String?          @db.Text
+  resolvedBy    String?
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("assistance_requests")
+}
+
+// =============================================================================
+// FeatureFlag — admin-editable feature toggles
+// =============================================================================
+
+model FeatureFlag {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  enabled   Boolean  @default(false)
+  label     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("feature_flags")
+}
+
+// =============================================================================
+// PricingConfig — admin-editable service pricing
+// =============================================================================
+
+model PricingConfig {
+  id          String   @id @default(cuid())
+  serviceKey  String   @unique    // e.g., "verification", "metadata"
+  priceBnb    Float               // Price in BNB
+  priceUsd    Float?              // USD equivalent (informational)
+  label       String?             // Human-readable label
+  active      Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("pricing_configs")
+}
+
+// =============================================================================
+// MonitoringEvent — custom monitoring system
+// =============================================================================
+
+enum EventType {
+  ERROR
+  DEPLOYMENT_FAILURE
+  WALLET_ERROR
+  VALIDATION_FAILURE
+  PAYMENT_ISSUE
+  API_EXCEPTION
+  SECURITY_EVENT
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model MonitoringEvent {
+  id              String    @id @default(cuid())
+  type            EventType
+  severity        Severity
+  message         String    @db.Text
+  stackTrace      String?   @db.Text
+  affectedUserId  String?
+  affectedUser    User?     @relation(fields: [affectedUserId], references: [id])
+  metadata        Json?
+  resolved        Boolean   @default(false)
+  resolvedAt      DateTime?
+  resolvedBy      String?
+
+  createdAt       DateTime  @default(now())
+
+  @@index([type])
+  @@index([severity])
+  @@index([resolved])
+  @@index([affectedUserId])
+  @@index([createdAt])
+  @@map("monitoring_events")
+}
+
+// =============================================================================
+// AuditLog — comprehensive audit trail
+// =============================================================================
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorId       String?
+  actor         User?    @relation("ActorLogs", fields: [actorId], references: [id])
+  actorAddress  String?  // Wallet address (for cases where user may not exist yet)
+
+  action        String   // e.g., "user.create", "token.deploy", "admin.pricing.update"
+  targetEntity  String?  // e.g., "Token", "Payment", "FeatureFlag"
+  targetId      String?  // ID of the affected entity
+  before        Json?    // State before change
+  after         Json?    // State after change
+  metadata      Json?    // Additional context
+
+  createdAt     DateTime @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([targetEntity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// =============================================================================
+// SwapTransaction — TERR→TER swap records (future activation)
+// =============================================================================
+
+enum SwapStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model SwapTransaction {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+
+  terrAmount  Float
+  terAmount   Float
+  rateApplied Float      // TERR:TER rate at time of swap
+  status      SwapStatus @default(PENDING)
+  txHash      String?
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("swap_transactions")
+}
