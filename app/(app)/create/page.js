@@ -12,13 +12,15 @@ import StepReview from "@/components/create/StepReview";
 import { useToastContext } from "@/components/ToastProvider";
 import { useWallet } from "@/hooks/useWallet";
 import { useRouter } from "next/navigation";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 export default function CreateTokenPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isDeploying, setIsDeploying] = useState(false);
   const { addToast } = useToastContext();
-  const { address, isConnected, isBnbChain, connect, connectors } = useWallet();
+  const { address, isConnected, isBnbChain } = useWallet();
   const router = useRouter();
+  const { open } = useWeb3Modal();
 
   const {
     register,
@@ -111,7 +113,7 @@ export default function CreateTokenPage() {
             You need a connected wallet to sign the deployment transaction.
           </p>
           <button
-            onClick={() => connect({ connector: connectors[0] })}
+            onClick={() => open()}
             className="h-12 px-8 bg-accent text-accent-text font-bold rounded-lg hover:bg-accent-hover transition-colors"
           >
             Connect Wallet

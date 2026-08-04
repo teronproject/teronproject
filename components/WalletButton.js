@@ -5,6 +5,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { useToastContext } from "@/components/ToastProvider";
 import Button from "@/components/ui/Button";
 import { bsc, bscTestnet } from "wagmi/chains";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 /**
  * WalletButton — primary wallet connection UI.
@@ -25,29 +26,12 @@ export default function WalletButton() {
     userProfile,
     isProfileLoading,
   } = useWallet();
+  
+  const { open } = useWeb3Modal();
 
   const { addToast } = useToastContext();
 
-  const handleConnect = (connector) => {
-    try {
-      connect(
-        { connector, chainId: bscTestnet.id },
-        {
-          onSuccess: () => {
-            addToast({ variant: "success", message: "Wallet connected!" });
-          },
-          onError: (err) => {
-            addToast({
-              variant: "error",
-              message: err.shortMessage || err.message || "Connection failed",
-            });
-          },
-        }
-      );
-    } catch (err) {
-      addToast({ variant: "error", message: "Failed to initiate connection" });
-    }
-  };
+
 
   const handleDisconnect = () => {
     disconnect();
@@ -72,19 +56,7 @@ export default function WalletButton() {
   const truncateAddress = (addr) =>
     addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
 
-  // Connector labels
-  const getConnectorLabel = (connector) => {
-    if (connector.name === "WalletConnect") return "WalletConnect";
-    if (connector.name === "MetaMask") return "MetaMask";
-    if (connector.name === "Injected") return "Browser Wallet";
-    return connector.name;
-  };
 
-  const getConnectorIcon = (connector) => {
-    if (connector.name === "WalletConnect") return "🔗";
-    if (connector.name === "MetaMask") return "🦊";
-    return "💼";
-  };
 
   // If not connected — show "Connect Wallet" button
   if (!isConnected) {
@@ -92,7 +64,7 @@ export default function WalletButton() {
       <Button
         variant="primary"
         size="md"
-        onClick={() => handleConnect(connectors[0])}
+        onClick={() => open()}
         isLoading={isConnecting}
       >
         Connect Wallet
