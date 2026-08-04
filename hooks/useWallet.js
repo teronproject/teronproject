@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useEffect, useState, useCallback } from "react";
+import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { BNB_CHAIN_ID, BNB_TESTNET_CHAIN_ID } from "@/lib/constants";
 
 /**
@@ -12,43 +12,79 @@ export function useWallet() {
   const { address, isConnected, chain, connector } = useAccount();
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
   const [userProfile, setUserProfile] = useState(null);
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
 
   const isBnbChain =
     chain?.id === BNB_CHAIN_ID || chain?.id === BNB_TESTNET_CHAIN_ID;
   const isWrongChain = isConnected && !isBnbChain;
+  const isAdmin = userProfile?.role === "ADMIN";
 
-  // Sync wallet with Teron database session
-  useEffect(() => {
-    if (isConnected && address) {
-      fetch("/api/auth/wallet-session", {
+  /**
+   * Sync wallet with the Teron backend.
+   * Creates or resumes a DB session and returns the user profile.
+   */
+  const syncSession = useCallback(async (walletAddress) => {
+    if (!walletAddress) return null;
+    setIsProfileLoading(true);
+    try {
+      const res = await fetch("/api/auth/wallet-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.user) {
-            setUserProfile(data.user);
-          }
-        })
-        .catch(console.error);
+        body: JSON.stringify({ address: walletAddress }),
+      });
+      const data = await res.json();
+      if (res.ok && data.user) {
+        setUserProfile(data.user);
+        return data.user;
+      }
+      return null;
+    } catch (err) {
+      console.error("Session sync failed:", err);
+      return null;
+    } finally {
+      setIsProfileLoading(false);
+    }
+  }, []);
+
+  /**
+   * Refresh user profile from the backend (e.g. after profile update).
+   */
+  const refreshProfile = useCallback(async () => {
+    if (address) {
+      return syncSession(address);
+    }
+  }, [address, syncSession]);
+
+  // Sync wallet with Teron database session on connect
+  useEffect(() => {
+    if (isConnected && address) {
+      syncSession(address);
     } else {
       setUserProfile(null);
     }
-  }, [isConnected, address]);
+  }, [isConnected, address, syncSession]);
 
   return {
+    // Wagmi state
     address,
     isConnected,
     chain,
     connector,
+    connectors,
+    // BNB Chain helpers
     isBnbChain,
     isWrongChain,
-    isConnecting,
+    // Actions
     connect,
-    connectors,
     disconnect,
-    userProfile, // Extracted from Teron DB
+    switchChain,
+    isConnecting,
+    // Teron user profile
+    userProfile,
+    isProfileLoading,
+    isAdmin,
+    refreshProfile,
   };
 }

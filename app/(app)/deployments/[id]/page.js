@@ -4,7 +4,7 @@ import { useEffect, useState, use } from "react";
 import { useDeployContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseUnits } from "viem";
 import { useWallet } from "@/hooks/useWallet";
-import { useToast } from "@/components/ui/Toast";
+import { useToastContext } from "@/components/ToastProvider";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
@@ -23,7 +23,7 @@ export default function DeploymentStatusPage({ params }) {
   const [contractAddr, setContractAddr] = useState(null);
 
   const { address, isConnected, isBnbChain, chain } = useWallet();
-  const { addToast } = useToast();
+  const { addToast } = useToastContext();
 
   // Wagmi Contract Deployment hook
   const {

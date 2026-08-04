@@ -6,11 +6,13 @@ import { z } from "zod";
 export async function POST(request) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
-    const { address } = z.object({
-      address: walletAddressSchema,
-    }).parse(body);
+    const { address } = z
+      .object({
+        address: walletAddressSchema,
+      })
+      .parse(body);
 
     // Create or resume session
     const user = await createOrResumeSession(address);
@@ -21,13 +23,21 @@ export async function POST(request) {
         walletAddress: user.walletAddress,
         role: user.role,
         displayName: user.displayName,
-      }
+        avatar: user.avatar,
+        email: user.email,
+      },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ message: "Invalid wallet address", errors: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid wallet address", errors: error.errors },
+        { status: 400 }
+      );
     }
     console.error("Wallet session error:", error);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

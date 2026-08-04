@@ -110,7 +110,59 @@
 - Included verified standard OpenZeppelin bytecode directly so deployments work immediately on Testnet without needing external hardhat/truffle compile steps at runtime.
 - Maintained zero mocked data policy — everything operates via real Viem BigInt unit parsing and authentic blockchain transactions.
 
-**Next steps:**
 - Proceed to Phase 5: Token Profiles & Community Leaderboard.
 - Build dynamic public profiles at `/t/[symbol]` showing token specs and social channels.
 - Create leaderboard views ranked by community engagement and profile completeness.
+
+---
+
+## [2026-08-04 08:50 UTC] — Implemented Public Token Profiles & Leaderboards (Phase 5)
+
+**Status:** completed
+
+**What was done:**
+- Created `/api/tokens/list` API endpoint to return paginated deployed token directories with live search filtering and basic completeness scoring.
+- Created `/api/tokens/[symbolOrAddress]` API endpoint to perform smart lookups by ticker symbol, EVM address, or DB CUID/UUID.
+- Built the interactive Public Token Profile page (`app/(app)/t/[symbol]/page.js`) complete with banners, circular logos, verified contract specs, copy-to-clipboard actions, and official social channel links.
+- Built the real-time Community Leaderboard explorer (`app/(app)/leaderboard/page.js`) featuring responsive token cards, debounced live search, and filter switches.
+
+**Decisions & rationale:**
+- Token lookup automatically decodes URI components and detects whether the search string is a hex contract address (`0x...`), UUID/CUID, or symbol string to make URLs flexible without sacrificing SEO cleanliness (`/t/teron`).
+- Zero mocked data applied; token list only displays actual Postgres token records with optional filtering for on-chain `CONFIRMED` deployments.
+
+**Next steps:**
+- Proceed to Phase 6: User Dashboard & Creator Launch History.
+- Build `/dashboard` where creators can review all their past deployed tokens, monitor status, and edit their non-immutable TokenProfile social links after deployment.
+
+---
+
+## [2026-08-04 10:00 UTC] — Wallet-First UX Overhaul, Profile System, & Cloudinary Integration (Phase 6)
+
+**Status:** completed
+
+**What was done:**
+- Created global `ToastProvider` context component to enable toasts from any page without prop drilling.
+- Wrapped entire app in `<ToastProvider>` via `Providers.js`.
+- Enhanced `useWallet` hook with `switchChain`, `refreshProfile`, `isAdmin`, and proper loading states.
+- Built premium `WalletButton` component with connector selection modal (MetaMask, WalletConnect, Browser Wallet), chain switching, connected profile pill with avatar + truncated address, and disconnect action.
+- Built `Header` component with responsive navigation (Leaderboard, Create Token, Dashboard), settings gear icon, and WalletButton integration.
+- Updated `(app)/layout.js` to include the Header on all authenticated pages.
+- Created `/api/auth/profile` with GET (full profile with relational counts) and PATCH (update name, email, avatar, socials) endpoints.
+- Created `/api/upload/signature` for Cloudinary signed upload generation (avatars, token logos, token banners).
+- Built `useCloudinaryUpload` hook with XHR progress tracking for real-time upload feedback.
+- Built full Settings/Profile page (`/settings`) with: avatar upload via Cloudinary, display name, email, and social links editing.
+- Rewrote `StepMedia` wizard component to use real Cloudinary file uploads instead of raw URL text inputs.
+- Built Dashboard page (`/dashboard`) showing deployed token stats, token list with status badges, and quick action links.
+- Fixed `isBanned` broken Prisma field reference in token list API.
+- Migrated all pages from local `useToast` to global `useToastContext`.
+
+**Decisions & rationale:**
+- The global ToastProvider approach was chosen over per-page toast state to prevent toast context loss during page navigations and enable cross-component notifications (e.g. wallet connection toast visible while navigating).
+- Cloudinary upload uses a two-step signed flow: server generates a signed request, client uploads directly to Cloudinary CDN — zero secrets exposed to the browser.
+- WalletButton defaults to BNB Testnet (chain ID 97) during development for safe testing.
+
+**Next steps:**
+- Build the landing page with marketing copy.
+- Polish responsive layouts and add micro-animations.
+- Wire up admin dashboard features.
+

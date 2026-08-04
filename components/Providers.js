@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { wagmiConfig } from "@/lib/wagmi-config";
+import { ToastProvider } from "@/components/ToastProvider";
 import { useState } from "react";
 
 export function Providers({ children }) {
@@ -11,8 +12,9 @@ export function Providers({ children }) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
 }
+

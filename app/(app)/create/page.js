@@ -9,15 +9,15 @@ import StepBasicInfo from "@/components/create/StepBasicInfo";
 import StepProfile from "@/components/create/StepProfile";
 import StepMedia from "@/components/create/StepMedia";
 import StepReview from "@/components/create/StepReview";
-import { useToast } from "@/components/ui/Toast";
+import { useToastContext } from "@/components/ToastProvider";
 import { useWallet } from "@/hooks/useWallet";
 import { useRouter } from "next/navigation";
 
 export default function CreateTokenPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isDeploying, setIsDeploying] = useState(false);
-  const { addToast } = useToast();
-  const { isConnected, isBnbChain, connect, connectors } = useWallet();
+  const { addToast } = useToastContext();
+  const { address, isConnected, isBnbChain, connect, connectors } = useWallet();
   const router = useRouter();
 
   const {
