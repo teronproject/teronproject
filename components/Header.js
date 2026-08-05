@@ -19,8 +19,8 @@ export default function Header() {
   const { isConnected, isAdmin } = useWallet();
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border-primary bg-bg-primary/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 w-full  bg-bg-primary/80 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto border-b border-l border-r border-border-primary flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
           <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
