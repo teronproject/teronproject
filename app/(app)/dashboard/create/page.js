@@ -6,8 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { tokenCreateSchema } from "@/lib/zod-schemas/token";
 import WizardLayout from "@/components/create/WizardLayout";
 import StepBasicInfo from "@/components/create/StepBasicInfo";
-import StepProfile from "@/components/create/StepProfile";
-import StepMedia from "@/components/create/StepMedia";
 import StepReview from "@/components/create/StepReview";
 import { useToastContext } from "@/components/ToastProvider";
 import { useWallet } from "@/hooks/useWallet";
@@ -50,15 +48,11 @@ export default function CreateTokenPage() {
   });
 
   const nextStep = async () => {
-    let fieldsToValidate = [];
-    if (currentStep === 1) fieldsToValidate = ["name", "symbol", "decimals", "totalSupply"];
-    else if (currentStep === 2) fieldsToValidate = ["shortDescription", "website", "twitter", "telegram", "discord"];
-    else if (currentStep === 3) fieldsToValidate = ["logoUrl", "bannerUrl"];
-
+    let fieldsToValidate = ["name", "symbol", "decimals", "totalSupply"];
     const isStepValid = await trigger(fieldsToValidate);
     
     if (isStepValid) {
-      setCurrentStep((prev) => Math.min(prev + 1, 4));
+      setCurrentStep((prev) => Math.min(prev + 1, 2));
     }
   };
 
@@ -79,7 +73,7 @@ export default function CreateTokenPage() {
     setIsDeploying(true);
     
     try {
-      const response = await fetch("/api/tokens/create", {
+      const response = await fetch("/api/launch/create", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -106,7 +100,7 @@ export default function CreateTokenPage() {
 
   return (
     <div className="py-12 px-4">
-      {!isConnected && currentStep === 4 ? (
+      {!isConnected && currentStep === 2 ? (
         <div className="max-w-xl mx-auto text-center py-20">
           <h2 className="text-2xl font-bold mb-4">Connect Wallet to Deploy</h2>
           <p className="text-text-secondary mb-8">
@@ -123,26 +117,21 @@ export default function CreateTokenPage() {
         <WizardLayout
           currentStep={currentStep}
           title={
-            currentStep === 1 ? "Token Fundamentals" :
-            currentStep === 2 ? "Profile & Socials" :
-            currentStep === 3 ? "Visual Assets" :
-            "Final Review"
+            currentStep === 1 ? "Token Fundamentals" : "Final Review"
           }
           description={
-            currentStep === 4 
+            currentStep === 2 
               ? "Ensure all details are correct. Smart contracts cannot be altered once deployed."
               : null
           }
-          onNext={currentStep === 4 ? handleSubmit(onSubmit) : nextStep}
+          onNext={currentStep === 2 ? handleSubmit(onSubmit) : nextStep}
           onBack={currentStep > 1 ? prevStep : null}
-          nextLabel={currentStep === 4 ? (isDeploying ? "Deploying..." : "Deploy Token") : "Continue"}
+          nextLabel={currentStep === 2 ? (isDeploying ? "Deploying..." : "Deploy Token") : "Continue"}
           isNextLoading={isDeploying}
         >
           <form onSubmit={(e) => e.preventDefault()}>
             {currentStep === 1 && <StepBasicInfo register={register} errors={errors} />}
-            {currentStep === 2 && <StepProfile register={register} errors={errors} />}
-            {currentStep === 3 && <StepMedia register={register} errors={errors} watch={watch} setValue={setValue} />}
-            {currentStep === 4 && <StepReview getValues={getValues} setValue={setValue} watch={watch} />}
+            {currentStep === 2 && <StepReview getValues={getValues} setValue={setValue} watch={watch} />}
           </form>
         </WizardLayout>
       )}

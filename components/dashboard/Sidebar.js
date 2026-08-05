@@ -5,13 +5,15 @@ import { usePathname } from "next/navigation";
 import { 
   Home01Icon, 
   Rocket01Icon, 
-  Settings01Icon 
+  Settings01Icon,
+  Layout01Icon
 } from "hugeicons-react";
 import { motion } from "motion/react";
 
 const navItems = [
   { name: "Overview", href: "/dashboard", icon: Home01Icon },
   { name: "Launch Token", href: "/dashboard/create", icon: Rocket01Icon },
+  { name: "Token Profiles", href: "/dashboard/profiles", icon: Layout01Icon },
   { name: "Settings", href: "/dashboard/settings", icon: Settings01Icon },
 ];
 

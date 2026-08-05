@@ -12,7 +12,6 @@ export default function StepReview({ getValues, setValue, watch }) {
   const { address } = useWallet();
   const values = getValues();
   const addVerification = watch("addVerification");
-  const addMetadata = watch("addMetadata");
 
   const [pricing, setPricing] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +28,6 @@ export default function StepReview({ getValues, setValue, watch }) {
   }, []);
 
   const verificationPrice = pricing.find(p => p.serviceKey === "verification")?.priceBnb || 0.0033;
-  const metadataPrice = pricing.find(p => p.serviceKey === "metadata")?.priceBnb || 0.005;
 
   return (
     <div className="space-y-8">
@@ -50,20 +48,6 @@ export default function StepReview({ getValues, setValue, watch }) {
       </div>
 
       <div className="bg-surface-primary border border-border-primary rounded-lg overflow-hidden">
-        {/* Banner & Logo Preview */}
-        <div className="h-24 bg-surface-tertiary relative border-b border-border-primary">
-          {values.bannerUrl && (
-            <img src={values.bannerUrl} alt="Banner" className="w-full h-full object-cover" />
-          )}
-          <div className="absolute -bottom-6 left-6 w-16 h-16 rounded-full border-4 border-surface-primary bg-bg-secondary overflow-hidden">
-            {values.logoUrl ? (
-              <img src={values.logoUrl} alt="Logo" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-xl opacity-20">📷</div>
-            )}
-          </div>
-        </div>
-
         <div className="p-6 pt-10">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-text-primary">
@@ -91,18 +75,6 @@ export default function StepReview({ getValues, setValue, watch }) {
               <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">Deployer Wallet</span>
               <p className="text-sm text-text-primary font-mono">{address || "Not connected"}</p>
             </div>
-            
-            {(values.website || values.twitter || values.telegram || values.discord) && (
-              <div className="space-y-2 py-3 border-t border-border-secondary md:col-span-2">
-                <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">Linked Socials</span>
-                <div className="flex flex-wrap gap-4 text-sm text-accent">
-                  {values.website && <span className="truncate max-w-[150px]">{values.website}</span>}
-                  {values.twitter && <span className="truncate max-w-[150px]">{values.twitter}</span>}
-                  {values.telegram && <span className="truncate max-w-[150px]">{values.telegram}</span>}
-                  {values.discord && <span className="truncate max-w-[150px]">{values.discord}</span>}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -141,34 +113,6 @@ export default function StepReview({ getValues, setValue, watch }) {
               </div>
             </div>
             <input type="checkbox" className="hidden" checked={addVerification} onChange={(e) => setValue("addVerification", e.target.checked)} />
-          </motion.label>
-
-          {/* Metadata Add-on */}
-          <motion.label 
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            className={`cursor-pointer flex items-start p-5 rounded-xl border-2 transition-all ${
-              addMetadata ? "border-accent bg-accent/5" : "border-border-secondary bg-surface-secondary hover:border-border-primary"
-            }`}
-          >
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <SecurityCheckIcon variant={addMetadata ? "solid" : "stroke-rounded"} size={20} className={addMetadata ? "text-accent" : "text-text-secondary"} />
-                <h4 className="font-semibold text-text-primary text-sm">On-Chain Logo & Info</h4>
-              </div>
-              <p className="text-xs text-text-secondary mt-1.5 ml-7 leading-relaxed">
-                We'll submit your logo, website, and social links to Web3 metadata registries so they appear inside Trust Wallet, MetaMask, and PancakeSwap.
-              </p>
-              <p className="text-xs font-semibold text-accent mt-2 ml-7">
-                {isLoading ? "Loading price..." : `${metadataPrice} BNB`}
-              </p>
-            </div>
-            <div className="ml-4 flex items-center h-full pt-1">
-              <div className={`w-11 h-6 rounded-full transition-colors relative ${addMetadata ? 'bg-accent' : 'bg-surface-tertiary'}`}>
-                <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${addMetadata ? 'translate-x-5' : 'translate-x-0'}`} />
-              </div>
-            </div>
-            <input type="checkbox" className="hidden" checked={addMetadata} onChange={(e) => setValue("addMetadata", e.target.checked)} />
           </motion.label>
         </div>
       </div>
