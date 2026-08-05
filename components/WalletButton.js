@@ -6,6 +6,7 @@ import { useToastContext } from "@/components/ToastProvider";
 import Button from "@/components/ui/Button";
 import { bsc, bscTestnet } from "wagmi/chains";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { Logout01Icon } from "hugeicons-react";
 
 /**
  * WalletButton — primary wallet connection UI.
@@ -85,7 +86,7 @@ export default function WalletButton() {
   return (
     <div className="flex items-center gap-3">
       {/* Profile avatar & address */}
-      <div className="flex items-center gap-2.5 pl-3 pr-1 py-1 bg-surface-primary border border-border-primary rounded-full">
+      <div className="flex items-center gap-2.5 pl-3 pr-1 py-1 bg-surface-primary border border-border-primary rounded-full card">
         <div className="flex flex-col items-end">
           {isProfileLoading ? (
             <span className="text-xs text-text-tertiary">Loading...</span>
@@ -118,11 +119,11 @@ export default function WalletButton() {
       {/* Disconnect button */}
       <button
         onClick={handleDisconnect}
-        className="w-8 h-8 rounded-full bg-surface-primary border border-border-primary text-text-tertiary hover:text-error hover:border-error/50 transition-colors flex items-center justify-center text-xs"
+        className="w-8 h-8 rounded-full cta bg-surface-primary border border-border-primary text-text-tertiary hover:text-error hover:border-error/50 transition-colors flex items-center justify-center text-xs"
         aria-label="Disconnect wallet"
         title="Disconnect wallet"
       >
-        ✕
+        <Logout01Icon size={20} variant="stroke-rounded" />
       </button>
     </div>
   );

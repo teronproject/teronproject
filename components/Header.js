@@ -77,7 +77,7 @@ export default function Header() {
           {isConnected && (
             <Link
               href="/dashboard/settings"
-              className="w-10 h-10 rounded-[10px] bg-surface-primary border border-border-primary text-text-tertiary hover:text-text-primary hover:border-border-secondary transition-all flex items-center justify-center shadow-sm hover:shadow-md hover:-translate-y-0.5"
+              className="w-10 h-10 rounded-[10px] card bg-surface-primary border border-border-primary text-text-tertiary hover:text-text-primary hover:border-border-secondary transition-all flex items-center justify-center shadow-sm hover:shadow-md hover:-translate-y-0.5"
               title="Profile Settings"
             >
               <Settings01Icon size={18} variant="stroke-rounded" />
