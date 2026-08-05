@@ -113,10 +113,10 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <Card.Body className="text-center py-6">
-            <p className="text-3xl font-extrabold text-accent">
+            <p className="text-3xl title font-extrabold text-accent">
               {tokens.length}
             </p>
-            <p className="text-sm text-text-secondary mt-1">
+            <p className="text-sm stitle text-text-secondary mt-1">
               Total Deployments
             </p>
           </Card.Body>
@@ -124,10 +124,10 @@ export default function DashboardPage() {
 
         <Card>
           <Card.Body className="text-center py-6">
-            <p className="text-3xl font-extrabold text-success">
+            <p className="text-3xl title font-extrabold text-success">
               {confirmedTokens.length}
             </p>
-            <p className="text-sm text-text-secondary mt-1">
+            <p className="text-sm stitle text-text-secondary mt-1">
               Confirmed On-Chain
             </p>
           </Card.Body>
@@ -135,10 +135,10 @@ export default function DashboardPage() {
 
         <Card>
           <Card.Body className="text-center py-6">
-            <p className="text-3xl font-extrabold text-warning">
+            <p className="text-3xl title font-extrabold text-warning">
               {pendingTokens.length}
             </p>
-            <p className="text-sm text-text-secondary mt-1">
+            <p className="text-sm stitle text-text-secondary mt-1">
               Pending / In Progress
             </p>
           </Card.Body>

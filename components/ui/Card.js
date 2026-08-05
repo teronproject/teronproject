@@ -1,8 +1,5 @@
 "use client";
 
-/**
- * Card component with optional header and footer.
- */
 export default function Card({
   children,
   className = "",
@@ -11,9 +8,7 @@ export default function Card({
 }) {
   return (
     <div
-      className={`bg-surface-primary border border-border-primary rounded-md ${
-        hover ? "hover:border-border-secondary transition-colors" : ""
-      } ${className}`}
+      className={`card ${hover ? "card-hover" : ""} ${className}`}
       {...props}
     >
       {children}
@@ -23,19 +18,23 @@ export default function Card({
 
 Card.Header = function CardHeader({ children, className = "" }) {
   return (
-    <div className={`px-6 py-4 border-b border-border-primary ${className}`}>
+    <div className={`card-header ${className}`}>
       {children}
     </div>
   );
 };
 
 Card.Body = function CardBody({ children, className = "" }) {
-  return <div className={`px-6 py-4 ${className}`}>{children}</div>;
+  return (
+    <div className={`card-body ${className}`}>
+      {children}
+    </div>
+  );
 };
 
 Card.Footer = function CardFooter({ children, className = "" }) {
   return (
-    <div className={`px-6 py-4 border-t border-border-primary ${className}`}>
+    <div className={`card-footer ${className}`}>
       {children}
     </div>
   );
