@@ -4,7 +4,7 @@ import { useState, useCallback } from "react";
 
 /**
  * Hook for uploading files to Cloudinary via signed upload.
- * Handles: signature fetching → direct upload → returns secure URL.
+ * Handles: signature fetching → client validation → direct upload → returns secure URL.
  *
  * @param {object} options
  * @param {"avatar"|"token-logo"|"token-banner"} options.type - Upload type
@@ -38,10 +38,21 @@ export function useCloudinaryUpload({ type, walletAddress }) {
           throw new Error(sigErr.message || "Failed to get upload signature");
         }
 
-        const { signature, timestamp, apiKey, cloudName, folder } =
+        const { signature, timestamp, apiKey, cloudName, folder, maxFileSize, allowedFormats } =
           await sigRes.json();
 
-        // Step 2: Upload directly to Cloudinary
+        // Step 2: Client-side validation
+        if (file.size > maxFileSize) {
+          throw new Error(`File too large. Max size: ${Math.round(maxFileSize / 1024 / 1024)}MB`);
+        }
+
+        const ext = file.name.split(".").pop()?.toLowerCase();
+        if (allowedFormats && allowedFormats.length > 0 && ext && !allowedFormats.includes(ext)) {
+          throw new Error(`Invalid format. Allowed: ${allowedFormats.join(", ")}`);
+        }
+
+        // Step 3: Upload directly to Cloudinary
+        // CRITICAL: Only include params that were part of the signature hash
         const formData = new FormData();
         formData.append("file", file);
         formData.append("api_key", apiKey);
@@ -66,7 +77,12 @@ export function useCloudinaryUpload({ type, walletAddress }) {
             if (xhr.status >= 200 && xhr.status < 300) {
               resolve(JSON.parse(xhr.responseText));
             } else {
-              reject(new Error("Upload failed"));
+              try {
+                const errData = JSON.parse(xhr.responseText);
+                reject(new Error(errData.error?.message || "Upload failed"));
+              } catch {
+                reject(new Error(`Upload failed with status ${xhr.status}`));
+              }
             }
           };
 
@@ -77,6 +93,7 @@ export function useCloudinaryUpload({ type, walletAddress }) {
         setProgress(100);
         return uploadRes.secure_url;
       } catch (err) {
+        console.error("Cloudinary upload error:", err);
         setError(err.message);
         return null;
       } finally {

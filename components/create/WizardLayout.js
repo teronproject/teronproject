@@ -102,10 +102,8 @@ export default function WizardLayout({
             {currentStep === 1 &&
               "Choose a unique name and symbol. The total supply defines how many tokens will ever exist. Standard tokens usually have 18 decimals."}
             {currentStep === 2 &&
-              "A strong profile builds trust. Provide clear descriptions and link your official social channels so investors can find you."}
+              "Select optional premium services. Contract Verification publishes your source code on BscScan. On-Chain Metadata makes your logo visible in wallets."}
             {currentStep === 3 &&
-              "High-quality imagery makes your token stand out on the leaderboard. Upload a clear, square logo and an engaging banner."}
-            {currentStep === 4 &&
               "Review all details carefully. Once deployed to the blockchain, basic contract parameters cannot be changed."}
           </p>
         </motion.div>

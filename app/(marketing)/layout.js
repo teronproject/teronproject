@@ -1,8 +1,12 @@
+import Header from "@/components/shared/Header";
+import Footer from "@/components/shared/Footer";
+
 export default function MarketingLayout({ children }) {
   return (
     <>
-      {/* Marketing pages share nav/footer — will be built with full components */}
-      {children}
+      <Header />
+      <main className="flex-1">{children}</main>
+      <Footer />
     </>
   );
 }

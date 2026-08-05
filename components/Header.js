@@ -7,7 +7,7 @@ import { useWallet } from "@/hooks/useWallet";
 
 const navLinks = [
   { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/create", label: "Create Token", requiresAuth: true },
+  { href: "/dashboard/create", label: "Create Token", requiresAuth: true },
   { href: "/dashboard", label: "Dashboard", requiresAuth: true },
 ];
 
@@ -16,16 +16,13 @@ const navLinks = [
  */
 export default function Header() {
   const pathname = usePathname();
-  const { isConnected } = useWallet();
+  const { isConnected, isAdmin } = useWallet();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border-primary bg-bg-primary/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 group shrink-0"
-        >
+        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
           <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
             <span className="text-accent-text font-extrabold text-sm">T</span>
           </div>
@@ -37,7 +34,6 @@ export default function Header() {
         {/* Center Nav */}
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => {
-            // Hide auth-required links when not connected
             if (link.requiresAuth && !isConnected) return null;
 
             const isActive =
@@ -57,6 +53,20 @@ export default function Header() {
               </Link>
             );
           })}
+
+          {/* Admin link — only for admin wallets */}
+          {isConnected && isAdmin && (
+            <Link
+              href="/admin"
+              className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+                pathname.startsWith("/admin")
+                  ? "bg-error/10 text-error"
+                  : "text-error/70 hover:text-error hover:bg-error/10"
+              }`}
+            >
+              Admin
+            </Link>
+          )}
         </nav>
 
         {/* Right: Wallet Button */}
