@@ -4,11 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import WalletButton from "@/components/WalletButton";
 import { useWallet } from "@/hooks/useWallet";
+import { ChampionIcon, Layout01Icon, Settings01Icon, Shield01Icon } from "hugeicons-react";
 
 const navLinks = [
-  { href: "/leaderboard", label: "Leaderboard" },
+  { href: "/leaderboard", label: "Leaderboard", icon: ChampionIcon },
   // { href: "/dashboard/create", label: "Create Token", requiresAuth: true },
-  { href: "/dashboard", label: "Dashboard", requiresAuth: true },
+  { href: "/dashboard", label: "Dashboard", requiresAuth: true, icon: Layout01Icon },
 ];
 
 /**
@@ -19,12 +20,12 @@ export default function Header() {
   const { isConnected, isAdmin } = useWallet();
 
   return (
-    <header className="sticky top-0 z-40 w-full  bg-bg-primary/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full bg-bg-primary/60 backdrop-blur-2xl">
       <div className="max-w-7xl mx-auto border-b border-l border-r border-border-primary flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
-            <span className="text-accent-text font-extrabold text-sm">T</span>
+        <Link href="/" className="flex items-center gap-3 group shrink-0">
+          <div className="w-8 h-8 rounded-[10px] bg-gradient-to-b from-[#F4D86A] to-[#E5AC2B] flex items-center justify-center shadow-[0_2px_10px_rgba(244,216,106,0.3),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-transform group-hover:scale-105">
+            <span className="text-[#4E3500] font-extrabold text-sm" style={{ textShadow: "0 1px 0 rgba(255,255,255,0.4)" }}>T</span>
           </div>
           <span className="text-lg font-extrabold text-text-primary tracking-tight group-hover:text-accent transition-colors">
             Teron
@@ -32,7 +33,7 @@ export default function Header() {
         </Link>
 
         {/* Center Nav */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1.5">
           {navLinks.map((link) => {
             if (link.requiresAuth && !isConnected) return null;
 
@@ -43,12 +44,13 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-[10px] text-[13px] font-semibold transition-all flex items-center gap-2 ${
                   isActive
-                    ? "bg-surface-primary text-accent"
+                    ? "bg-surface-secondary text-accent shadow-sm ring-1 ring-border-secondary"
                     : "text-text-secondary hover:text-text-primary hover:bg-surface-primary"
                 }`}
               >
+                {link.icon && <link.icon size={16} variant={isActive ? "solid" : "stroke-rounded"} />}
                 {link.label}
               </Link>
             );
@@ -58,12 +60,13 @@ export default function Header() {
           {isConnected && isAdmin && (
             <Link
               href="/admin"
-              className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-[10px] text-[13px] font-semibold transition-all flex items-center gap-2 ${
                 pathname.startsWith("/admin")
-                  ? "bg-error/10 text-error"
-                  : "text-error/70 hover:text-error hover:bg-error/10"
+                  ? "bg-error/10 text-error shadow-sm ring-1 ring-error/20"
+                  : "text-error/70 hover:text-error hover:bg-error/5"
               }`}
             >
+              <Shield01Icon size={16} variant={pathname.startsWith("/admin") ? "solid" : "stroke-rounded"} />
               Admin
             </Link>
           )}
@@ -74,10 +77,10 @@ export default function Header() {
           {isConnected && (
             <Link
               href="/dashboard/settings"
-              className="w-8 h-8 rounded-full bg-surface-primary border border-border-primary text-text-tertiary hover:text-text-primary hover:border-border-secondary transition-colors flex items-center justify-center text-sm"
+              className="w-10 h-10 rounded-[10px] bg-surface-primary border border-border-primary text-text-tertiary hover:text-text-primary hover:border-border-secondary transition-all flex items-center justify-center shadow-sm hover:shadow-md hover:-translate-y-0.5"
               title="Profile Settings"
             >
-              ⚙
+              <Settings01Icon size={18} variant="stroke-rounded" />
             </Link>
           )}
           <WalletButton />
