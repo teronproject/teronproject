@@ -7,7 +7,7 @@ import { useWallet } from "@/hooks/useWallet";
 
 const navLinks = [
   { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/dashboard/create", label: "Create Token", requiresAuth: true },
+  // { href: "/dashboard/create", label: "Create Token", requiresAuth: true },
   { href: "/dashboard", label: "Dashboard", requiresAuth: true },
 ];
 
