@@ -33,7 +33,7 @@ export default function StepMedia({ register, errors, watch, setValue }) {
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) return;
     const url = await uploadLogo(file);
-    if (url) setValue("logoUrl", url, { shouldValidate: true });
+    if (url) setValue("logoUrl", url, { shouldValidate: true, shouldDirty: true });
   };
 
   const handleBannerUpload = async (e) => {
@@ -41,7 +41,7 @@ export default function StepMedia({ register, errors, watch, setValue }) {
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) return;
     const url = await uploadBanner(file);
-    if (url) setValue("bannerUrl", url, { shouldValidate: true });
+    if (url) setValue("bannerUrl", url, { shouldValidate: true, shouldDirty: true });
   };
 
   return (

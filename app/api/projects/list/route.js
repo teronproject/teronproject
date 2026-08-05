@@ -29,29 +29,27 @@ export async function GET(request) {
       }),
     };
 
-    // Fetch total count and tokens in parallel
-    const [totalCount, tokens] = await Promise.all([
-      prisma.token.count({ where }),
-      prisma.token.findMany({
-        where,
-        take: limit,
-        skip,
-        include: {
-          profile: true,
-          deployer: {
-            select: {
-              id: true,
-              walletAddress: true,
-              displayName: true,
-              avatar: true,
-            },
+    // Fetch sequentially to prevent connection pool exhaustion on Neon Free Tier
+    const totalCount = await prisma.token.count({ where });
+    const tokens = await prisma.token.findMany({
+      where,
+      take: limit,
+      skip,
+      include: {
+        profile: true,
+        deployer: {
+          select: {
+            id: true,
+            walletAddress: true,
+            displayName: true,
+            avatar: true,
           },
         },
-        orderBy: {
-          createdAt: "desc", // Newest deployments first by default
-        },
-      }),
-    ]);
+      },
+      orderBy: {
+        createdAt: "desc", // Newest deployments first by default
+      },
+    });
 
     // Calculate basic profile completeness score for ranking / highlighting
     const scoredTokens = tokens.map((token) => {

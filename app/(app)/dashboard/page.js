@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
         // Load user's deployed tokens
         const tokensRes = await fetch(
-          `/api/tokens/list?status=ALL&search=&limit=50`
+          `/api/projects/list?status=ALL&search=&limit=50`
         );
         const tokensData = await tokensRes.json();
         if (tokensRes.ok) {

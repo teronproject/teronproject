@@ -26,7 +26,7 @@ export default function LeaderboardPage() {
           status: statusFilter,
           ...(searchTerm.trim() && { search: searchTerm.trim() }),
         });
-        const res = await fetch(`/api/tokens/list?${params.toString()}`);
+        const res = await fetch(`/api/projects/list?${params.toString()}`);
         const data = await res.json();
         if (res.ok) {
           setTokens(data.tokens || []);

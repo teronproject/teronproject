@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import StepProfile from "@/components/create/StepProfile";
 import StepMedia from "@/components/create/StepMedia";
+import { Link01Icon, Copy01Icon } from "hugeicons-react";
 import { tokenSocialsSchema, tokenMediaSchema } from "@/lib/zod-schemas/token";
 
 const profileSchema = tokenSocialsSchema.merge(tokenMediaSchema);
@@ -53,19 +54,19 @@ export default function TokenProfileEditor() {
         const res = await fetch(`/api/projects/${id}`);
         const data = await res.json();
         
-        if (res.ok) {
-          setToken(data.project);
+        if (res.ok && data.token) {
+          setToken(data.token);
           // Initialize form with existing data
-          if (data.project?.profile) {
+          if (data.token?.profile) {
             reset({
-              shortDescription: data.project.profile.shortDescription || "",
-              description: data.project.profile.description || "",
-              website: data.project.profile.website || "",
-              twitter: data.project.profile.twitter || "",
-              telegram: data.project.profile.telegram || "",
-              discord: data.project.profile.discord || "",
-              logoUrl: data.project.profile.logoUrl || "",
-              bannerUrl: data.project.profile.bannerUrl || "",
+              shortDescription: data.token.profile.shortDescription || "",
+              description: data.token.profile.description || "",
+              website: data.token.profile.website || "",
+              twitter: data.token.profile.twitter || "",
+              telegram: data.token.profile.telegram || "",
+              discord: data.token.profile.discord || "",
+              logoUrl: data.token.profile.logoUrl || "",
+              bannerUrl: data.token.profile.bannerUrl || "",
             });
           }
         } else {
@@ -139,6 +140,27 @@ export default function TokenProfileEditor() {
             Save Changes
           </Button>
         </div>
+      </div>
+
+      <div className="mb-8 p-4 bg-surface-secondary border border-border-secondary rounded-lg flex items-center justify-between">
+        <div>
+          <p className="text-xs text-text-tertiary mb-1 font-semibold uppercase tracking-wider">Public Profile Link</p>
+          <div className="flex items-center gap-2 text-text-primary font-mono text-sm">
+            <Link01Icon size={16} className="text-accent" />
+            <span className="select-all">teron.io/t/{token.symbol}</span>
+          </div>
+        </div>
+        <Button 
+          variant="secondary" 
+          onClick={() => {
+            navigator.clipboard.writeText(`https://teron.io/t/${token.symbol}`);
+            addToast({ variant: "success", message: "Link copied to clipboard!" });
+          }}
+          className="h-9 px-4 text-xs font-semibold"
+        >
+          <Copy01Icon size={16} className="mr-2" />
+          Copy Link
+        </Button>
       </div>
 
       <div className="space-y-8">

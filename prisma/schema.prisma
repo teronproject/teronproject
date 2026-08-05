@@ -141,6 +141,7 @@ model TokenProfile {
   tokenomics     String?  @db.Text
   contactEmail   String?
   contactName    String?
+  projectCategory String?
 
   // SEO
   metaTitle      String?

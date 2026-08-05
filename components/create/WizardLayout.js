@@ -6,12 +6,14 @@ import {
   CheckmarkBadge01Icon, 
   InformationCircleIcon, 
   Settings01Icon,
+  CrownIcon,
   Rocket01Icon
 } from "hugeicons-react";
 
 const steps = [
   { id: 1, name: "Token Basics", description: "Name, symbol, and supply", icon: Settings01Icon },
-  { id: 2, name: "Review & Deploy", description: "Final check and transaction", icon: Rocket01Icon },
+  { id: 2, name: "Premium Add-ons", description: "Verification and visibility", icon: CrownIcon },
+  { id: 3, name: "Review & Deploy", description: "Final check and transaction", icon: Rocket01Icon },
 ];
 
 /**

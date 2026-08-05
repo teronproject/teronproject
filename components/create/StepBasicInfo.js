@@ -6,7 +6,7 @@ import { Settings02Icon } from "hugeicons-react";
 /**
  * Step 1: Basic Token Info
  */
-export default function StepBasicInfo({ register, errors }) {
+export default function StepBasicInfo({ register, errors, setValue }) {
   return (
     <div className="space-y-6">
       <div className="bg-surface-tertiary border border-border-secondary p-5 rounded-xl flex items-start gap-4">
@@ -53,7 +53,7 @@ export default function StepBasicInfo({ register, errors }) {
           />
         </div>
 
-        <div>
+        <div className="space-y-2">
           <Input
             label="Decimals"
             type="number"
@@ -64,9 +64,32 @@ export default function StepBasicInfo({ register, errors }) {
             min={0}
             max={18}
           />
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => setValue("decimals", 18, { shouldValidate: true })}
+              className="text-xs px-2.5 py-1 rounded bg-surface-secondary border border-border-secondary text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors"
+            >
+              18 (Standard)
+            </button>
+            <button
+              type="button"
+              onClick={() => setValue("decimals", 9, { shouldValidate: true })}
+              className="text-xs px-2.5 py-1 rounded bg-surface-secondary border border-border-secondary text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors"
+            >
+              9 (Meme/Deflationary)
+            </button>
+            <button
+              type="button"
+              onClick={() => setValue("decimals", 0, { shouldValidate: true })}
+              className="text-xs px-2.5 py-1 rounded bg-surface-secondary border border-border-secondary text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors"
+            >
+              0 (Indivisible)
+            </button>
+          </div>
         </div>
 
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 space-y-2">
           <Input
             label="Initial Supply"
             type="text"
@@ -75,6 +98,36 @@ export default function StepBasicInfo({ register, errors }) {
             error={errors.totalSupply?.message}
             helperText="The total number of tokens to mint initially. Do not include commas."
           />
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => setValue("totalSupply", "1000000", { shouldValidate: true })}
+              className="text-xs px-2.5 py-1 rounded bg-surface-secondary border border-border-secondary text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors"
+            >
+              1M
+            </button>
+            <button
+              type="button"
+              onClick={() => setValue("totalSupply", "10000000", { shouldValidate: true })}
+              className="text-xs px-2.5 py-1 rounded bg-surface-secondary border border-border-secondary text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors"
+            >
+              10M
+            </button>
+            <button
+              type="button"
+              onClick={() => setValue("totalSupply", "1000000000", { shouldValidate: true })}
+              className="text-xs px-2.5 py-1 rounded bg-surface-secondary border border-border-secondary text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors"
+            >
+              1B
+            </button>
+            <button
+              type="button"
+              onClick={() => setValue("totalSupply", "1000000000000", { shouldValidate: true })}
+              className="text-xs px-2.5 py-1 rounded bg-surface-secondary border border-border-secondary text-text-secondary hover:bg-surface-tertiary hover:text-text-primary transition-colors"
+            >
+              1T (Meme Coin)
+            </button>
+          </div>
         </div>
       </div>
     </div>

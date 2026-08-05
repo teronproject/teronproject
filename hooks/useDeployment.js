@@ -20,7 +20,7 @@ export function useDeployment() {
     setStatus("simulating");
     setError(null);
     try {
-      const res = await fetch("/api/tokens/simulate", {
+      const res = await fetch("/api/launch/simulate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tokenId }),
@@ -41,7 +41,7 @@ export function useDeployment() {
     setStatus("deploying");
     setError(null);
     try {
-      const res = await fetch("/api/tokens/deploy", {
+      const res = await fetch("/api/launch/deploy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tokenId }),

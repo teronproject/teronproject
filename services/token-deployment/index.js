@@ -30,11 +30,15 @@ export async function initiateDeployment(userId, data) {
     discord,
     logoUrl,
     bannerUrl,
-    addVerification
+    addVerification,
+    addMetadata,
+    projectCategory,
+    contactEmail
   } = data;
 
   const pricing = await getActivePricing();
   const verificationPrice = pricing.find(p => p.serviceKey === "verification")?.priceBnb || 0.0033;
+  const metadataPrice = pricing.find(p => p.serviceKey === "metadata")?.priceBnb || 0.005;
 
   // Use a transaction to ensure all records are created together
   const deployment = await prisma.$transaction(async (tx) => {
@@ -63,6 +67,8 @@ export async function initiateDeployment(userId, data) {
         discord,
         logoUrl,
         bannerUrl,
+        projectCategory,
+        contactEmail,
       }
     });
 
@@ -83,6 +89,18 @@ export async function initiateDeployment(userId, data) {
           tokenId: token.id,
           serviceType: "VERIFICATION",
           amountBnb: verificationPrice,
+          status: "PENDING",
+        }
+      });
+    }
+
+    if (addMetadata) {
+      await tx.payment.create({
+        data: {
+          userId,
+          tokenId: token.id,
+          serviceType: "METADATA",
+          amountBnb: metadataPrice,
           status: "PENDING",
         }
       });

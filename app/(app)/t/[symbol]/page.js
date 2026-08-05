@@ -24,7 +24,7 @@ export default function TokenProfilePage({ params }) {
   useEffect(() => {
     async function fetchTokenData() {
       try {
-        const res = await fetch(`/api/tokens/${encodeURIComponent(symbolOrAddr)}`);
+        const res = await fetch(`/api/projects/${encodeURIComponent(symbolOrAddr)}`);
         const data = await res.json();
 
         if (res.ok && data.token) {
