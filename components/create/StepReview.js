@@ -54,23 +54,20 @@ export default function StepReview({ getValues, setValue, watch }) {
 
   return (
     <div className="space-y-8">
-      <div className="bg-warning-subtle border border-warning/30 p-5 rounded-xl flex items-start gap-4">
-        <div className="mt-0.5">
-          <SecurityCheckIcon className="text-warning" variant="solid" size={24} />
-        </div>
+      <div className="bg-warning/5 border border-warning/30 p-5 rounded-xl flex items-start gap-4 shadow-sm card">
         <div>
-          <h3 className="text-sm font-semibold text-warning mb-1">
+          <h3 className="text-lg title text-warning mb-1">
             Final Review
           </h3>
-          <p className="text-xs text-warning/90 leading-relaxed">
+          <p className="text-xs text-text-tertiary leading-relaxed">
             Please review your token details carefully. Once you click "Deploy", a transaction
-            will be sent to the BNB Chain. <strong>Smart contracts are immutable</strong> — you will not
+            will be sent to the BNB Chain. <strong className="font-bold">Smart contracts are immutable</strong>  you will not
             be able to change the Name, Symbol, Decimals, or Initial Supply after deployment.
           </p>
         </div>
       </div>
 
-      <div className="bg-surface-primary border border-border-primary rounded-lg overflow-hidden">
+      <div className="bg-surface-primary border border-border-primary rounded-lg overflow-hidden card">
         <div className="p-6 pt-10">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-text-primary">
@@ -104,11 +101,11 @@ export default function StepReview({ getValues, setValue, watch }) {
 
       {/* Cost Summary */}
       <div className="pt-4">
-        <h3 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+        <h3 className="text-lg title text-text-primary mb-4 flex items-center gap-2">
           Deployment Cost Summary
         </h3>
         
-        <div className="bg-surface-secondary border border-border-secondary rounded-xl p-6">
+        <div className="bg-surface-secondary border border-border-secondary rounded-xl p-6 card">
           <div className="space-y-3 mb-6">
             <div className="flex justify-between items-center text-sm">
               <span className="text-text-secondary">Smart Contract Deployment</span>

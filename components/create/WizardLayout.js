@@ -2,8 +2,9 @@
 
 import { motion } from "motion/react";
 import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import { 
-  CheckmarkBadge01Icon, 
+  CheckmarkCircle03Icon, 
   InformationCircleIcon, 
   Settings01Icon,
   CrownIcon,
@@ -35,8 +36,8 @@ export default function WizardLayout({
       {/* Left Sidebar: Progress Tracker & Heavy Context */}
       <div className="lg:col-span-4 space-y-8">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary mb-2">Deploy Token</h1>
-          <p className="text-text-secondary text-sm">
+          <h1 className="text-2xl title text-text-primary mb-2">Deploy Token</h1>
+          <p className="text-text-tertiary text-xs text-balance">
             Launch your BEP-20 token on BNB Chain in minutes. No coding required.
           </p>
         </div>
@@ -53,16 +54,16 @@ export default function WizardLayout({
                   <div className="group relative flex items-start">
                     <span className="flex h-9 items-center">
                       <span
-                        className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 shadow-sm transition-all duration-300 ${
+                        className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 shadow-sm transition-all duration-300 card ${
                           isComplete
-                            ? "bg-accent border-accent text-accent-text"
+                            ? "text-green-600"
                             : isCurrent
                             ? "border-accent bg-accent/10 text-accent shadow-[0_0_15px_rgba(var(--color-accent),0.3)]"
                             : "border-border-secondary bg-surface-secondary text-text-disabled"
                         }`}
                       >
                         {isComplete ? (
-                          <CheckmarkBadge01Icon variant="solid" size={20} />
+                          <CheckmarkCircle03Icon variant="solid" size={20} />
                         ) : (
                           <step.icon variant={isCurrent ? "solid" : "stroke-rounded"} size={20} />
                         )}
@@ -70,13 +71,13 @@ export default function WizardLayout({
                     </span>
                     <span className="ml-4 flex min-w-0 flex-col">
                       <span
-                        className={`text-sm font-semibold tracking-wide uppercase ${
-                          isCurrent ? "text-accent" : "text-text-primary"
+                        className={`text-sm mb-0.5 font-semibold title ${
+                          isCurrent ? "text-accent" : "text-text-secondary"
                         }`}
                       >
                         {step.name}
                       </span>
-                      <span className="text-sm text-text-tertiary">
+                      <span className="text-xs text-text-tertiary">
                         {step.description}
                       </span>
                     </span>
@@ -92,13 +93,13 @@ export default function WizardLayout({
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           key={`help-${currentStep}`}
-          className="bg-accent/5 border border-accent/20 rounded-xl p-5 shadow-sm"
+          className="bg-accent/5 border border-accent/20 rounded-xl p-5 shadow-sm card"
         >
           <div className="flex items-center gap-2 mb-3">
             <InformationCircleIcon variant="solid" className="text-accent" size={20} />
-            <h3 className="font-semibold text-accent text-sm tracking-wide uppercase">Need Help?</h3>
+            <h3 className="font-semibold title text-accent text-sm">Need Help?</h3>
           </div>
-          <p className="text-sm text-text-secondary leading-relaxed">
+          <p className="text-xs text-text-secondary leading-relaxed">
             {currentStep === 1 &&
               "Choose a unique name and symbol. The total supply defines how many tokens will ever exist. Standard tokens usually have 18 decimals."}
             {currentStep === 2 &&
@@ -117,38 +118,36 @@ export default function WizardLayout({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="bg-surface-secondary border border-border-primary rounded-2xl overflow-hidden shadow-xl shadow-black/5"
         >
-          {/* Step Header */}
-          <div className="px-8 py-6 border-b border-border-primary bg-surface-primary">
-            <h2 className="text-xl font-bold text-text-primary">{title}</h2>
-            {description && (
-              <p className="mt-2 text-sm text-text-secondary">{description}</p>
-            )}
-          </div>
+          <Card className="shadow-2xl">
+            {/* Step Header */}
+            <Card.Header>
+              <h2 className="text-xl font-bold title text-text-primary">{title}</h2>
+              {description && (
+                <p className="mt-1.5 text-xs stitle text-text-secondary">{description}</p>
+              )}
+            </Card.Header>
 
-          {/* Step Body */}
-          <div className="p-8">{children}</div>
+            {/* Step Body */}
+            <Card.Body className="p-8">
+              {children}
+            </Card.Body>
 
-          {/* Step Footer / Actions */}
-          <div className="px-8 py-5 border-t border-border-primary bg-surface-primary flex items-center justify-between">
-            {onBack ? (
-              <Button variant="ghost" onClick={onBack} disabled={isNextLoading}>
-                Back
+            {/* Step Footer / Actions */}
+            <Card.Footer className="flex items-center justify-between bg-surface-primary/30">
+              {onBack ? (
+                <Button variant="secondary" onClick={onBack} disabled={isNextLoading} className="card text-white cursor-pointer">
+                  Back
+                </Button>
+              ) : (
+                <div /> // Spacer
+              )}
+              
+              <Button onClick={onNext} isLoading={isNextLoading} disabled={isNextDisabled} className="cta">
+                {nextLabel}
               </Button>
-            ) : (
-              <div /> // Spacer
-            )}
-
-            <Button
-              variant="primary"
-              onClick={onNext}
-              disabled={isNextDisabled || isNextLoading}
-              isLoading={isNextLoading}
-            >
-              {nextLabel}
-            </Button>
-          </div>
+            </Card.Footer>
+          </Card>
         </motion.div>
       </div>
     </div>

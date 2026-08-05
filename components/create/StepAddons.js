@@ -58,13 +58,15 @@ export default function StepAddons({ register, errors, watch, setValue }) {
 
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <h3 className="text-sm font-semibold text-text-primary mb-1">
-          Premium Launch Services
-        </h3>
-        <p className="text-xs text-text-secondary leading-relaxed">
-          Enhance your token's credibility and visibility on BscScan. These services are highly recommended for serious projects.
-        </p>
+      <div className="bg-accent/5 border border-accent/20 p-5 rounded-xl flex items-start gap-4 mb-6 shadow-sm card">
+        <div>
+          <h3 className="text-sm title text-text-secondary mb-1 tracking-wide">
+            Premium Launch Services
+          </h3>
+          <p className="text-xs text-text-tertiary text-balance leading-relaxed">
+            Enhance your token's credibility and visibility on BscScan. These services are highly recommended for serious projects.
+          </p>
+        </div>
       </div>
 
       <div className="space-y-5">
