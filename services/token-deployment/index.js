@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { getActivePricing } from "@/services/pricing";
 
 /**
  * Token Deployment Service
@@ -28,8 +29,14 @@ export async function initiateDeployment(userId, data) {
     telegram,
     discord,
     logoUrl,
-    bannerUrl
+    bannerUrl,
+    addVerification,
+    addMetadata
   } = data;
+
+  const pricing = await getActivePricing();
+  const verificationPrice = pricing.find(p => p.serviceKey === "verification")?.priceBnb || 0.0033;
+  const metadataPrice = pricing.find(p => p.serviceKey === "metadata")?.priceBnb || 0.005;
 
   // Use a transaction to ensure all records are created together
   const deployment = await prisma.$transaction(async (tx) => {
@@ -69,6 +76,31 @@ export async function initiateDeployment(userId, data) {
         status: "PENDING",
       }
     });
+
+    // 4. Create Payment records for optional services
+    if (addVerification) {
+      await tx.payment.create({
+        data: {
+          userId,
+          tokenId: token.id,
+          serviceType: "VERIFICATION",
+          amountBnb: verificationPrice,
+          status: "PENDING",
+        }
+      });
+    }
+
+    if (addMetadata) {
+      await tx.payment.create({
+        data: {
+          userId,
+          tokenId: token.id,
+          serviceType: "METADATA",
+          amountBnb: metadataPrice,
+          status: "PENDING",
+        }
+      });
+    }
 
     return newDeployment;
   });

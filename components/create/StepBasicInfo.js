@@ -1,6 +1,7 @@
 "use client";
 
 import Input from "@/components/ui/Input";
+import { Settings02Icon } from "hugeicons-react";
 
 /**
  * Step 1: Basic Token Info
@@ -8,15 +9,20 @@ import Input from "@/components/ui/Input";
 export default function StepBasicInfo({ register, errors }) {
   return (
     <div className="space-y-6">
-      <div className="bg-surface-tertiary border border-border-secondary p-4 rounded-md mb-8">
-        <h3 className="text-sm font-semibold text-text-primary mb-1">
-          Smart Contract Fundamentals
-        </h3>
-        <p className="text-xs text-text-secondary leading-relaxed">
-          These details are permanently written to the blockchain when you deploy.
-          Ensure you double-check your Token Name, Symbol, and Supply, as they
-          cannot be altered later.
-        </p>
+      <div className="bg-surface-tertiary border border-border-secondary p-5 rounded-xl flex items-start gap-4">
+        <div className="mt-0.5">
+          <Settings02Icon className="text-accent" variant="stroke-rounded" size={24} />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-text-primary mb-1">
+            Smart Contract Fundamentals
+          </h3>
+          <p className="text-xs text-text-secondary leading-relaxed">
+            These details are permanently written to the blockchain when you deploy.
+            Ensure you double-check your Token Name, Symbol, and Supply, as they
+            cannot be altered later.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

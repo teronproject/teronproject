@@ -24,7 +24,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/create" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+                <Link href="/dashboard/create" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
                   Launch Token
                 </Link>
               </li>

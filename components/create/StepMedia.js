@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
 import { useWallet } from "@/hooks/useWallet";
+import { Image01Icon, Camera01Icon, ImageUploadIcon } from "hugeicons-react";
 
 /**
  * Step 3: Media Uploads — Logo & Banner via Cloudinary
@@ -45,15 +46,20 @@ export default function StepMedia({ register, errors, watch, setValue }) {
 
   return (
     <div className="space-y-8">
-      <div className="bg-surface-tertiary border border-border-secondary p-4 rounded-md">
-        <h3 className="text-sm font-semibold text-text-primary mb-1">
-          Visual Identity
-        </h3>
+      <div className="bg-surface-tertiary border border-border-secondary p-5 rounded-xl flex items-start gap-4">
+        <div className="mt-0.5">
+          <Image01Icon className="text-accent" variant="stroke-rounded" size={24} />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-text-primary mb-1">
+            Visual Identity
+          </h3>
         <p className="text-xs text-text-secondary leading-relaxed">
           Your token's branding is the first thing investors see. High-quality,
           properly sized images make your project look professional and
           trustworthy. Images are uploaded securely via Cloudinary.
-        </p>
+          </p>
+        </div>
       </div>
 
       {/* Logo Upload Section */}
@@ -85,10 +91,10 @@ export default function StepMedia({ register, errors, watch, setValue }) {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="text-center">
-                <span className="text-2xl opacity-20 block">📷</span>
-                <span className="text-[10px] text-text-tertiary group-hover:text-accent transition-colors">
-                  Click to upload
+              <div className="text-center flex flex-col items-center justify-center">
+                <Camera01Icon variant="stroke-rounded" size={28} className="text-text-tertiary group-hover:text-accent transition-colors mb-2" />
+                <span className="text-[10px] text-text-tertiary group-hover:text-accent transition-colors font-medium">
+                  Upload Logo
                 </span>
               </div>
             )}
@@ -157,9 +163,9 @@ export default function StepMedia({ register, errors, watch, setValue }) {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="text-center">
-                <span className="text-2xl opacity-20 block">🖼️</span>
-                <span className="text-xs text-text-tertiary group-hover:text-accent transition-colors mt-1 block">
+              <div className="text-center flex flex-col items-center justify-center">
+                <ImageUploadIcon variant="stroke-rounded" size={32} className="text-text-tertiary group-hover:text-accent transition-colors mb-2" />
+                <span className="text-xs font-medium text-text-tertiary group-hover:text-accent transition-colors block">
                   Click to upload banner
                 </span>
               </div>

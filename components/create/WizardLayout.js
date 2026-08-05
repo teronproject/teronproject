@@ -2,12 +2,20 @@
 
 import { motion } from "motion/react";
 import Button from "@/components/ui/Button";
+import { 
+  CheckmarkBadge01Icon, 
+  InformationCircleIcon, 
+  Settings01Icon,
+  GlobalIcon,
+  Image01Icon,
+  Rocket01Icon
+} from "hugeicons-react";
 
 const steps = [
-  { id: 1, name: "Token Basics", description: "Name, symbol, and supply" },
-  { id: 2, name: "Profile & Socials", description: "Links and community details" },
-  { id: 3, name: "Media Assets", description: "Logo and banner images" },
-  { id: 4, name: "Review & Deploy", description: "Final check and transaction" },
+  { id: 1, name: "Token Basics", description: "Name, symbol, and supply", icon: Settings01Icon },
+  { id: 2, name: "Profile & Socials", description: "Links and community details", icon: GlobalIcon },
+  { id: 3, name: "Media Assets", description: "Logo and banner images", icon: Image01Icon },
+  { id: 4, name: "Review & Deploy", description: "Final check and transaction", icon: Rocket01Icon },
 ];
 
 /**
@@ -47,35 +55,18 @@ export default function WizardLayout({
                   <div className="group relative flex items-start">
                     <span className="flex h-9 items-center">
                       <span
-                        className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors ${
+                        className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 shadow-sm transition-all duration-300 ${
                           isComplete
-                            ? "bg-accent border-accent"
+                            ? "bg-accent border-accent text-accent-text"
                             : isCurrent
-                            ? "border-accent bg-bg-primary"
-                            : "border-border-secondary bg-bg-primary"
+                            ? "border-accent bg-accent/10 text-accent shadow-[0_0_15px_rgba(var(--color-accent),0.3)]"
+                            : "border-border-secondary bg-surface-secondary text-text-disabled"
                         }`}
                       >
                         {isComplete ? (
-                          <svg
-                            className="h-5 w-5 text-accent-text"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            aria-hidden="true"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
+                          <CheckmarkBadge01Icon variant="solid" size={20} />
                         ) : (
-                          <span
-                            className={`text-sm font-semibold ${
-                              isCurrent ? "text-accent" : "text-text-tertiary"
-                            }`}
-                          >
-                            {step.id}
-                          </span>
+                          <step.icon variant={isCurrent ? "solid" : "stroke-rounded"} size={20} />
                         )}
                       </span>
                     </span>
@@ -99,10 +90,15 @@ export default function WizardLayout({
         </nav>
 
         {/* Contextual Help Box */}
-        <div className="bg-surface-primary border border-border-primary rounded-lg p-5">
+        <motion.div 
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          key={`help-${currentStep}`}
+          className="bg-accent/5 border border-accent/20 rounded-xl p-5 shadow-sm"
+        >
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-accent">ℹ️</span>
-            <h3 className="font-semibold text-text-primary text-sm">Need Help?</h3>
+            <InformationCircleIcon variant="solid" className="text-accent" size={20} />
+            <h3 className="font-semibold text-accent text-sm tracking-wide uppercase">Need Help?</h3>
           </div>
           <p className="text-sm text-text-secondary leading-relaxed">
             {currentStep === 1 &&
@@ -114,17 +110,18 @@ export default function WizardLayout({
             {currentStep === 4 &&
               "Review all details carefully. Once deployed to the blockchain, basic contract parameters cannot be changed."}
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Right Content Area: Active Step Form */}
       <div className="lg:col-span-8">
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="bg-surface-secondary border border-border-primary rounded-xl overflow-hidden shadow-sm"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="bg-surface-secondary border border-border-primary rounded-2xl overflow-hidden shadow-xl shadow-black/5"
         >
           {/* Step Header */}
           <div className="px-8 py-6 border-b border-border-primary bg-surface-primary">

@@ -34,7 +34,7 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
           <Link
-            href="/create"
+            href="/dashboard/create"
             className="inline-flex items-center justify-center h-10 px-6 bg-accent text-accent-text font-semibold rounded text-sm hover:bg-accent-hover active:bg-accent-active transition-colors"
           >
             Launch Token

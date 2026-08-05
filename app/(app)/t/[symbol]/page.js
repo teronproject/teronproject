@@ -80,7 +80,7 @@ export default function TokenProfilePage({ params }) {
           <Link href="/leaderboard" className="h-10 px-6 bg-surface-secondary border border-border-primary text-text-primary font-semibold rounded inline-flex items-center text-sm hover:bg-surface-tertiary transition-colors">
             Explore Leaderboard
           </Link>
-          <Link href="/create" className="h-10 px-6 bg-accent text-accent-text font-semibold rounded inline-flex items-center text-sm hover:bg-accent-hover transition-colors">
+          <Link href="/dashboard/create" className="h-10 px-6 bg-accent text-accent-text font-semibold rounded inline-flex items-center text-sm hover:bg-accent-hover transition-colors">
             Deploy New Token
           </Link>
         </div>

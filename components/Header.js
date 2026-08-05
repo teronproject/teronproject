@@ -63,7 +63,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {isConnected && (
             <Link
-              href="/settings"
+              href="/dashboard/settings"
               className="w-8 h-8 rounded-full bg-surface-primary border border-border-primary text-text-tertiary hover:text-text-primary hover:border-border-secondary transition-colors flex items-center justify-center text-sm"
               title="Profile Settings"
             >

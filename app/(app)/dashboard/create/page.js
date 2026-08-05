@@ -97,7 +97,7 @@ export default function CreateTokenPage() {
       addToast({ variant: "success", message: "Token deployment initiated!" });
       
       // Redirect to the deployment status page
-      router.push(`/deployments/${result.deploymentId}`);
+      router.push(`/dashboard/deployments/${result.deploymentId}`);
     } catch (error) {
       addToast({ variant: "error", message: error.message });
       setIsDeploying(false);
@@ -142,7 +142,7 @@ export default function CreateTokenPage() {
             {currentStep === 1 && <StepBasicInfo register={register} errors={errors} />}
             {currentStep === 2 && <StepProfile register={register} errors={errors} />}
             {currentStep === 3 && <StepMedia register={register} errors={errors} watch={watch} setValue={setValue} />}
-            {currentStep === 4 && <StepReview getValues={getValues} />}
+            {currentStep === 4 && <StepReview getValues={getValues} setValue={setValue} watch={watch} />}
           </form>
         </WizardLayout>
       )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { useDeployContract, useWaitForTransactionReceipt } from "wagmi";
+import { useDeployContract, useWaitForTransactionReceipt, useSendTransaction } from "wagmi";
 import { parseUnits } from "viem";
 import { useWallet } from "@/hooks/useWallet";
 import { useToastContext } from "@/components/ToastProvider";
@@ -21,6 +21,7 @@ export default function DeploymentStatusPage({ params }) {
   const [isLoading, setIsLoading] = useState(true);
   const [dbStatus, setDbStatus] = useState("PENDING");
   const [contractAddr, setContractAddr] = useState(null);
+  const [coldWalletAddr, setColdWalletAddr] = useState(null);
 
   const { address, isConnected, isBnbChain, chain } = useWallet();
   const { addToast } = useToastContext();
@@ -33,7 +34,7 @@ export default function DeploymentStatusPage({ params }) {
     error: deployError,
   } = useDeployContract();
 
-  // Wait for On-Chain Transaction Receipt
+  // Wait for On-Chain Transaction Receipt (Deployment)
   const {
     data: receipt,
     isLoading: isConfirmingChain,
@@ -43,10 +44,31 @@ export default function DeploymentStatusPage({ params }) {
     hash: txHash || undefined,
   });
 
+  // Wagmi Send Transaction hook for Premium Services payment
+  const {
+    sendTransaction,
+    data: paymentTxHash,
+    isPending: isSendingPayment,
+    error: paymentError,
+  } = useSendTransaction();
+
+  // Wait for On-Chain Transaction Receipt (Payment)
+  const {
+    isLoading: isConfirmingPayment,
+    isSuccess: isConfirmedPayment,
+  } = useWaitForTransactionReceipt({
+    hash: paymentTxHash || undefined,
+  });
+
   // Fetch deployment metadata on initial load
   useEffect(() => {
     async function fetchDeployment() {
       try {
+        // Fetch pricing to get cold wallet address
+        const pricingRes = await fetch("/api/pricing");
+        const pricingData = await pricingRes.json();
+        if (pricingData.success) setColdWalletAddr(pricingData.coldWalletAddress);
+
         const res = await fetch(`/api/deployments/${deploymentId}`);
         const data = await res.json();
         if (res.ok && data.deployment) {
@@ -97,6 +119,35 @@ export default function DeploymentStatusPage({ params }) {
     }
   }, [isConfirmedChain, receipt, receiptError]);
 
+  // Handle wallet payment error
+  useEffect(() => {
+    if (paymentError) {
+      addToast({ variant: "error", message: paymentError.shortMessage || paymentError.message });
+    }
+  }, [paymentError]);
+
+  // When payment is confirmed on chain
+  useEffect(() => {
+    if (isConfirmedPayment && paymentTxHash) {
+      addToast({ variant: "success", message: "Payment confirmed! Services activated." });
+      // Notify backend
+      fetch("/api/payments/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-wallet-address": address },
+        body: JSON.stringify({ tokenId: deploymentData?.token?.id, txHash: paymentTxHash })
+      }).then(() => {
+        // Refresh local data to remove the pending payment UI
+        setDeploymentData(prev => ({
+          ...prev,
+          token: {
+            ...prev.token,
+            payments: prev.token.payments.map(p => ({ ...p, status: "CONFIRMED" }))
+          }
+        }));
+      });
+    }
+  }, [isConfirmedPayment, paymentTxHash, deploymentData, address]);
+
   const updateStatus = async (status, extra = {}) => {
     setDbStatus(status);
     try {
@@ -144,6 +195,24 @@ export default function DeploymentStatusPage({ params }) {
     }
   };
 
+  const handlePayPremium = (totalAmountBnb) => {
+    if (!isConnected || !isBnbChain) return;
+    if (!coldWalletAddr) {
+      addToast({ variant: "error", message: "Cold wallet address not configured." });
+      return;
+    }
+    
+    try {
+      const value = parseUnits(totalAmountBnb.toString(), 18);
+      sendTransaction({
+        to: coldWalletAddr,
+        value,
+      });
+    } catch (err) {
+      addToast({ variant: "error", message: "Failed to prepare transaction." });
+    }
+  };
+
   const getBscScanUrl = (targetAddress, isTx = false) => {
     const baseUrl = "https://bscscan.com";
     return `${baseUrl}/${isTx ? "tx" : "address"}/${targetAddress}`;
@@ -163,7 +232,7 @@ export default function DeploymentStatusPage({ params }) {
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
         <h2 className="text-xl font-bold text-text-primary">Deployment Session Not Found</h2>
         <p className="text-text-secondary text-sm mt-2">The requested deployment ID does not exist.</p>
-        <Link href="/create" className="inline-block mt-6 text-accent hover:underline">
+        <Link href="/dashboard/create" className="inline-block mt-6 text-accent hover:underline">
           &larr; Launch a New Token
         </Link>
       </div>
@@ -173,6 +242,9 @@ export default function DeploymentStatusPage({ params }) {
   const { token } = deploymentData;
   const isComplete = dbStatus === "CONFIRMED";
   const isInProgress = isDeployingWallet || isConfirmingChain || dbStatus === "DEPLOYING" || dbStatus === "SIMULATING";
+
+  const pendingPayments = token?.payments?.filter(p => p.status === "PENDING") || [];
+  const totalPendingBnb = pendingPayments.reduce((acc, curr) => acc + curr.amountBnb, 0);
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4 space-y-8">
@@ -230,6 +302,47 @@ export default function DeploymentStatusPage({ params }) {
               </a>
             )}
           </div>
+
+          {/* Premium Add-ons Payment UI */}
+          {isComplete && pendingPayments.length > 0 && (
+            <div className="mt-8 pt-6 border-t border-border-primary text-left">
+              <div className="bg-accent/10 border border-accent/20 rounded-xl p-6">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-accent mb-2">Activate Premium Features</h3>
+                    <p className="text-sm text-text-secondary">
+                      You selected premium add-ons during token creation. Pay the combined fee of <strong className="text-accent">{totalPendingBnb} BNB</strong> to activate them.
+                    </p>
+                    <ul className="mt-3 space-y-1 text-sm text-text-primary list-disc list-inside">
+                      {pendingPayments.map(p => (
+                        <li key={p.id}>{p.serviceType === "VERIFICATION" ? "Contract Verification" : "On-Chain Metadata"} ({p.amountBnb} BNB)</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-3">
+                  {isSendingPayment || isConfirmingPayment ? (
+                    <div className="flex items-center gap-3 bg-surface-primary p-4 rounded-lg border border-border-secondary">
+                      <span className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin shrink-0" />
+                      <span className="text-sm font-medium text-text-primary">
+                        {isSendingPayment ? "Waiting for wallet signature..." : "Transaction broadcasted! Waiting for confirmation..."}
+                      </span>
+                    </div>
+                  ) : (
+                    <Button
+                      size="lg"
+                      variant="primary"
+                      onClick={() => handlePayPremium(totalPendingBnb)}
+                      className="w-full sm:w-auto self-start"
+                    >
+                      Pay {totalPendingBnb} BNB
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <Card className="p-8 space-y-6 bg-surface-secondary">

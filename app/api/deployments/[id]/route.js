@@ -21,6 +21,7 @@ export async function GET(request, { params }) {
           include: {
             profile: true,
             deployer: true,
+            payments: true,
           },
         },
       },

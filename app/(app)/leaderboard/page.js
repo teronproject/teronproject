@@ -58,7 +58,7 @@ export default function LeaderboardPage() {
             Real-time directory of BEP-20 tokens deployed cleanly and immutably on the BNB Smart Chain through Teron.
           </p>
         </div>
-        <Link href="/create" className="h-11 px-6 bg-accent text-accent-text font-bold rounded-lg inline-flex items-center justify-center hover:bg-accent-hover transition-all shadow-md shrink-0">
+        <Link href="/dashboard/create" className="h-11 px-6 bg-accent text-accent-text font-bold rounded-lg inline-flex items-center justify-center hover:bg-accent-hover transition-all shadow-md shrink-0">
           + Deploy New Token
         </Link>
       </div>
@@ -127,7 +127,7 @@ export default function LeaderboardPage() {
                 Clear Search
               </Button>
             ) : (
-              <Link href="/create" className="h-11 px-8 bg-accent text-accent-text font-bold rounded-lg inline-flex items-center hover:bg-accent-hover transition-colors shadow-lg">
+              <Link href="/dashboard/create" className="h-11 px-8 bg-accent text-accent-text font-bold rounded-lg inline-flex items-center hover:bg-accent-hover transition-colors shadow-lg">
                 Launch First Token
               </Link>
             )}

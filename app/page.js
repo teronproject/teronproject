@@ -14,7 +14,7 @@ export default function LandingPage() {
           </p>
           <div className="flex items-center justify-center gap-4">
             <a
-              href="/create"
+              href="/dashboard/create"
               className="inline-flex items-center justify-center h-12 px-8 bg-accent text-accent-text font-semibold rounded hover:bg-accent-hover active:bg-accent-active transition-colors"
             >
               Launch Token

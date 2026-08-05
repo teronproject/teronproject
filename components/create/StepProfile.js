@@ -1,6 +1,7 @@
 "use client";
 
 import Input from "@/components/ui/Input";
+import { GlobalIcon } from "hugeicons-react";
 
 /**
  * Step 2: Token Profile & Socials
@@ -8,16 +9,21 @@ import Input from "@/components/ui/Input";
 export default function StepProfile({ register, errors }) {
   return (
     <div className="space-y-6">
-      <div className="bg-surface-tertiary border border-border-secondary p-4 rounded-md mb-8">
-        <h3 className="text-sm font-semibold text-text-primary mb-1">
-          Community & Trust
-        </h3>
-        <p className="text-xs text-text-secondary leading-relaxed">
-          Provide links to your project's website and social media. Tokens with verified
-          social profiles rank higher on the Teron Leaderboard and attract more investors.
-          This information is saved to your Token Profile, not the blockchain, and can
-          be updated later.
-        </p>
+      <div className="bg-surface-tertiary border border-border-secondary p-5 rounded-xl flex items-start gap-4 mb-8">
+        <div className="mt-0.5">
+          <GlobalIcon className="text-accent" variant="stroke-rounded" size={24} />
+        </div>
+        <div>
+          <h3 className="text-sm font-semibold text-text-primary mb-1">
+            Community & Trust
+          </h3>
+          <p className="text-xs text-text-secondary leading-relaxed">
+            Provide links to your project's website and social media. Tokens with verified
+            social profiles rank higher on the Teron Leaderboard and attract more investors.
+            This information is saved to your Token Profile, not the blockchain, and can
+            be updated later.
+          </p>
+        </div>
       </div>
 
       <div className="space-y-4">

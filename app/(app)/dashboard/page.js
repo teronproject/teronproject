@@ -52,20 +52,6 @@ export default function DashboardPage() {
     loadDashboard();
   }, [address]);
 
-  if (!isConnected) {
-    return (
-      <div className="max-w-3xl mx-auto py-24 px-4 text-center space-y-6">
-        <div className="text-5xl opacity-30">🔒</div>
-        <h1 className="text-2xl font-bold text-text-primary">
-          Connect Wallet to View Dashboard
-        </h1>
-        <p className="text-text-secondary text-sm max-w-md mx-auto">
-          Connect your BNB Chain wallet to see your deployed tokens and account stats.
-        </p>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto py-12 px-4 space-y-6">
@@ -116,7 +102,7 @@ export default function DashboardPage() {
         </div>
 
         <Link
-          href="/create"
+          href="/dashboard/create"
           className="h-11 px-6 bg-accent text-accent-text font-bold rounded-lg inline-flex items-center justify-center hover:bg-accent-hover transition-all shadow-md shrink-0"
         >
           + Create New Token
@@ -180,7 +166,7 @@ export default function DashboardPage() {
                 You haven't deployed any tokens yet.
               </p>
               <Link
-                href="/create"
+                href="/dashboard/create"
                 className="inline-block text-accent text-sm font-semibold hover:underline"
               >
                 Launch your first BEP-20 token →
@@ -254,7 +240,7 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-4 pt-4 border-t border-border-primary">
         <Link
-          href="/settings"
+          href="/dashboard/settings"
           className="h-10 px-5 bg-surface-primary border border-border-secondary text-text-primary text-sm font-semibold rounded hover:bg-surface-secondary transition-colors inline-flex items-center gap-2"
         >
           ⚙ Edit Profile
