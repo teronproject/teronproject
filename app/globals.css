@@ -17,36 +17,39 @@
   --color-bg-tertiary: #18181b;
 
   /* --- Surface Layers --- */
-  --color-surface-primary: #1c1c20;
-  --color-surface-secondary: #222226;
-  --color-surface-tertiary: #2a2a2e;
+  --color-surface-primary: #1d1d21;
+  --color-surface-secondary: #242428;
+  --color-surface-tertiary: #2d2d32;
 
   /* --- Borders --- */
-  --color-border-primary: #27272a;
-  --color-border-secondary: #3f3f46;
+  --color-border-primary: #2b2b31;
+  --color-border-secondary: #43434c;
   --color-border-focus: #facc15;
 
   /* --- Text --- */
-  --color-text-primary: #fafafa;
-  --color-text-secondary: #a1a1aa;
-  --color-text-tertiary: #71717a;
-  --color-text-disabled: #52525b;
+  --color-text-primary: #fcfcfd;
+  --color-text-secondary: #d0d0d7;
+  --color-text-tertiary: #a8a8b3;
+  --color-text-disabled: #6d6d77;
 
   /* --- Yellow Accent --- */
   --color-accent: #facc15;
-  --color-accent-hover: #fbbf24;
-  --color-accent-active: #f59e0b;
+  --color-accent-hover: #fcd34d;
+  --color-accent-active: #fbbf24;
   --color-accent-disabled: oklch(0.554 0.135 66.442 / 0.5);
-  --color-accent-subtle: oklch(0.855 0.167 91.678 / 0.06);
-  --color-accent-text: #422006;
+  --color-accent-subtle: oklch(0.855 0.167 91.678 / 0.07);
+  --color-accent-text: #241800;
 
   /* --- Semantic --- */
   --color-success: #22c55e;
   --color-success-subtle: oklch(0.723 0.219 149.579 / 0.1);
+
   --color-error: #ef4444;
   --color-error-subtle: oklch(0.637 0.237 25.331 / 0.1);
+
   --color-warning: #f59e0b;
   --color-warning-subtle: oklch(0.769 0.188 70.08 / 0.1);
+
   --color-info: #3b82f6;
   --color-info-subtle: oklch(0.623 0.214 259.815 / 0.1);
 }
@@ -213,4 +216,63 @@ body {
     inset 0 0 0 3px rgba(82,60,6,.18),
     inset 0 3px 8px rgba(72,52,4,.12),
     inset 0 -1px 0 rgba(255,255,255,.10);
+}
+
+.title {
+  font-weight: 580;
+  font-style: normal;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  word-spacing: -0.04em;
+
+  font-kerning: normal;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1,
+    "calt" 1,
+    "ss01" 1;
+  font-variant-ligatures: common-ligatures;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  text-wrap: balance;
+
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.18),
+    0 -1px 0 rgba(0,0,0,.035);
+
+  transition:
+    letter-spacing .3s ease,
+    text-shadow .3s ease;
+}
+
+.stitle {
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  word-spacing: -0.015em;
+
+  font-kerning: normal;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1,
+    "calt" 1;
+  font-variant-ligatures: common-ligatures;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  text-wrap: balance;
+
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.14),
+    0 -1px 0 rgba(0,0,0,.025);
+
+  transition:
+    letter-spacing .3s ease,
+    text-shadow .3s ease;
 }
