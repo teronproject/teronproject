@@ -76,7 +76,7 @@ export default function DashboardPage() {
   return (
     <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Welcome Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border-primary">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dashed border-border-primary">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-surface-primary border border-border-secondary flex items-center justify-center overflow-hidden">
             {profile?.avatar ? (
@@ -92,7 +92,7 @@ export default function DashboardPage() {
             )}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-text-primary">
+            <h1 className="text-xl title mb-1 font-bold text-text-primary">
               {profile?.displayName
                 ? `Welcome, ${profile.displayName}`
                 : "Your Dashboard"}
@@ -103,7 +103,7 @@ export default function DashboardPage() {
 
         <Link
           href="/dashboard/create"
-          className="h-11 px-6 bg-accent text-accent-text font-bold rounded-lg inline-flex items-center justify-center hover:bg-accent-hover transition-all shadow-md shrink-0"
+          className="h-11 px-6 bg-accent cta text-accent-text font-bold rounded-lg inline-flex items-center justify-center hover:bg-accent-hover transition-all shadow-md shrink-0"
         >
           + Create New Token
         </Link>
