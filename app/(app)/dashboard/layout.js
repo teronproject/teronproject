@@ -36,7 +36,7 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] max-w-7xl mx-auto w-full">
       <Sidebar />
       <main className="flex-1 w-full pb-20 md:pb-0">
         {children}
