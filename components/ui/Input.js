@@ -43,12 +43,12 @@ const Input = forwardRef(function Input(
         {...props}
       />
       {error && (
-        <p id={`${inputId}-error`} className="text-sm text-error" role="alert">
+        <p id={`${inputId}-error`} className="text-[10px] text-error mt-1" role="alert">
           {error}
         </p>
       )}
       {helperText && !error && (
-        <p id={`${inputId}-helper`} className="text-sm text-text-tertiary">
+        <p id={`${inputId}-helper`} className="text-[10px] text-text-tertiary mt-1 font-medium leading-relaxed">
           {helperText}
         </p>
       )}
