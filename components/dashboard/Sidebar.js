@@ -36,19 +36,19 @@ export default function Sidebar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${
+                  className={`flex items-center justify-self-start w-full gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${
                     isActive
-                      ? "text-accent font-semibold"
+                      ? "text-accent cta font-semibold"
                       : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
                   }`}
                 >
-                  {isActive && (
+                  {/* {isActive && (
                     <motion.div
                       layoutId="sidebar-active"
                       className="absolute inset-0 bg-accent/10 border border-accent/20 rounded-xl"
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
-                  )}
+                  )} */}
                   <Icon
                     variant={isActive ? "solid" : "stroke-rounded"}
                     size={20}
