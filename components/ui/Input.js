@@ -2,9 +2,6 @@
 
 import { forwardRef } from "react";
 
-/**
- * Input component with label, error state, and helper text.
- */
 const Input = forwardRef(function Input(
   {
     label,
@@ -19,36 +16,48 @@ const Input = forwardRef(function Input(
   const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-text-secondary"
+          className="input-label"
         >
           {label}
         </label>
       )}
+
       <input
         ref={ref}
         id={inputId}
-        className={`w-full h-10 px-3 bg-surface-primary border rounded text-sm text-text-primary placeholder:text-text-disabled transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${
-          error
-            ? "border-error focus:ring-error"
-            : "border-border-primary hover:border-border-secondary"
+        className={`input ${
+          error ? "input-error" : ""
         } ${className}`}
         aria-invalid={error ? "true" : undefined}
         aria-describedby={
-          error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
+          error
+            ? `${inputId}-error`
+            : helperText
+            ? `${inputId}-helper`
+            : undefined
         }
         {...props}
       />
+
       {error && (
-        <p id={`${inputId}-error`} className="text-[10px] text-error mt-1" role="alert">
+        <p
+          id={`${inputId}-error`}
+          className="input-error-text"
+          role="alert"
+        >
           {error}
         </p>
       )}
-      {helperText && !error && (
-        <p id={`${inputId}-helper`} className="text-[10px] text-text-tertiary mt-1 font-medium leading-relaxed">
+
+      {!error && helperText && (
+        <p
+          id={`${inputId}-helper`}
+          className="input-helper"
+        >
           {helperText}
         </p>
       )}
