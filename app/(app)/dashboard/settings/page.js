@@ -164,10 +164,10 @@ export default function SettingsPage() {
     <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 space-y-8">
       {/* Page Header */}
       <div className="space-y-1">
-        <h1 className="text-2xl font-bold text-text-primary">
+        <h1 className="text-2xl title text-text-primary">
           Profile Settings
         </h1>
-        <p className="text-text-secondary text-sm">
+        <p className="text-text-secondary text-xs">
           Manage your public profile, contact information, and social links.
         </p>
       </div>
@@ -175,7 +175,7 @@ export default function SettingsPage() {
       {/* Avatar & Identity Card */}
       <Card>
         <Card.Header>
-          <h2 className="text-sm font-bold text-text-primary">
+          <h2 className="text-md title font-bold text-text-primary">
             Wallet Identity
           </h2>
         </Card.Header>
@@ -243,7 +243,7 @@ export default function SettingsPage() {
       {/* Profile Details Form */}
       <Card>
         <Card.Header>
-          <h2 className="text-sm font-bold text-text-primary">
+          <h2 className="text-md title font-bold text-text-primary">
             Public Profile
           </h2>
         </Card.Header>
@@ -272,7 +272,7 @@ export default function SettingsPage() {
       {/* Social Links */}
       <Card>
         <Card.Header>
-          <h2 className="text-sm font-bold text-text-primary">Social Links</h2>
+          <h2 className="text-md title font-bold text-text-primary">Social Links</h2>
         </Card.Header>
         <Card.Body className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -312,10 +312,10 @@ export default function SettingsPage() {
       </Card>
 
       {/* Save Button */}
-      <div className="flex justify-end gap-4 pt-4 border-t border-border-primary">
+      <div className="flex justify-end gap-4 pt-4 border-t border-dashed border-border-primary">
         <Link
           href="/dashboard"
-          className="h-10 px-5 bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded inline-flex items-center text-sm hover:bg-surface-secondary transition-colors"
+          className="h-11 px-5 card bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded inline-flex items-center text-sm hover:bg-surface-secondary transition-colors"
         >
           Go to Dashboard
         </Link>
@@ -325,6 +325,7 @@ export default function SettingsPage() {
           onClick={handleSave}
           isLoading={isSaving}
           disabled={isSaving}
+          className="cta h-10"
         >
           Save Changes
         </Button>
