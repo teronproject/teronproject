@@ -67,6 +67,7 @@ export default function WalletButton() {
         size="md"
         onClick={() => open()}
         isLoading={isConnecting}
+        className="cta"
       >
         Connect Wallet
       </Button>
