@@ -47,14 +47,13 @@ export default function LeaderboardPage() {
   }, [searchTerm, statusFilter, page]);
 
   return (
-    <div className="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8 space-y-12 relative z-10 w-full">
+    <div className=" py-16 px-4 sm:px-6 lg:px-8 space-y-12 relative z-10 w-full">
       {/* Header Section */}
-      <div className="flex flex-col items-center text-center space-y-6 pb-4">
-        <Badge variant="accent" size="md" className="shadow-[0_0_15px_rgba(var(--color-accent),0.3)]">EXPLORE PREMIUM TOKENS</Badge>
-        <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-text-primary to-text-secondary tracking-tight">
+      <div className="flex flex-col items-left text-left space-y-3">
+        <h1 className="text-3xl text-text-primary title">
           Teron Leaderboard
         </h1>
-        <p className="text-text-secondary text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+        <p className="text-text-secondary text-sm text-balance max-w-xl">
           The definitive directory of top-tier BEP-20 tokens deployed immutably on the BNB Smart Chain.
         </p>
       </div>
@@ -80,7 +79,7 @@ export default function LeaderboardPage() {
             onClick={() => { setStatusFilter("CONFIRMED"); setPage(1); }}
             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
               statusFilter === "CONFIRMED"
-                ? "bg-accent text-accent-text shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
+                ? "bg-accent cta text-accent-text shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
                 : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
             }`}
           >
@@ -90,7 +89,7 @@ export default function LeaderboardPage() {
             onClick={() => { setStatusFilter("ALL"); setPage(1); }}
             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
               statusFilter === "ALL"
-                ? "bg-accent text-accent-text shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
+                ? "bg-accent cta text-accent-text shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
                 : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
             }`}
           >
@@ -236,11 +235,11 @@ export default function LeaderboardPage() {
       )}
 
       {/* Premium Disclaimer Footer */}
-      <div className="pt-24 pb-8 text-center max-w-3xl mx-auto space-y-4">
-        <p className="text-[10px] text-text-tertiary/70 leading-relaxed uppercase tracking-widest font-bold">
+      <div className="pt-24 pb-8 text-left max-w-3xl space-y-2">
+        <p className="text-xs text-text-tertiary leading-relaxed stitle">
           Leaderboard Data & Ranking Disclaimer
         </p>
-        <p className="text-[11px] text-text-tertiary/50 leading-relaxed text-balance">
+        <p className="text-[11px] text-text-tertiary/60 leading-relaxed text-balance">
           The Teron Leaderboard displays BEP-20 tokens deployed via the Teron platform. Rankings are dynamic and may change based on verification status and platform metrics. Teron is a decentralized token deployment protocol; we do not manage, endorse, or guarantee the value, utility, or security of any listed token. Interacting with smart contracts involves inherent risks. Please Do Your Own Research (DYOR) and verify contract addresses directly on BscScan.
         </p>
       </div>

@@ -64,7 +64,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-dvh flex flex-col">
+      <body className="min-h-dvh flex flex-col max-w-7xl w-full mx-auto border-left border-right">
         <Providers>{children}</Providers>
       </body>
     </html>
