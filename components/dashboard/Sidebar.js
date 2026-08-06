@@ -30,7 +30,9 @@ export default function Sidebar() {
           </h2>
           <nav className="space-y-2">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = item.href === '/dashboard' 
+                ? pathname === item.href 
+                : pathname.startsWith(item.href);
               const Icon = item.icon;
               return (
                 <Link
@@ -66,7 +68,9 @@ export default function Sidebar() {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-border-primary bg-surface-primary/80 backdrop-blur-xl z-50 pb-safe">
         <div className="flex items-center justify-around p-2">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = item.href === '/dashboard' 
+              ? pathname === item.href 
+              : pathname.startsWith(item.href);
             const Icon = item.icon;
             return (
               <Link
