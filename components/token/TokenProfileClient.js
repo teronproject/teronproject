@@ -8,7 +8,7 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
-import { GlobalIcon, TwitterIcon, TelegramIcon, DiscordIcon, Search01Icon, LinkSquare02Icon, Shield01Icon, Copy01Icon } from "hugeicons-react";
+import { GlobalIcon, TwitterIcon, TelegramIcon, DiscordIcon, Search01Icon, LinkSquare02Icon, Shield01Icon, Copy01Icon, File02Icon, Tag01Icon, Coins01Icon, Calendar01Icon, Wallet01Icon, InformationSquareIcon } from "hugeicons-react";
 
 export default function TokenProfileClient({ symbolOrAddr, initialToken, initialError }) {
   const [token, setToken] = useState(initialToken);
@@ -102,11 +102,11 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
         {profile.bannerUrl ? (
           <>
             <img src={profile.bannerUrl} alt="Token Banner" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-bg-primary via-transparent to-transparent opacity-90"></div>
+            <div className="absolute inset-0 h-80 bottom-0 bg-gradient-to-t from-bg-primary via-transparent to-transparent opacity-90"></div>
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center opacity-20 text-4xl">
-            ⛓️ BNB SMART CHAIN
+            BNB SMART CHAI5
           </div>
         )}
       </div>
@@ -147,9 +147,6 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
           <div className="flex flex-wrap gap-3 w-full sm:w-auto z-10 relative">
             {token.contractAddress ? (
               <>
-                <Button variant="secondary" size="md" onClick={handleCopyAddress} className="flex items-center gap-2 card !bg-surface-primary shadow-sm hover:border-accent">
-                  {isCopied ? <span className="text-success font-bold">✓ Copied!</span> : <><Copy01Icon size={16} /> <span>Copy Address</span></>}
-                </Button>
                 <a
                   href={getBscScanUrl(token.contractAddress)}
                   target="_blank"
@@ -268,48 +265,63 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
 
           {/* Right Sidebar: Token Specs */}
           <div className="lg:col-span-4 space-y-6">
-            <Card className="shadow-sm">
-              <Card.Header className="bg-surface-secondary border-b border-border-primary">
-                <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Smart Contract Specs</h3>
+            <Card className="shadow-sm border border-border-primary/50 overflow-hidden relative group">
+              <Card.Header className="bg-surface-secondary/80 border-b border-border-primary backdrop-blur-sm">
+                <h3 className="text-sm title text-text-primary flex items-center gap-2">
+                  <Shield01Icon size={16} className="text-accent" variant="stroke-rounded" /> 
+                  Smart Contract Info
+                </h3>
               </Card.Header>
-              <Card.Body className="divide-y divide-border-primary text-sm bg-surface-primary">
+              <Card.Body className="divide-y divide-border-primary/30 text-sm bg-surface-primary/50 backdrop-blur-sm">
                 {token.contractAddress && (
                   <div className="py-4 space-y-2">
-                    <span className="text-[10px] text-text-tertiary uppercase font-bold tracking-widest block">Contract Address</span>
-                    <div className="flex items-center justify-between gap-2 bg-bg-primary border border-border-secondary px-3 py-2 rounded-lg">
-                      <code className="text-xs font-mono text-text-secondary truncate">{token.contractAddress}</code>
-                      <button onClick={handleCopyAddress} className="text-[10px] uppercase font-bold text-accent hover:text-accent-hover transition-colors shrink-0 bg-accent/10 px-2 py-1 rounded">
-                        {isCopied ? "Copied" : "Copy"}
+                    <span className="text-sm text-text-secondary stitle flex items-center gap-1.5">
+                      <File02Icon size={15} className="text-accent/80" /> Contract Address
+                    </span>
+                    <div className="flex items-center justify-between gap-2 bg-surface-secondary/50 border border-border-secondary/50 px-3 py-2.5 rounded-lg group/copy hover:border-accent/30 transition-colors">
+                      <code className="text-[11px] font-mono text-text-secondary truncate">{token.contractAddress}</code>
+                      <button onClick={handleCopyAddress} className="text-[10px] uppercase font-bold text-text-tertiary hover:text-accent transition-colors shrink-0 flex items-center gap-1">
+                        {isCopied ? <span className="text-success">Copied</span> : <><Copy01Icon size={12} /> Copy</>}
                       </button>
                     </div>
                   </div>
                 )}
 
-                <div className="py-4 flex justify-between items-center">
-                  <span className="text-xs text-text-tertiary uppercase font-bold tracking-widest">Token Symbol</span>
-                  <span className="font-bold text-text-primary uppercase font-mono bg-surface-secondary px-2 py-1 rounded text-xs border border-border-primary">{token.symbol}</span>
+                <div className="py-4 flex justify-between items-center group/item hover:bg-surface-secondary/30 -mx-5 px-5 transition-colors">
+                  <span className="text-sm text-text-secondary stitle flex items-center gap-1.5">
+                    <Tag01Icon size={16} className="text-accent/60 group-hover/item:text-accent transition-colors" /> Token Symbol
+                  </span>
+                  <span className="font-bold text-text-primary uppercase font-mono bg-surface-secondary px-2 py-0.5 rounded text-xs border border-border-primary/50 shadow-sm">{token.symbol}</span>
                 </div>
 
-                <div className="py-4 flex justify-between items-center">
-                  <span className="text-xs text-text-tertiary uppercase font-bold tracking-widest">Decimals</span>
-                  <span className="font-bold text-text-primary font-mono text-xs">{token.decimals}</span>
+                <div className="py-4 flex justify-between items-center group/item hover:bg-surface-secondary/30 -mx-5 px-5 transition-colors">
+                  <span className="text-sm text-text-secondary stitle flex items-center gap-1.5">
+                    <InformationSquareIcon size={16} className="text-accent/60 group-hover/item:text-accent transition-colors" /> Decimals
+                  </span>
+                  <span className="font-bold text-text-primary font-mono text-[13px]">{token.decimals}</span>
                 </div>
 
-                <div className="py-4 flex justify-between items-center">
-                  <span className="text-xs text-text-tertiary uppercase font-bold tracking-widest">Initial Supply</span>
-                  <span className="font-bold text-text-primary font-mono text-xs">{token.totalSupply}</span>
+                <div className="py-4 flex justify-between items-center group/item hover:bg-surface-secondary/30 -mx-5 px-5 transition-colors">
+                  <span className="text-sm text-text-secondary stitle flex items-center gap-1.5">
+                    <Coins01Icon size={16} className="text-accent/60 group-hover/item:text-accent transition-colors" /> Initial Supply
+                  </span>
+                  <span className="font-bold text-text-primary font-mono text-[13px]">{token.totalSupply}</span>
                 </div>
 
-                <div className="py-4 flex justify-between items-center">
-                  <span className="text-xs text-text-tertiary uppercase font-bold tracking-widest">Deployed Date</span>
-                  <span className="text-text-secondary font-medium text-xs">
-                    {new Date(token.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                <div className="py-4 flex justify-between items-center group/item hover:bg-surface-secondary/30 -mx-5 px-5 transition-colors">
+                  <span className="text-sm text-text-secondary stitle flex items-center gap-1.5">
+                    <Calendar01Icon size={16} className="text-accent/60 group-hover/item:text-accent transition-colors" /> Deployed Date
+                  </span>
+                  <span className="text-text-secondary font-medium text-[12px]">
+                    {new Date(token.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                   </span>
                 </div>
 
-                <div className="py-4 space-y-2">
-                  <span className="text-[10px] text-text-tertiary uppercase font-bold tracking-widest block">Deployer Wallet</span>
-                  <p className="font-mono text-[11px] text-text-secondary truncate bg-surface-secondary p-2 rounded border border-border-primary">
+                <div className="py-4 space-y-2 group/item hover:bg-surface-secondary/30 -mx-5 px-5 transition-colors">
+                  <span className="text-sm text-text-secondary stitle flex items-center gap-1.5">
+                    <Wallet01Icon size={16} className="text-accent/60 group-hover/item:text-accent transition-colors" /> Deployer Wallet
+                  </span>
+                  <p className="font-mono text-[10px] text-text-secondary truncate bg-surface-secondary/50 p-2 rounded border border-border-primary/50">
                     {token.deployer?.walletAddress || "Anonymous Deployer"}
                   </p>
                 </div>
@@ -320,18 +332,9 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
       </div>
 
       {/* Footer Credits */}
-      <footer className="max-w-5xl mx-auto py-16 px-6 mt-12 border-t border-border-primary text-center">
-        <div className="inline-flex items-center justify-center gap-3 card !bg-surface-secondary px-8 py-4 rounded-full border border-border-secondary shadow-lg mb-8 hover:scale-[1.02] transition-transform">
-          <Shield01Icon size={24} className="text-accent" variant="stroke-rounded" />
-          <p className="text-base font-semibold text-text-secondary">
-            Verified Smart Contract deployed via{" "}
-            <Link href="/" className="text-text-primary hover:text-accent transition-colors title">
-              Teron Platform
-            </Link>
-          </p>
-        </div>
+      <footer className=" mx-auto py-16 px-6 mt-12 text-left">
         
-        <div className="max-w-2xl mx-auto space-y-4 text-[11px] text-text-tertiary leading-relaxed text-justify sm:text-center">
+        <div className="space-y-4 text-[10px] text-text-tertiary leading-relaxed text-justify sm:text-left text-balance">
           <p>
             <strong className="text-text-secondary">Disclaimer:</strong> Tokens deployed on the Teron platform are created by independent users and organizations. Teron provides the technical infrastructure for smart contract deployment but does not endorse, vet, or guarantee the utility, safety, or financial value of any token listed.
           </p>
