@@ -22,7 +22,8 @@ export async function createOrResumeSession(walletAddress, referralCode = null) 
   const adminAddresses = (process.env.ADMIN_WALLET_ADDRESSES || "")
     .toLowerCase()
     .split(",")
-    .map(a => a.trim());
+    .map(a => a.trim())
+    .filter(Boolean);
     
   const isUserAdmin = adminAddresses.includes(normalizedAddress);
   const role = isUserAdmin ? ROLES.ADMIN : ROLES.USER;
@@ -37,25 +38,44 @@ export async function createOrResumeSession(walletAddress, referralCode = null) 
   const generateRefCode = () => crypto.randomUUID().replace(/-/g, "").slice(0, 8);
 
   if (!user) {
-    user = await prisma.user.create({
-      data: {
-        walletAddress: normalizedAddress,
-        role: role,
-        referralCode: generateRefCode(),
-      },
-    });
+    // New user — create with referralCode
+    try {
+      user = await prisma.user.create({
+        data: {
+          walletAddress: normalizedAddress,
+          role: role,
+          referralCode: generateRefCode(),
+        },
+      });
+    } catch (createErr) {
+      // Fallback: create without referralCode if column doesn't exist yet
+      user = await prisma.user.create({
+        data: {
+          walletAddress: normalizedAddress,
+          role: role,
+        },
+      });
+    }
     isNewUser = true;
   } else {
-    // Backfill referralCode for existing users who don't have one
-    const updates = {};
-    if (user.role !== role) updates.role = role;
-    if (!user.referralCode) updates.referralCode = generateRefCode();
-
-    if (Object.keys(updates).length > 0) {
+    // Existing user — sync role if needed
+    if (user.role !== role) {
       user = await prisma.user.update({
         where: { id: user.id },
-        data: updates,
+        data: { role },
       });
+    }
+
+    // Backfill referralCode (separate try-catch so it doesn't break login)
+    if (!user.referralCode) {
+      try {
+        user = await prisma.user.update({
+          where: { id: user.id },
+          data: { referralCode: generateRefCode() },
+        });
+      } catch (backfillErr) {
+        console.warn("Could not backfill referralCode (column may not exist yet):", backfillErr.message);
+      }
     }
   }
 
