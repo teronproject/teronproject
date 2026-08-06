@@ -194,7 +194,7 @@ export default function StepMedia({ register, errors, watch, setValue }) {
             Profile Banner (Optional)
           </h4>
           <p className="text-xs text-text-tertiary mt-1">
-            Recommended: 1500×500px, JPG or PNG. Max 5MB. Appears at the top of
+            Recommended: 1024×256px, JPG or PNG. Max 5MB. Appears at the top of
             your token's public profile page.
           </p>
         </div>
@@ -202,7 +202,7 @@ export default function StepMedia({ register, errors, watch, setValue }) {
         <div className="space-y-4">
           <div
             onClick={() => bannerInputRef.current?.click()}
-            className="w-full h-32 rounded-lg border-2 border-dashed border-border-secondary bg-surface-primary flex items-center justify-center overflow-hidden cursor-pointer hover:border-accent transition-colors group"
+            className="w-full aspect-[4/1] rounded-lg border-2 border-dashed border-border-secondary bg-surface-primary flex items-center justify-center overflow-hidden cursor-pointer hover:border-accent transition-colors group"
           >
             {isBannerUploading ? (
               <div className="relative w-full h-full">

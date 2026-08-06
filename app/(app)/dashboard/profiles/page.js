@@ -49,15 +49,12 @@ export default function TokenProfilesPage() {
   }
 
   return (
-    <div className="py-12 px-4 sm:px-6 max-w-4xl mx-auto">
+    <div className="py-12 px-4  max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl title text-text-primary flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-            <Layout01Icon className="text-accent" variant="stroke-rounded" size={28} />
-          </div>
+        <h1 className="text-2xl title text-text-primary flex items-center gap-4">
           Token Profiles
         </h1>
-        <p className="text-sm stitle text-text-secondary mt-3 max-w-2xl">
+        <p className="text-sm stitle text-text-tertiary mt-3 max-w-2xl">
           Manage the public Link-in-Bio pages for your deployed tokens. Update logos, banners, and social links to build trust with your community.
         </p>
       </div>

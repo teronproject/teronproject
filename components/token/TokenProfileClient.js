@@ -179,7 +179,7 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
               </Card.Header>
               <Card.Body className="prose prose-invert max-w-none text-text-secondary text-sm leading-relaxed">
                 {profile.shortDescription && (
-                  <p className="text-base font-medium text-text-primary mb-5 border-l-4 border-accent pl-4 py-1 bg-gradient-to-r from-accent/5 to-transparent rounded-r-lg">
+                  <p className="text-sm text-text-primary mb-5 ">
                     {profile.shortDescription}
                   </p>
                 )}

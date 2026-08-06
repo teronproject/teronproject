@@ -128,21 +128,7 @@ export default function TokenProfileEditor() {
             Updating the profile for <strong className="font-semibold text-text-primary">{token.name}</strong> ({token.symbol})
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="secondary" className="card text-white cursor-pointer" onClick={() => router.push("/dashboard/profiles")}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSubmit(onSubmit)} 
-            isLoading={isSaving} 
-            disabled={!isDirty || isSaving}
-            className="cta"
-          >
-            Save Changes
-          </Button>
-        </div>
       </div>
-
       <div className="mb-8 p-5 card flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div>
           <p className="text-[11px] text-text-tertiary mb-1.5 font-bold uppercase tracking-wider">Public Profile Link</p>
@@ -164,7 +150,7 @@ export default function TokenProfileEditor() {
         </Button>
       </div>
 
-      <div className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="card p-8 shadow-sm">
           <h2 className="text-xl title text-text-primary border-b border-border-secondary/50 pb-5 mb-8">Profile & Socials</h2>
           <StepProfile register={register} errors={errors} />
@@ -174,7 +160,21 @@ export default function TokenProfileEditor() {
           <h2 className="text-xl title text-text-primary border-b border-border-secondary/50 pb-5 mb-8">Media Assets</h2>
           <StepMedia register={register} errors={errors} watch={watch} setValue={setValue} />
         </div>
-      </div>
+
+        <div className="flex items-center justify-end gap-4 pt-6 border-t border-border-primary/50">
+          <Button type="button" variant="secondary" className="card text-white cursor-pointer px-6 h-12 font-semibold" onClick={() => router.push("/dashboard/profiles")}>
+            Cancel
+          </Button>
+          <Button 
+            type="submit"
+            isLoading={isSaving} 
+            disabled={isSaving}
+            className="cta px-8 h-12 font-bold shadow-lg shadow-accent/20"
+          >
+            Save Changes
+          </Button>
+        </div>
+      </form>
     </div>
   );
 }
