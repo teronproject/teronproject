@@ -8,14 +8,15 @@ export async function POST(request) {
     const body = await request.json();
 
     // Validate request body
-    const { address } = z
+    const { address, referralCode } = z
       .object({
         address: walletAddressSchema,
+        referralCode: z.string().optional().nullable(),
       })
       .parse(body);
 
-    // Create or resume session
-    const user = await createOrResumeSession(address);
+    // Create or resume session (with optional referral code for new users)
+    const user = await createOrResumeSession(address, referralCode || null);
 
     return NextResponse.json({
       user: {
@@ -25,6 +26,8 @@ export async function POST(request) {
         displayName: user.displayName,
         avatar: user.avatar,
         email: user.email,
+        terrBalance: user.terrBalance,
+        referralCode: user.referralCode,
       },
     });
   } catch (error) {

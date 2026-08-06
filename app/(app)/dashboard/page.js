@@ -16,7 +16,11 @@ import {
   CheckmarkBadge01Icon, 
   Time02Icon,
   Shield01Icon,
-  Rocket02Icon
+  Rocket02Icon,
+  Copy01Icon,
+  Share08Icon,
+  Task01Icon,
+  ArrowRight02Icon,
 } from "hugeicons-react";
 
 export default function DashboardPage() {
@@ -25,26 +29,34 @@ export default function DashboardPage() {
   const [tokens, setTokens] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState(null);
+  const [rewardData, setRewardData] = useState(null);
+  const [referralData, setReferralData] = useState(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     if (!address) return;
 
     async function loadDashboard() {
       try {
-        // Load full profile with counts
-        const profileRes = await fetch("/api/auth/profile", {
-          headers: { "x-wallet-address": address },
-        });
+        // Load everything in parallel
+        const [profileRes, tokensRes, rewardsRes, referralsRes] = await Promise.all([
+          fetch("/api/auth/profile", {
+            headers: { "x-wallet-address": address },
+          }),
+          fetch(`/api/projects/list?status=ALL&search=&limit=50`),
+          fetch("/api/rewards/balance", {
+            headers: { "x-wallet-address": address },
+          }),
+          fetch("/api/referrals", {
+            headers: { "x-wallet-address": address },
+          }),
+        ]);
+
         const profileData = await profileRes.json();
         if (profileRes.ok) setProfile(profileData.user);
 
-        // Load user's deployed tokens
-        const tokensRes = await fetch(
-          `/api/projects/list?status=ALL&search=&limit=50`
-        );
         const tokensData = await tokensRes.json();
         if (tokensRes.ok) {
-          // Filter to this user's tokens
           const userTokens = (tokensData.tokens || []).filter(
             (t) =>
               t.deployer?.walletAddress?.toLowerCase() ===
@@ -52,6 +64,12 @@ export default function DashboardPage() {
           );
           setTokens(userTokens);
         }
+
+        const rewards = await rewardsRes.json();
+        if (rewards.success) setRewardData(rewards);
+
+        const referrals = await referralsRes.json();
+        if (referrals.success) setReferralData(referrals);
       } catch (err) {
         addToast({ variant: "error", message: "Failed to load dashboard data" });
       } finally {
@@ -61,6 +79,15 @@ export default function DashboardPage() {
 
     loadDashboard();
   }, [address]);
+
+  function copyReferralLink() {
+    if (!referralData?.referralCode) return;
+    const link = `${window.location.origin}?ref=${referralData.referralCode}`;
+    navigator.clipboard.writeText(link);
+    setIsCopied(true);
+    addToast({ variant: "success", message: "Referral link copied!" });
+    setTimeout(() => setIsCopied(false), 2500);
+  }
 
   if (isLoading) {
     return (
@@ -82,6 +109,7 @@ export default function DashboardPage() {
   const pendingTokens = tokens.filter(
     (t) => t.deploymentStatus !== "CONFIRMED" && t.deploymentStatus !== "FAILED"
   );
+  const terrBalance = rewardData?.balance || userProfile?.terrBalance || 0;
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-8">
@@ -120,7 +148,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <Card>
           <Card.Body className="p-6 flex flex-col items-start text-left">
             <p className="text-3xl title font-extrabold text-text-primary mb-3">
@@ -132,7 +160,6 @@ export default function DashboardPage() {
             </div>
               Total Deployments
             </p>
-            {/* <p className="text-[11px] text-text-tertiary mt-1">All tokens created by you</p> */}
           </Card.Body>
         </Card>
 
@@ -147,7 +174,6 @@ export default function DashboardPage() {
             </div>
               Confirmed On-Chain
             </p>
-            {/* <p className="text-[11px] text-text-tertiary mt-1">Live and verified tokens</p> */}
           </Card.Body>
         </Card>
 
@@ -162,7 +188,85 @@ export default function DashboardPage() {
             </div>
               Pending / In Progress
             </p>
-            {/* <p className="text-[11px] text-text-tertiary mt-1">Deployments finalizing</p> */}
+          </Card.Body>
+        </Card>
+
+        {/* TERR Balance Card */}
+        <Card className="relative overflow-hidden">
+          <Card.Body className="p-6 flex flex-col items-start text-left relative">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-accent/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
+            <p className="text-3xl title font-extrabold text-accent mb-3 relative">
+              {terrBalance.toLocaleString()}
+            </p>
+            <p className="text-sm title flex items-center gap-1 stitle text-text-secondary mt-1.5 relative">
+              <div className="size-6 rounded-full bg-accent/10 text-accent flex items-center justify-center">
+                <Coins01Icon size={15} variant="solid" />
+              </div>
+              TERR Tokens
+            </p>
+          </Card.Body>
+        </Card>
+      </div>
+
+      {/* Tasks + Referral Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Quick Tasks */}
+        <Card>
+          <Card.Header className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-text-primary flex items-center gap-2">
+              <Task01Icon size={16} className="text-accent" variant="stroke-rounded" />
+              Tasks
+            </h2>
+            <Link href="/dashboard/tasks" className="text-xs text-accent hover:underline flex items-center gap-1">
+              View All <ArrowRight02Icon size={12} />
+            </Link>
+          </Card.Header>
+          <Card.Body>
+            <p className="text-xs text-text-secondary mb-4">
+              Complete community tasks to earn TERR rewards. Follow channels, visit links, and more.
+            </p>
+            <Link href="/dashboard/tasks">
+              <Button size="sm" className="cta">
+                Go to Task Center
+              </Button>
+            </Link>
+          </Card.Body>
+        </Card>
+
+        {/* Referral Card */}
+        <Card>
+          <Card.Header className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-text-primary flex items-center gap-2">
+              <Share08Icon size={16} className="text-accent" variant="stroke-rounded" />
+              Refer & Earn
+            </h2>
+            {referralData && (
+              <Badge variant="accent" size="sm">
+                {referralData.totalReferrals} referral{referralData.totalReferrals !== 1 ? "s" : ""}
+              </Badge>
+            )}
+          </Card.Header>
+          <Card.Body>
+            <p className="text-xs text-text-secondary mb-3">
+              Earn <strong className="text-accent">25 TERR</strong> for each friend who connects with your link.
+            </p>
+            <div className="flex items-stretch gap-2">
+              <div className="flex-1 bg-surface-secondary border border-border-secondary rounded-lg px-3 py-2 flex items-center overflow-hidden">
+                <code className="text-[11px] font-mono text-text-tertiary truncate">
+                  {referralData?.referralCode
+                    ? `${typeof window !== "undefined" ? window.location.origin : ""}?ref=${referralData.referralCode}`
+                    : "Loading..."}
+                </code>
+              </div>
+              <button
+                onClick={copyReferralLink}
+                disabled={!referralData?.referralCode}
+                className="px-3 py-2 bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-colors flex items-center gap-1 text-xs font-semibold shrink-0"
+              >
+                <Copy01Icon size={14} />
+                {isCopied ? "Copied!" : "Copy"}
+              </button>
+            </div>
           </Card.Body>
         </Card>
       </div>
@@ -274,6 +378,13 @@ export default function DashboardPage() {
         >
           <Settings01Icon size={16} variant="stroke-rounded" className="text-text-secondary" />
           Edit Profile
+        </Link>
+        <Link
+          href="/dashboard/rewards"
+          className="h-10 px-5 bg-surface-primary border border-border-secondary text-text-primary text-xs font-semibold rounded-lg hover:bg-surface-secondary hover:border-border-primary transition-all inline-flex items-center gap-2 shadow-sm"
+        >
+          <Coins01Icon size={16} variant="stroke-rounded" className="text-text-secondary" />
+          Reward History
         </Link>
         <Link
           href="/leaderboard"

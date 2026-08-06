@@ -10,7 +10,8 @@ import {
   CoinsSwapIcon, 
   UserMultiple02Icon, 
   MoneyBag02Icon,
-  SecurityCheckIcon 
+  SecurityCheckIcon,
+  Task01Icon,
 } from "hugeicons-react";
 import { motion } from "motion/react";
 
@@ -18,6 +19,7 @@ const adminNavItems = [
   { name: "Overview", href: "/admin", icon: DashboardSquare01Icon },
   { name: "Tokens", href: "/admin/tokens", icon: CoinsSwapIcon },
   { name: "Users", href: "/admin/users", icon: UserMultiple02Icon },
+  { name: "Tasks", href: "/admin/tasks", icon: Task01Icon },
   { name: "Pricing", href: "/admin/pricing", icon: MoneyBag02Icon },
 ];
 

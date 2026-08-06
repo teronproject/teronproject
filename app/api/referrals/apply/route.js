@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { completeTask } from "@/services/tasks";
+import { processReferral } from "@/services/referrals";
 import { getUserByWallet } from "@/services/auth";
 import { z } from "zod";
 
-const completeTaskSchema = z.object({
-  taskId: z.string().min(1, "Task ID is required"),
-  proof: z.string().optional().nullable(),
+const applySchema = z.object({
+  referralCode: z.string().min(1, "Referral code is required"),
 });
 
 export async function POST(request) {
@@ -27,17 +26,20 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { taskId, proof } = completeTaskSchema.parse(body);
+    const { referralCode } = applySchema.parse(body);
 
-    const completion = await completeTask(user.id, taskId, proof);
+    const success = await processReferral(user.id, referralCode);
+
+    if (!success) {
+      return NextResponse.json(
+        { success: false, message: "Invalid or already used referral code" },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      completion: {
-        id: completion.id,
-        status: completion.status,
-        verifiedAt: completion.verifiedAt,
-      },
+      message: "Referral code applied successfully! TERR rewards granted.",
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -46,18 +48,10 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
-    const message = error.message || "Failed to complete task";
-    const isUserError = [
-      "Task not found",
-      "Task is no longer active",
-      "Task already completed and verified",
-      "Task completion is pending review",
-    ].includes(message);
-
+    console.error("Referral apply error:", error);
     return NextResponse.json(
-      { success: false, message },
-      { status: isUserError ? 400 : 500 }
+      { success: false, message: "Failed to apply referral code" },
+      { status: 500 }
     );
   }
 }

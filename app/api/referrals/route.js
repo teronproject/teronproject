@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getRewardHistory } from "@/services/rewards";
+import { getUserReferralCode, getReferralStats } from "@/services/referrals";
 import { getUserByWallet } from "@/services/auth";
 
 export async function GET(request) {
@@ -20,20 +20,16 @@ export async function GET(request) {
       );
     }
 
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
-
-    const result = await getRewardHistory(user.id, { page, limit });
+    const stats = await getReferralStats(user.id);
 
     return NextResponse.json({
       success: true,
-      ...result,
+      ...stats,
     });
   } catch (error) {
-    console.error("Rewards balance error:", error);
+    console.error("Referrals error:", error);
     return NextResponse.json(
-      { success: false, message: "Failed to fetch rewards" },
+      { success: false, message: "Failed to fetch referral data" },
       { status: 500 }
     );
   }

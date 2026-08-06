@@ -6,13 +6,17 @@ import {
   Home01Icon, 
   Rocket01Icon, 
   Settings01Icon,
-  Layout01Icon
+  Layout01Icon,
+  Task01Icon,
+  Coins01Icon,
 } from "hugeicons-react";
 import { motion } from "motion/react";
 
 const navItems = [
   { name: "Overview", href: "/dashboard", icon: Home01Icon },
   { name: "Launch Token", href: "/dashboard/create", icon: Rocket01Icon },
+  { name: "Tasks", href: "/dashboard/tasks", icon: Task01Icon },
+  { name: "Rewards", href: "/dashboard/rewards", icon: Coins01Icon },
   { name: "Token Profiles", href: "/dashboard/profiles", icon: Layout01Icon },
   { name: "Settings", href: "/dashboard/settings", icon: Settings01Icon },
 ];
@@ -44,13 +48,6 @@ export default function Sidebar() {
                       : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
                   }`}
                 >
-                  {/* {isActive && (
-                    <motion.div
-                      layoutId="sidebar-active"
-                      className="absolute inset-0 bg-accent/10 border border-accent/20 rounded-xl"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )} */}
                   <Icon
                     variant={isActive ? "solid" : "stroke-rounded"}
                     size={20}
@@ -76,7 +73,7 @@ export default function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex flex-col items-center justify-center p-2 min-w-[64px] transition-colors ${
+                className={`flex flex-col items-center justify-center p-2 min-w-[50px] transition-colors ${
                   isActive ? "text-accent" : "text-text-secondary"
                 }`}
               >

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
+import { useSearchParams } from "next/navigation";
 import { BNB_CHAIN_ID, BNB_TESTNET_CHAIN_ID } from "@/lib/constants";
 
 /**
@@ -15,6 +16,15 @@ export function useWallet() {
   const { switchChain } = useSwitchChain();
   const [userProfile, setUserProfile] = useState(null);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
+
+  // Get referral code from URL params (e.g., ?ref=abc123)
+  let referralCodeFromUrl = null;
+  try {
+    const searchParams = useSearchParams();
+    referralCodeFromUrl = searchParams?.get("ref") || null;
+  } catch (_) {
+    // useSearchParams may fail in some contexts
+  }
 
   const isBnbChain = chain?.id === BNB_CHAIN_ID;
   const isWrongChain = isConnected && !isBnbChain;
@@ -31,7 +41,10 @@ export function useWallet() {
       const res = await fetch("/api/auth/wallet-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: walletAddress }),
+        body: JSON.stringify({
+          address: walletAddress,
+          referralCode: referralCodeFromUrl,
+        }),
       });
       const data = await res.json();
       if (res.ok && data.user) {
@@ -45,7 +58,7 @@ export function useWallet() {
     } finally {
       setIsProfileLoading(false);
     }
-  }, []);
+  }, [referralCodeFromUrl]);
 
   /**
    * Refresh user profile from the backend (e.g. after profile update).
