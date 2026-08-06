@@ -97,11 +97,15 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
   return (
     <div className="min-h-screen pb-20 max-w-5xl mx-auto">
       {/* Banner Area */}
-      <div className="relative h-64 w-full bg-gradient-to-r from-bg-secondary via-surface-tertiary to-bg-secondary overflow-hidden">
+      <div className="relative h-64 w-full bg-gradient-to-r from-bg-secondary via-surface-tertiary to-bg-secondary overflow-hidden rounded-b-xl">
         {profile.bannerUrl ? (
           <>
-            <img src={profile.bannerUrl} alt="Token Banner" className="w-full h-full object-cover rounded-b-xl" />
-            <div className="absolute inset-0 h-80 bottom-0 bg-gradient-to-t from-bg-primary via-transparent to-transparent opacity-90 rounded-b-xl"></div>
+            <img 
+                src={profile.bannerUrl} 
+                alt="Token Banner" 
+                className="w-full h-full object-cover rounded-b-xl" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-bg-primary to-transparent opacity-100 rounded-b-xl pointer-events-none"></div>
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center opacity-20 text-4xl">
