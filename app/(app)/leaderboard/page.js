@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
-import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { Search01Icon, CrownIcon, ArrowRight01Icon, Coins01Icon, Calendar01Icon, Shield01Icon } from "hugeicons-react";
 
 export default function LeaderboardPage() {
   const [tokens, setTokens] = useState([]);
@@ -22,7 +21,7 @@ export default function LeaderboardPage() {
       try {
         const params = new URLSearchParams({
           page: page.toString(),
-          limit: "12",
+          limit: "15", // Adjusted to 15 for a better list view
           status: statusFilter,
           ...(searchTerm.trim() && { search: searchTerm.trim() }),
         });
@@ -48,54 +47,51 @@ export default function LeaderboardPage() {
   }, [searchTerm, statusFilter, page]);
 
   return (
-    <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:px-8 space-y-12 relative z-10 w-full">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border-primary">
-        <div className="space-y-2">
-          <Badge variant="accent" size="md">EXPLORE & DISCOVER</Badge>
-          <h1 className="text-3xl font-extrabold text-text-primary">Teron Token Leaderboard</h1>
-          <p className="text-text-secondary text-sm max-w-2xl">
-            Real-time directory of BEP-20 tokens deployed cleanly and immutably on the BNB Smart Chain through Teron.
-          </p>
-        </div>
-        <Link href="/dashboard/create" className="h-11 px-6 bg-accent text-accent-text font-bold rounded-lg inline-flex items-center justify-center hover:bg-accent-hover transition-all shadow-md shrink-0">
-          + Deploy New Token
-        </Link>
+      <div className="flex flex-col items-center text-center space-y-6 pb-4">
+        <Badge variant="accent" size="md" className="shadow-[0_0_15px_rgba(var(--color-accent),0.3)]">EXPLORE PREMIUM TOKENS</Badge>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-text-primary to-text-secondary tracking-tight">
+          Teron Leaderboard
+        </h1>
+        <p className="text-text-secondary text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+          The definitive directory of top-tier BEP-20 tokens deployed immutably on the BNB Smart Chain.
+        </p>
       </div>
 
       {/* Controls & Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-surface-primary p-4 rounded-xl border border-border-primary">
-        <div className="w-full sm:w-80">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-surface-secondary/50 backdrop-blur-md p-2 rounded-2xl border border-border-primary/50 shadow-sm">
+        <div className="w-full sm:w-96 relative group">
+          <Search01Icon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-tertiary group-focus-within:text-accent transition-colors" />
           <input
             type="text"
             placeholder="Search by name, symbol, or address..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setPage(1); // Reset page on search
+              setPage(1);
             }}
-            className="w-full h-10 px-4 bg-surface-secondary border border-border-secondary rounded-lg text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-2 focus:ring-accent"
+            className="w-full h-12 pl-12 pr-4 bg-transparent border-none text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-0"
           />
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-center">
-          <span className="text-xs font-semibold text-text-tertiary uppercase mr-1">Filter:</span>
+        <div className="flex items-center gap-2 p-2 bg-surface-primary/50 rounded-xl">
           <button
             onClick={() => { setStatusFilter("CONFIRMED"); setPage(1); }}
-            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
               statusFilter === "CONFIRMED"
-                ? "bg-accent text-accent-text"
-                : "bg-surface-secondary text-text-secondary hover:text-text-primary"
+                ? "bg-accent text-accent-text shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
             }`}
           >
             Verified On-Chain
           </button>
           <button
             onClick={() => { setStatusFilter("ALL"); setPage(1); }}
-            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
               statusFilter === "ALL"
-                ? "bg-accent text-accent-text"
-                : "bg-surface-secondary text-text-secondary hover:text-text-primary"
+                ? "bg-accent text-accent-text shadow-[0_0_10px_rgba(var(--color-accent),0.2)]"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
             }`}
           >
             All Deployments
@@ -103,64 +99,63 @@ export default function LeaderboardPage() {
         </div>
       </div>
 
-      {/* Token Grid View */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, idx) => (
-            <Skeleton key={idx} className="h-56 w-full rounded-xl" />
-          ))}
-        </div>
-      ) : tokens.length === 0 ? (
-        <div className="bg-surface-secondary border border-dashed border-border-primary rounded-2xl p-16 text-center space-y-6 max-w-2xl mx-auto">
-          <div className="text-6xl opacity-30">🪙</div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-text-primary">No Tokens Found</h2>
-            <p className="text-text-secondary text-sm">
-              {searchTerm
-                ? `No deployed tokens matched your search query "${searchTerm}". Try a different term or adjust filters.`
-                : "Be the first creator on the Teron platform! Launch your BEP-20 token in just a few minutes."}
-            </p>
+      {/* Token List View */}
+      <div className="space-y-4">
+        {isLoading ? (
+          <div className="space-y-3">
+            {[...Array(5)].map((_, idx) => (
+              <Skeleton key={idx} className="h-24 w-full rounded-2xl opacity-50" />
+            ))}
           </div>
-          <div className="pt-2">
-            {searchTerm ? (
-              <Button variant="secondary" onClick={() => setSearchTerm("")}>
-                Clear Search
-              </Button>
-            ) : (
-              <Link href="/dashboard/create" className="h-11 px-8 bg-accent text-accent-text font-bold rounded-lg inline-flex items-center hover:bg-accent-hover transition-colors shadow-lg">
-                Launch First Token
-              </Link>
+        ) : tokens.length === 0 ? (
+          <div className="border border-dashed border-border-primary/50 bg-surface-secondary/20 backdrop-blur-sm rounded-3xl p-16 text-center space-y-6 max-w-2xl mx-auto">
+            <div className="text-6xl opacity-30 drop-shadow-lg">🪙</div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold text-text-primary">No Tokens Found</h2>
+              <p className="text-text-secondary text-sm">
+                {searchTerm
+                  ? `No deployed tokens matched your search query "${searchTerm}".`
+                  : "The leaderboard is currently empty. Launch the first token!"}
+              </p>
+            </div>
+            {!searchTerm && (
+              <div className="pt-4">
+                <Link href="/dashboard/create" className="h-12 px-8 bg-accent text-accent-text font-bold rounded-full inline-flex items-center hover:bg-accent-hover transition-all shadow-lg hover:shadow-accent/20">
+                  Launch Token
+                </Link>
+              </div>
             )}
           </div>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tokens.map((t) => {
-            const prof = t.profile || {};
-            const isConfirmed = t.deploymentStatus === "CONFIRMED";
+        ) : (
+          <div className="flex flex-col gap-3">
+            {tokens.map((t, index) => {
+              const prof = t.profile || {};
+              const isConfirmed = t.deploymentStatus === "CONFIRMED";
+              const rank = (page - 1) * 15 + index + 1;
 
-            return (
-              <Link
-                key={t.id}
-                href={`/t/${t.symbol ? t.symbol.toLowerCase() : t.id}`}
-                className="group block bg-surface-secondary border border-border-primary rounded-xl overflow-hidden hover:border-accent hover:shadow-lg transition-all duration-200"
-              >
-                {/* Card Banner */}
-                <div className="h-20 w-full bg-gradient-to-r from-bg-secondary via-surface-tertiary to-bg-secondary relative overflow-hidden">
-                  {prof.bannerUrl && (
-                    <img src={prof.bannerUrl} alt={t.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  )}
-                  <div className="absolute top-2 right-2">
-                    <Badge variant={isConfirmed ? "success" : "warning"} size="sm">
-                      {isConfirmed ? "✓ On-Chain" : t.deploymentStatus}
-                    </Badge>
+              return (
+                <Link
+                  key={t.id}
+                  href={`/t/${t.symbol ? t.symbol.toLowerCase() : t.id}`}
+                  className="group relative flex items-center gap-4 sm:gap-6 bg-surface-secondary/40 backdrop-blur-sm border border-border-primary/30 p-4 rounded-2xl hover:bg-surface-secondary/80 hover:border-accent/40 transition-all duration-300 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/0 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                  
+                  {/* Rank Indicator */}
+                  <div className="flex flex-col items-center justify-center w-8 shrink-0">
+                    {rank <= 3 ? (
+                      <CrownIcon size={24} className={
+                        rank === 1 ? "text-yellow-400" :
+                        rank === 2 ? "text-gray-400" :
+                        "text-amber-600"
+                      } variant="solid" />
+                    ) : (
+                      <span className="text-sm font-bold text-text-tertiary">#{rank}</span>
+                    )}
                   </div>
-                </div>
 
-                {/* Card Body */}
-                <div className="p-5 pt-0 relative">
-                  {/* Logo Avatar Overlap */}
-                  <div className="w-14 h-14 rounded-full border-2 border-surface-secondary bg-surface-primary -mt-7 mb-3 overflow-hidden flex items-center justify-center shadow-md shrink-0">
+                  {/* Logo Avatar */}
+                  <div className="w-14 h-14 rounded-full border border-border-secondary bg-surface-primary overflow-hidden flex items-center justify-center shrink-0 group-hover:shadow-[0_0_15px_rgba(var(--color-accent),0.2)] transition-shadow">
                     {prof.logoUrl ? (
                       <img src={prof.logoUrl} alt={t.symbol} className="w-full h-full object-cover" />
                     ) : (
@@ -170,44 +165,62 @@ export default function LeaderboardPage() {
                     )}
                   </div>
 
-                  <div className="space-y-1 mb-4">
-                    <div className="flex items-baseline justify-between gap-2">
+                  {/* Token Info */}
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 mb-1">
                       <h3 className="font-bold text-base text-text-primary group-hover:text-accent transition-colors truncate">
                         {t.name}
                       </h3>
-                      <span className="text-xs font-mono font-bold text-text-tertiary uppercase shrink-0">
+                      <span className="text-[11px] font-mono font-bold text-text-primary bg-surface-primary px-2 py-0.5 rounded-full border border-border-secondary shrink-0">
                         ${t.symbol}
                       </span>
+                      {isConfirmed && (
+                        <Shield01Icon size={14} className="text-success shrink-0" variant="solid" />
+                      )}
                     </div>
-                    <p className="text-xs text-text-secondary line-clamp-2 min-h-[32px]">
-                      {prof.shortDescription || "No short description provided by the deployer."}
+                    <p className="text-xs text-text-secondary truncate pr-4">
+                      {prof.shortDescription || "Premium BEP-20 smart contract deployed on the BNB Chain."}
                     </p>
                   </div>
 
-                  {/* Card Footer / Specs */}
-                  <div className="pt-3 border-t border-border-primary flex items-center justify-between text-xs font-mono text-text-tertiary">
-                    <span>Supply: <strong className="text-text-secondary">{t.totalSupply}</strong></span>
-                    <span>Decimals: <strong className="text-text-secondary">{t.decimals}</strong></span>
+                  {/* Quick Specs (Desktop Only) */}
+                  <div className="hidden md:flex items-center gap-8 shrink-0 text-xs text-text-tertiary mr-4">
+                    <div className="flex flex-col gap-1 items-end">
+                      <span className="flex items-center gap-1.5 uppercase font-bold tracking-widest text-[9px]"><Coins01Icon size={12}/> Supply</span>
+                      <span className="font-mono text-text-primary font-medium">{t.totalSupply}</span>
+                    </div>
+                    <div className="flex flex-col gap-1 items-end">
+                      <span className="flex items-center gap-1.5 uppercase font-bold tracking-widest text-[9px]"><Calendar01Icon size={12}/> Deployed</span>
+                      <span className="text-text-primary font-medium">
+                        {new Date(t.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
+
+                  {/* Action Icon */}
+                  <div className="shrink-0 text-text-tertiary group-hover:text-accent transition-transform group-hover:translate-x-1 duration-300">
+                    <ArrowRight01Icon size={20} />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Pagination Controls */}
       {pagination.totalPages > 1 && (
-        <div className="flex justify-center items-center gap-4 pt-4 border-t border-border-primary">
+        <div className="flex justify-center items-center gap-4 pt-8">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setPage((p) => Math.max(p - 1, 1))}
             disabled={page === 1}
+            className="hover:bg-surface-secondary/50"
           >
             &larr; Previous
           </Button>
-          <span className="text-xs text-text-secondary font-medium">
+          <span className="text-xs text-text-secondary font-medium bg-surface-secondary/30 px-4 py-1.5 rounded-full border border-border-primary/50">
             Page <strong className="text-text-primary">{page}</strong> of <strong className="text-text-primary">{pagination.totalPages}</strong>
           </span>
           <Button
@@ -215,11 +228,22 @@ export default function LeaderboardPage() {
             size="sm"
             onClick={() => setPage((p) => Math.min(p + 1, pagination.totalPages))}
             disabled={page >= pagination.totalPages}
+            className="hover:bg-surface-secondary/50"
           >
             Next &rarr;
           </Button>
         </div>
       )}
+
+      {/* Premium Disclaimer Footer */}
+      <div className="pt-24 pb-8 text-center max-w-3xl mx-auto space-y-4">
+        <p className="text-[10px] text-text-tertiary/70 leading-relaxed uppercase tracking-widest font-bold">
+          Leaderboard Data & Ranking Disclaimer
+        </p>
+        <p className="text-[11px] text-text-tertiary/50 leading-relaxed text-balance">
+          The Teron Leaderboard displays BEP-20 tokens deployed via the Teron platform. Rankings are dynamic and may change based on verification status and platform metrics. Teron is a decentralized token deployment protocol; we do not manage, endorse, or guarantee the value, utility, or security of any listed token. Interacting with smart contracts involves inherent risks. Please Do Your Own Research (DYOR) and verify contract addresses directly on BscScan.
+        </p>
+      </div>
     </div>
   );
 }
