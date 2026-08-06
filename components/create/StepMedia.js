@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
 import { useWallet } from "@/hooks/useWallet";
+import { useToastContext } from "@/components/ToastProvider";
 import { Image01Icon, Camera01Icon, ImageUploadIcon } from "hugeicons-react";
 
 /**
@@ -28,20 +29,69 @@ export default function StepMedia({ register, errors, watch, setValue }) {
     progress: bannerProgress,
   } = useCloudinaryUpload({ type: "token-banner", walletAddress: address });
 
+  const { addToast } = useToastContext();
+  const [localLogoPreview, setLocalLogoPreview] = useState(null);
+  const [localBannerPreview, setLocalBannerPreview] = useState(null);
+
   const handleLogoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) return;
-    const url = await uploadLogo(file);
-    if (url) setValue("logoUrl", url, { shouldValidate: true, shouldDirty: true });
+
+    // Safety Validations
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
+    if (!validTypes.includes(file.type)) {
+      addToast({ variant: "error", message: "Logo must be a JPG, PNG, WebP, or SVG." });
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      addToast({ variant: "error", message: "Logo file size must be less than 2MB." });
+      return;
+    }
+
+    // Set local preview immediately
+    const objectUrl = URL.createObjectURL(file);
+    setLocalLogoPreview(objectUrl);
+
+    try {
+      const url = await uploadLogo(file);
+      if (url) setValue("logoUrl", url, { shouldValidate: true, shouldDirty: true });
+    } catch (err) {
+      addToast({ variant: "error", message: "Failed to upload logo." });
+    } finally {
+      // Clean up object URL to prevent memory leaks
+      URL.revokeObjectURL(objectUrl);
+      setLocalLogoPreview(null);
+    }
   };
 
   const handleBannerUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) return;
-    const url = await uploadBanner(file);
-    if (url) setValue("bannerUrl", url, { shouldValidate: true, shouldDirty: true });
+
+    // Safety Validations
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      addToast({ variant: "error", message: "Banner must be a JPG, PNG, or WebP." });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      addToast({ variant: "error", message: "Banner file size must be less than 5MB." });
+      return;
+    }
+
+    // Set local preview immediately
+    const objectUrl = URL.createObjectURL(file);
+    setLocalBannerPreview(objectUrl);
+
+    try {
+      const url = await uploadBanner(file);
+      if (url) setValue("bannerUrl", url, { shouldValidate: true, shouldDirty: true });
+    } catch (err) {
+      addToast({ variant: "error", message: "Failed to upload banner." });
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+      setLocalBannerPreview(null);
+    }
   };
 
   return (
@@ -78,11 +128,16 @@ export default function StepMedia({ register, errors, watch, setValue }) {
             className="w-24 h-24 rounded-full border-2 border-dashed border-border-secondary bg-surface-primary flex items-center justify-center overflow-hidden shrink-0 cursor-pointer hover:border-accent transition-colors group"
           >
             {isLogoUploading ? (
-              <div className="text-center">
-                <span className="block w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto" />
-                <span className="text-xs text-text-tertiary mt-1 block">
-                  {logoProgress}%
-                </span>
+              <div className="relative w-full h-full">
+                {localLogoPreview && (
+                  <img src={localLogoPreview} alt="Preview" className="w-full h-full object-cover opacity-50 grayscale" />
+                )}
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-primary/40 backdrop-blur-sm">
+                  <span className="block w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-1" />
+                  <span className="text-xs font-bold text-accent drop-shadow-sm">
+                    {logoProgress}%
+                  </span>
+                </div>
               </div>
             ) : logoUrl ? (
               <img
@@ -150,11 +205,16 @@ export default function StepMedia({ register, errors, watch, setValue }) {
             className="w-full h-32 rounded-lg border-2 border-dashed border-border-secondary bg-surface-primary flex items-center justify-center overflow-hidden cursor-pointer hover:border-accent transition-colors group"
           >
             {isBannerUploading ? (
-              <div className="text-center">
-                <span className="block w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto" />
-                <span className="text-xs text-text-tertiary mt-2 block">
-                  Uploading... {bannerProgress}%
-                </span>
+              <div className="relative w-full h-full">
+                {localBannerPreview && (
+                  <img src={localBannerPreview} alt="Preview" className="w-full h-full object-cover opacity-50 grayscale" />
+                )}
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-primary/40 backdrop-blur-sm">
+                  <span className="block w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-2" />
+                  <span className="text-xs font-bold text-accent drop-shadow-sm">
+                    Uploading... {bannerProgress}%
+                  </span>
+                </div>
               </div>
             ) : bannerUrl ? (
               <img
