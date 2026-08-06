@@ -6,7 +6,9 @@ import { GlobalIcon } from "hugeicons-react";
 /**
  * Step 2: Token Profile & Socials
  */
-export default function StepProfile({ register, errors }) {
+export default function StepProfile({ register, errors, watch }) {
+  const currentLength = watch ? (watch("shortDescription")?.length || 0) : 0;
+  const isAtLimit = currentLength >= 250;
   return (
     <div className="space-y-6">
       <div className="bg-surface-tertiary border border-border-secondary p-5 rounded-xl flex items-start gap-4 mb-8">
@@ -28,13 +30,19 @@ export default function StepProfile({ register, errors }) {
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-text-secondary mb-1.5">
-            Short Description
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-sm font-medium text-text-secondary">
+              Short Description
+            </label>
+            <span className={`text-[11px] font-medium transition-colors ${isAtLimit ? 'text-error' : 'text-text-tertiary'}`}>
+              {currentLength}/250
+            </span>
+          </div>
           <textarea
             {...register("shortDescription")}
+            maxLength={250}
             placeholder="A one-sentence summary of your token's purpose..."
-            className={`w-full h-20 p-3 bg-surface-primary border rounded text-sm text-text-primary placeholder:text-text-disabled transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none card ${
+            className={`w-full h-24 p-3 bg-surface-primary border rounded text-sm text-text-primary placeholder:text-text-disabled transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none card ${
               errors.shortDescription
                 ? "border-error focus:ring-error"
                 : "border-border-primary hover:border-border-secondary"
@@ -44,7 +52,7 @@ export default function StepProfile({ register, errors }) {
             <p className="mt-1.5 text-sm text-error">{errors.shortDescription.message}</p>
           ) : (
             <p className="mt-1.5 text-xs text-text-tertiary">
-              Max 160 characters. Displayed on token cards and leaderboard previews.
+              Max 250 characters. Displayed on token cards and leaderboard previews.
             </p>
           )}
         </div>

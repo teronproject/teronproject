@@ -179,15 +179,15 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
               </Card.Header>
               <Card.Body className="prose prose-invert max-w-none text-text-secondary text-sm leading-relaxed">
                 {profile.shortDescription && (
-                  <p className="text-sm text-text-primary mb-5 ">
+                  <p className="text-sm text-text-secondary ">
                     {profile.shortDescription}
                   </p>
                 )}
-                {profile.description ? (
+                {/* {profile.description ? (
                   <p className="whitespace-pre-wrap">{profile.description}</p>
                 ) : (
                   <p className="italic text-text-tertiary">No extended description provided by the deployer.</p>
-                )}
+                )} */}
               </Card.Body>
             </Card>
 

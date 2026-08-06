@@ -153,7 +153,7 @@ export default function TokenProfileEditor() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="card p-8 shadow-sm">
           <h2 className="text-xl title text-text-primary border-b border-border-secondary/50 pb-5 mb-8">Profile & Socials</h2>
-          <StepProfile register={register} errors={errors} />
+          <StepProfile register={register} errors={errors} watch={watch} />
         </div>
 
         <div className="card p-8 shadow-sm">
