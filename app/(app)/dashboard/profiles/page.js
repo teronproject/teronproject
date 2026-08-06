@@ -51,63 +51,67 @@ export default function TokenProfilesPage() {
   return (
     <div className="py-12 px-4 sm:px-6 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-text-primary flex items-center gap-3">
-          <Layout01Icon className="text-accent" />
+        <h1 className="text-3xl title text-text-primary flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+            <Layout01Icon className="text-accent" variant="stroke-rounded" size={28} />
+          </div>
           Token Profiles
         </h1>
-        <p className="text-sm text-text-secondary mt-2">
+        <p className="text-sm stitle text-text-secondary mt-3 max-w-2xl">
           Manage the public Link-in-Bio pages for your deployed tokens. Update logos, banners, and social links to build trust with your community.
         </p>
       </div>
 
       {tokens.length === 0 ? (
-        <div className="bg-surface-primary border border-border-primary rounded-xl p-12 text-center">
-          <div className="text-4xl opacity-30 mb-4">🎨</div>
-          <h3 className="text-lg font-semibold text-text-primary mb-2">No tokens deployed yet</h3>
-          <p className="text-sm text-text-secondary mb-6 max-w-sm mx-auto">
+        <div className="card p-16 text-center">
+          <div className="text-5xl opacity-30 mb-6">🎨</div>
+          <h3 className="text-xl title text-text-primary mb-2">No tokens deployed yet</h3>
+          <p className="text-sm text-text-secondary mb-8 max-w-sm mx-auto">
             You need to launch a token before you can set up its public profile.
           </p>
           <Link
             href="/dashboard/create"
-            className="h-10 px-6 bg-accent text-accent-text font-semibold rounded inline-flex items-center text-sm hover:bg-accent-hover transition-colors"
+            className="h-11 px-8 cta font-semibold rounded-lg inline-flex items-center text-sm transition-all"
           >
             Launch Token
           </Link>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2">
           {tokens.map((token) => (
             <Link
               key={token.id}
               href={`/dashboard/profiles/${token.id}`}
-              className="group block bg-surface-primary border border-border-primary rounded-xl overflow-hidden hover:border-accent transition-colors"
+              className="group block card overflow-hidden hover:scale-[1.015] transition-transform duration-300 shadow-md hover:shadow-xl"
             >
-              <div className="h-20 bg-surface-tertiary relative border-b border-border-primary overflow-hidden">
+              <div className="h-24 bg-surface-tertiary relative overflow-hidden">
                  {token.profile?.bannerUrl ? (
-                   <img src={token.profile.bannerUrl} alt="Banner" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                   <img src={token.profile.bannerUrl} alt="Banner" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                  ) : (
-                   <div className="w-full h-full bg-gradient-to-r from-surface-tertiary to-surface-secondary opacity-50"></div>
+                   <div className="w-full h-full bg-gradient-to-tr from-surface-tertiary to-surface-secondary opacity-50 group-hover:opacity-70 transition-opacity"></div>
                  )}
+                 {/* Dark gradient overlay so the banner doesn't look cut off flat */}
+                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
               </div>
-              <div className="p-5 flex items-start gap-4 relative">
-                <div className="w-14 h-14 rounded-full border-4 border-surface-primary bg-surface-secondary flex items-center justify-center overflow-hidden shrink-0 -mt-10 relative z-10 shadow-sm">
+              <div className="p-6 flex items-start gap-5 relative">
+                <div className="w-16 h-16 rounded-full border-[3px] border-surface-primary bg-surface-secondary flex items-center justify-center overflow-hidden shrink-0 -mt-12 relative z-10 shadow-lg group-hover:border-accent transition-colors duration-300">
                   {token.profile?.logoUrl ? (
                     <img src={token.profile.logoUrl} alt="Logo" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-sm font-bold text-accent font-mono">
+                    <span className="text-lg font-bold text-accent font-mono">
                       {token.symbol?.slice(0, 3)}
                     </span>
                   )}
                 </div>
-                <div className="-mt-2">
-                  <h3 className="font-bold text-text-primary group-hover:text-accent transition-colors">
+                <div className="-mt-1.5 flex-1 min-w-0">
+                  <h3 className="text-base font-bold title text-text-primary group-hover:text-accent transition-colors truncate">
                     {token.name} <span className="text-text-tertiary font-normal text-xs ml-1">({token.symbol})</span>
                   </h3>
-                  <p className="text-xs text-text-secondary mt-1">
+                  <p className="text-xs text-text-secondary mt-1.5 font-medium tracking-wide">
                     {token.deploymentStatus === "CONFIRMED" ? (
-                      <span className="text-success flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-success inline-block"></span> Deployed</span>
+                      <span className="text-success flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-success shadow-[0_0_8px_rgba(34,197,94,0.6)] inline-block"></span> Deployed</span>
                     ) : (
-                      <span className="text-warning flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-warning inline-block"></span> Pending</span>
+                      <span className="text-warning flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-warning shadow-[0_0_8px_rgba(245,158,11,0.6)] inline-block"></span> Pending</span>
                     )}
                   </p>
                 </div>

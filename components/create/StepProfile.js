@@ -34,7 +34,7 @@ export default function StepProfile({ register, errors }) {
           <textarea
             {...register("shortDescription")}
             placeholder="A one-sentence summary of your token's purpose..."
-            className={`w-full h-20 p-3 bg-surface-primary border rounded text-sm text-text-primary placeholder:text-text-disabled transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none ${
+            className={`w-full h-20 p-3 bg-surface-primary border rounded text-sm text-text-primary placeholder:text-text-disabled transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none card ${
               errors.shortDescription
                 ? "border-error focus:ring-error"
                 : "border-border-primary hover:border-border-secondary"

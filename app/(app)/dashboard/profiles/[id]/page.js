@@ -119,34 +119,35 @@ export default function TokenProfileEditor() {
 
   return (
     <div className="py-12 px-4 sm:px-6 max-w-4xl mx-auto">
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">
+          <h1 className="text-3xl title text-text-primary mb-2">
             Edit Link-in-Bio
           </h1>
-          <p className="text-sm text-text-secondary mt-1">
-            Updating the profile for <strong>{token.name}</strong> ({token.symbol})
+          <p className="text-sm stitle text-text-secondary">
+            Updating the profile for <strong className="font-semibold text-text-primary">{token.name}</strong> ({token.symbol})
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={() => router.push("/dashboard/profiles")}>
+          <Button variant="secondary" className="card text-white cursor-pointer" onClick={() => router.push("/dashboard/profiles")}>
             Cancel
           </Button>
           <Button 
             onClick={handleSubmit(onSubmit)} 
             isLoading={isSaving} 
             disabled={!isDirty || isSaving}
+            className="cta"
           >
             Save Changes
           </Button>
         </div>
       </div>
 
-      <div className="mb-8 p-4 bg-surface-secondary border border-border-secondary rounded-lg flex items-center justify-between">
+      <div className="mb-8 p-5 card flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
         <div>
-          <p className="text-xs text-text-tertiary mb-1 font-semibold uppercase tracking-wider">Public Profile Link</p>
-          <div className="flex items-center gap-2 text-text-primary font-mono text-sm">
-            <Link01Icon size={16} className="text-accent" />
+          <p className="text-[11px] text-text-tertiary mb-1.5 font-bold uppercase tracking-wider">Public Profile Link</p>
+          <div className="flex items-center gap-2.5 text-text-primary font-mono text-sm bg-surface-secondary px-3 py-1.5 rounded-lg border border-border-secondary/50">
+            <Link01Icon size={16} className="text-accent" variant="stroke-rounded" />
             <span className="select-all">teron.io/t/{token.symbol}</span>
           </div>
         </div>
@@ -156,21 +157,21 @@ export default function TokenProfileEditor() {
             navigator.clipboard.writeText(`https://teron.io/t/${token.symbol}`);
             addToast({ variant: "success", message: "Link copied to clipboard!" });
           }}
-          className="h-9 px-4 text-xs font-semibold"
+          className="h-10 px-3 text-xs font-semibold cta"
         >
-          <Copy01Icon size={16} className="mr-2" />
+          <Copy01Icon size={16} className="mr-1.5 inline-block" variant="stroke-rounded" />
           Copy Link
         </Button>
       </div>
 
       <div className="space-y-8">
-        <div className="bg-surface-primary border border-border-primary rounded-xl p-6">
-          <h2 className="text-lg font-bold text-text-primary border-b border-border-secondary pb-4 mb-6">Profile & Socials</h2>
+        <div className="card p-8 shadow-sm">
+          <h2 className="text-xl title text-text-primary border-b border-border-secondary/50 pb-5 mb-8">Profile & Socials</h2>
           <StepProfile register={register} errors={errors} />
         </div>
 
-        <div className="bg-surface-primary border border-border-primary rounded-xl p-6">
-          <h2 className="text-lg font-bold text-text-primary border-b border-border-secondary pb-4 mb-6">Media Assets</h2>
+        <div className="card p-8 shadow-sm">
+          <h2 className="text-xl title text-text-primary border-b border-border-secondary/50 pb-5 mb-8">Media Assets</h2>
           <StepMedia register={register} errors={errors} watch={watch} setValue={setValue} />
         </div>
       </div>
