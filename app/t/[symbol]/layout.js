@@ -3,9 +3,9 @@ export default function TokenProfileLayout({ children }) {
     <div className="min-h-dvh flex flex-col relative bg-[#0a0a0a]">
       {/* Premium Dotted Background Effect */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff20_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
-        <div className="absolute top-0 left-0 right-0 h-[600px] bg-gradient-to-b from-accent/10 via-transparent to-transparent"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-[400px] bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff20_1px,transparent_1px)] [background-size:8px_8px] opacity-20"></div>
+        {/* <div className="absolute top-0 left-0 right-0 h-[600px] bg-gradient-to-b from-accent/10 via-transparent to-transparent"></div> */}
+        {/* <div className="absolute bottom-0 left-0 right-0 h-[400px] bg-gradient-to-t from-bg-primary via-bg-primary/50 to-transparent"></div> */}
       </div>
       
       {/* Content wrapper */}

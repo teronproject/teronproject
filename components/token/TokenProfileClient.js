@@ -7,8 +7,7 @@ import { useToastContext } from "@/components/ToastProvider";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
-import Button from "@/components/ui/Button";
-import { GlobalIcon, TwitterIcon, TelegramIcon, DiscordIcon, Search01Icon, LinkSquare02Icon, Shield01Icon, Copy01Icon, File02Icon, Tag01Icon, Coins01Icon, Calendar01Icon, Wallet01Icon, InformationSquareIcon } from "hugeicons-react";
+import { GlobalIcon, NewTwitterIcon, TelegramIcon, DiscordIcon, Search01Icon, Shield01Icon, Copy01Icon, File02Icon, Tag01Icon, Coins01Icon, Calendar01Icon, Wallet01Icon, InformationSquareIcon } from "hugeicons-react";
 
 export default function TokenProfileClient({ symbolOrAddr, initialToken, initialError }) {
   const [token, setToken] = useState(initialToken);
@@ -98,11 +97,11 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
   return (
     <div className="min-h-screen pb-20 max-w-5xl mx-auto">
       {/* Banner Area */}
-      <div className="relative h-64 w-full bg-gradient-to-r from-bg-secondary via-surface-tertiary to-bg-secondary border-b border-border-primary overflow-hidden">
+      <div className="relative h-64 w-full bg-gradient-to-r from-bg-secondary via-surface-tertiary to-bg-secondary overflow-hidden">
         {profile.bannerUrl ? (
           <>
-            <img src={profile.bannerUrl} alt="Token Banner" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 h-80 bottom-0 bg-gradient-to-t from-bg-primary via-transparent to-transparent opacity-90"></div>
+            <img src={profile.bannerUrl} alt="Token Banner" className="w-full h-full object-cover rounded-b-xl" />
+            <div className="absolute inset-0 h-80 bottom-0 bg-gradient-to-t from-bg-primary via-transparent to-transparent opacity-90 rounded-b-xl"></div>
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center opacity-20 text-4xl">
@@ -130,7 +129,7 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
             <div className="space-y-1 sm:mb-2 z-10 relative">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary title drop-shadow-md">{token.name}</h1>
-                <span className="text-xl sm:text-2xl text-accent font-mono uppercase bg-accent/10 px-2 py-0.5 rounded">({token.symbol})</span>
+                <span className="text-xl card py-1 font-mono uppercase bg-accent/10 px-2  rounded">({token.symbol})</span>
               </div>
               <div className="flex flex-wrap items-center gap-2 pt-2">
                 <Badge variant={isConfirmed ? "success" : "warning"} size="sm" className="shadow-sm">
@@ -214,14 +213,14 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
                   {profile.twitter ? (
                     <a href={profile.twitter.startsWith("http") ? profile.twitter : `https://x.com/${profile.twitter.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="p-5 rounded-xl card hover:border-accent transition-all duration-300 flex flex-col items-center justify-center text-center group shadow-sm hover:shadow-md hover:-translate-y-1">
                       <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-3 group-hover:bg-accent group-hover:text-accent-text transition-colors text-accent">
-                        <TwitterIcon size={20} variant="stroke-rounded" />
+                        <NewTwitterIcon size={20} variant="stroke-rounded" />
                       </div>
                       <span className="text-[13px] font-bold text-text-primary title">X (Twitter)</span>
                     </a>
                   ) : (
                     <div className="p-5 rounded-xl bg-surface-primary/40 border border-dashed border-border-primary flex flex-col items-center justify-center text-center opacity-50 cursor-not-allowed">
                       <div className="w-10 h-10 rounded-full bg-surface-tertiary flex items-center justify-center mb-3 text-text-tertiary">
-                        <TwitterIcon size={20} variant="stroke-rounded" />
+                        <NewTwitterIcon size={20} variant="stroke-rounded" />
                       </div>
                       <span className="text-[13px] font-semibold text-text-tertiary">No X</span>
                     </div>
@@ -267,8 +266,7 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
           <div className="lg:col-span-4 space-y-6">
             <Card className="shadow-sm border border-border-primary/50 overflow-hidden relative group">
               <Card.Header className="bg-surface-secondary/80 border-b border-border-primary backdrop-blur-sm">
-                <h3 className="text-sm title text-text-primary flex items-center gap-2">
-                  <Shield01Icon size={16} className="text-accent" variant="stroke-rounded" /> 
+                <h3 className="text-lg title text-text-primary flex items-center gap-2">
                   Smart Contract Info
                 </h3>
               </Card.Header>
