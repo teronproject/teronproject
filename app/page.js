@@ -7,6 +7,7 @@ import Features from "@/components/landing/Features";
 import SpeedComparison from "@/components/landing/SpeedComparison";
 import SupportedChains from "@/components/landing/SupportedChains";
 import Pricing from "@/components/landing/Pricing";
+import Earn from "@/components/landing/Earn";
 import CTA from "@/components/landing/CTA";
 
 export const metadata = {
@@ -26,6 +27,7 @@ export default function LandingPage() {
       <SpeedComparison />
       <SupportedChains />
       <Pricing />
+      <Earn />
       <CTA />
       <Footer />
     </>
