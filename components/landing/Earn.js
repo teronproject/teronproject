@@ -12,12 +12,12 @@ export default function Earn() {
          <CanvasBackground />
          
          {/* Premium Tactile Noise/Grain Overlay */}
-         <div 
+         {/* <div 
            className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-40"
            style={{
              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
            }}
-         />
+         /> */}
          {/* Vertical gradients to blend borders seamlessly */}
          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-[#0a0a0a] to-transparent pointer-events-none" />
          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none" />
@@ -102,7 +102,7 @@ function CanvasBackground() {
 
     const draw = () => {
       // Deep dark background
-      ctx.fillStyle = "#09090b";
+      ctx.fillStyle = "#0a0a0a";
       ctx.fillRect(0, 0, width, height);
       
       const spacing = 16; // Grid spacing for the dots
@@ -186,7 +186,7 @@ function CanvasBackground() {
   return (
     <canvas 
       ref={canvasRef} 
-      className="w-full h-full opacity-60"
+      className="w-full h-full opacity-100"
     />
   );
 }
