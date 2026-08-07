@@ -19,7 +19,7 @@ export async function createOrResumeSession(walletAddress, referralCode = null) 
   const normalizedAddress = walletAddress.toLowerCase();
   
   // Check if admin
-  const adminAddresses = (process.env.ADMIN_WALLET_ADDRESSES || "")
+  const adminAddresses = (process.env.ADMIN_WALLET_ADDRESSES || "  ")
     .toLowerCase()
     .split(",")
     .map(a => a.trim())
