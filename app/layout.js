@@ -64,7 +64,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
-      <body className="min-h-dvh flex flex-col max-w-7xl w-full mx-auto border-left border-right">
+      <body className="min-h-dvh flex flex-col max-w-[1500px] w-full mx-auto lg:[mask-image:linear-gradient(to_right,transparent,black_64px,black_calc(100%-64px),transparent)] lg:[-webkit-mask-image:linear-gradient(to_right,transparent,black_64px,black_calc(100%-64px),transparent)]">
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -5,18 +5,29 @@ import { useEffect, useRef } from "react";
 
 export default function Hero() {
   return (
-    <section className="relative w-full overflow-hidden flex flex-col items-center pt-24 sm:pt-32 pb-20">
+    <section className="relative w-full overflow-hidden flex flex-col items-center pt-24 sm:pt-32 pb-0">
+      {/* Background Dots with Linear Gradient Mask */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-none opacity-30"
+        style={{
+          backgroundImage: "radial-gradient(circle at center, rgba(255,255,255,0.4) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          maskImage: "linear-gradient(to bottom, black 0%, transparent 60%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 60%)"
+        }}
+      />
+
       {/* Top Section - Typography and CTA */}
       <div className="max-w-5xl w-full mx-auto px-4 z-10 flex flex-col items-center text-center">
         {/* Big Premium Headline */}
-        <h1 className="title text-5xl sm:text-6xl  font-semibold text-text-primary tracking-tight leading-[1.05] mb-6">
+        <h1 className="title text-5xl sm:text-6xl font-semibold text-text-primary tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
           Launch Your Token
           <br className="hidden sm:block" />
           Secure, Simple, Trusted
         </h1>
 
         {/* Minimal Subheading */}
-        <p className=" text-lg text-balance  text-text-secondary max-w-2xl leading-relaxed mb-10">
+        <p className="text-lg text-balance text-text-secondary max-w-2xl leading-relaxed mb-10">
           Create secure BEP-20 smart contracts. Manage your project from a simple dashboard. Fast and trusted by builders.
         </p>
 
@@ -37,18 +48,22 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* The Canvas and Custom Animation Section */}
-      <div className="relative w-full max-w-5xl mx-auto mt-24 px-4 h-[400px] sm:h-[480px]">
-         {/* Canvas Background Container */}
-         <div className="absolute inset-x-4 inset-y-0 sm:inset-0 rounded-2xl overflow-hidden shadow-2xl border border-white/5 bg-[#111]">
+      {/* The Canvas and Custom Animation Section (Full Width) */}
+      <div className="relative w-full mt-24 h-[400px] sm:h-[480px]">
+         {/* Canvas Background Container - Full Width */}
+         <div className="absolute inset-0 overflow-hidden border-t border-white/5 bg-[#050403]">
             <CanvasBackground />
             
-            {/* Vignette overlays to blend edges */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent opacity-80" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,#0a0a0a_120%)]" />
+            {/* Premium Tactile Noise/Grain Overlay */}
+            <div 
+              className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-40"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+              }}
+            />
          </div>
          
-         {/* Floating UI Widget overlapping the canvas */}
+         {/* Floating UI Widget overlapping the canvas (Unchanged) */}
          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-2xl pointer-events-none">
             <div className="card rounded-2xl p-6 sm:p-8 flex flex-col gap-6 backdrop-blur-xl bg-surface-primary/70 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.4)] pointer-events-auto">
                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-5">
@@ -80,7 +95,7 @@ export default function Hero() {
   );
 }
 
-// Custom Canvas Background replicating the premium block layout
+// Custom Canvas Background replicating the dynamic clustered dot-matrix
 function CanvasBackground() {
   const canvasRef = useRef(null);
 
@@ -92,7 +107,7 @@ function CanvasBackground() {
     let width = canvas.offsetWidth;
     let height = canvas.offsetHeight;
     
-    // High DPI support
+    // High DPI support for premium crisp dots
     const dpr = window.devicePixelRatio || 1;
     canvas.width = width * dpr;
     canvas.height = height * dpr;
@@ -114,49 +129,90 @@ function CanvasBackground() {
     let animationFrameId;
 
     const draw = () => {
-      // Background base
-      ctx.fillStyle = "#0d0d0d";
+      // Deep dark background
+      ctx.fillStyle = "#09090b";
       ctx.fillRect(0, 0, width, height);
       
-      const blockW = Math.max(80, width / 12);
-      const blockH = 40;
+      const spacing = 16; // Grid spacing for the dots
+      const cols = Math.ceil(width / spacing);
+      const rows = Math.ceil(height / spacing);
       
-      const cols = Math.ceil(width / blockW) + 2;
-      const rows = Math.ceil(height / blockH) + 2;
-      
-      for (let y = -1; y < rows; y++) {
-        for (let x = -1; x < cols; x++) {
-          const stagger = (y % 2 === 0) ? 0 : blockW / 2;
-          const xPos = x * blockW - stagger;
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          const x = i * spacing + spacing / 2;
+          const y = j * spacing + spacing / 2;
           
-          // Animate rows slowly in opposite directions
-          const direction = y % 2 === 0 ? 1 : -1;
-          const animatedX = xPos + (time * 10 * direction) % blockW;
-          const yPos = y * blockH;
+          // Generate block coordinates to create the "clustered" look
+          // Macro blocks (large areas)
+          const bx1 = Math.floor(i / 10);
+          const by1 = Math.floor(j / 10);
+          // Micro blocks (smaller intersecting patterns)
+          const bx2 = Math.floor(i / 4);
+          const by2 = Math.floor(j / 4);
           
-          // Deterministic noise for color variation
-          const noise = Math.sin((x + y * cols) * 12.9898) * 43758.5453;
-          const random = Math.abs(noise - Math.floor(noise));
+          const t = time * 0.5;
           
-          // Premium Gold/Yellow theme colors mimicking the accent
-          const hue = 42 + random * 5; // 42-47
-          const saturation = 70 + random * 20; // 70-90%
-          const lightness = 10 + random * 20; // 10-30%
-          const alpha = 0.4 + random * 0.4;
+          // Smooth noise calculation for block movement
+          const n1 = Math.sin(bx1 * 0.4 + t) * Math.cos(by1 * 0.4 + t * 0.7);
+          const n2 = Math.sin(bx2 * 0.7 - t * 1.1) * Math.cos(by2 * 0.7 + t * 0.8);
           
-          // Occasional highlight blocks
-          const isHighlight = random > 0.95;
-          const finalLightness = isHighlight ? lightness + 20 : lightness;
-          ctx.fillStyle = `hsla(${hue}, ${saturation}%, ${finalLightness}%, ${alpha})`;
+          // Static deterministic scatter value (0 to 1) for texture
+          const scatter = Math.abs(Math.sin(i * 12.9898 + j * 78.233) * 43758.5453) % 1;
           
-          // Draw rectangle with tiny gap
-          ctx.beginPath();
-          ctx.roundRect(animatedX, yPos, blockW - 2, blockH - 2, 4);
-          ctx.fill();
+          // Combine and normalize (-1 to 1) -> (0 to 1)
+          let density = (n1 * 0.6) + (n2 * 0.4);
+          density = (density + 1) / 2; 
+          
+          let dotSize = 0;
+          let alpha = 0;
+          let glow = 0;
+
+          // Apply thresholds to mimic the exact visual clusters from the reference image
+          if (density > 0.72) {
+            // Core solid blocks (large, bright dots)
+            dotSize = spacing * 0.35;
+            alpha = 0.85 + scatter * 0.15;
+            glow = 6; // Subtle bloom for premium feel
+          } else if (density > 0.55) {
+            // Surrounding medium dense areas
+            dotSize = spacing * 0.22;
+            alpha = 0.4 + scatter * 0.2;
+            glow = 0;
+          } else if (density > 0.4 && scatter > 0.65) {
+            // Scattered, digital "falloff" dots extending from blocks
+            dotSize = spacing * 0.12;
+            alpha = 0.25 + scatter * 0.2;
+            glow = 0;
+          } else if (scatter > 0.96) {
+            // Occasional tiny ambient background blips
+            dotSize = spacing * 0.08;
+            alpha = 0.15;
+            glow = 0;
+          }
+          
+          // Draw the calculated dot
+          if (dotSize > 0) {
+            ctx.beginPath();
+            ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+            
+            // Rich golden theme (Hue 43-48)
+            const lightness = 60 + scatter * 15;
+            ctx.fillStyle = `hsla(45, 95%, ${lightness}%, ${alpha})`;
+            
+            // Apply lightweight glow only to the brightest clusters to maintain performance
+            if (glow > 0) {
+                ctx.shadowBlur = glow;
+                ctx.shadowColor = `hsla(45, 100%, 55%, ${alpha})`;
+            } else {
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.fill();
+          }
         }
       }
       
-      time += 0.01;
+      time += 0.015; // Smooth, relaxed speed
       animationFrameId = requestAnimationFrame(draw);
     };
 
