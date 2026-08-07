@@ -51,7 +51,7 @@ export default function Features() {
   ];
 
   return (
-    <section className="w-full py-24  relative z-10 border-t border-white/5">
+    <section className="w-full pt-24  relative z-10 border-t border-white/5">
       <div className="max-w-[1400px] mx-auto px-4">
         
         {/* Header Section */}
@@ -65,7 +65,7 @@ export default function Features() {
         </div>
 
         {/* Features Grid mimicking Cartesia */}
-        <div className="grid grid-cols-1 md:grid-cols-2 border border-white/5  overflow-hidden shadow-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 border mb-6 border-white/5  overflow-hidden shadow-2xl">
           {features.map((feature, idx) => {
             const borderClasses = "border-white/5 " +
               (idx % 2 === 0 ? "md:border-r " : "") +

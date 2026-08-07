@@ -4,6 +4,8 @@ import Hero from "@/components/landing/Hero";
 import TrustBar from "@/components/landing/TrustBar";
 import HowItWorks from "@/components/landing/HowItWorks";
 import Features from "@/components/landing/Features";
+import SpeedComparison from "@/components/landing/SpeedComparison";
+import SupportedChains from "@/components/landing/SupportedChains";
 import Pricing from "@/components/landing/Pricing";
 import CTA from "@/components/landing/CTA";
 
@@ -21,6 +23,8 @@ export default function LandingPage() {
       <TrustBar />
       <HowItWorks />
       <Features />
+      <SpeedComparison />
+      <SupportedChains />
       <Pricing />
       <CTA />
       <Footer />
