@@ -6,6 +6,7 @@ import { ArrowRight01Icon, UserGroupIcon, Tick01Icon } from "hugeicons-react";
 
 export default function Earn() {
   return (
+    <>
     <section className="relative w-full overflow-hidden border-t border-white/5 py-20 bg-[#050403]">
       {/* Canvas Background Container - Full Width */}
       <div className="absolute inset-0 overflow-hidden">
@@ -64,6 +65,8 @@ export default function Earn() {
         </div>
       </div>
     </section>
+    <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
+    </>
   );
 }
 

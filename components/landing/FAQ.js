@@ -33,15 +33,15 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="w-full bg-[#0a0a0a] py-24 sm:py-32 relative z-10 border-t border-white/5">
-      <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="w-full py-20 relative z-10 border-t border-white/5">
+      <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="title text-4xl sm:text-5xl font-medium text-text-primary tracking-tight leading-[1.15] mb-5">
+          <h2 className="title text-3xl sm:text-4xl  text-text-primary tracking-tight leading-[1.15] mb-3">
             Frequently Asked Questions
           </h2>
-          <p className="text-[17px] text-text-secondary leading-relaxed">
+          <p className="text-sm text-text-secondary leading-relaxed">
             Everything you need to know about launching your token with Teron.
           </p>
         </div>
@@ -90,6 +90,7 @@ export default function FAQ() {
         </div>
 
       </div>
+      <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
     </section>
   );
 }
