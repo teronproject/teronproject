@@ -40,7 +40,7 @@ export default function TokenProfilesPage() {
 
   if (isLoading) {
     return (
-      <div className="py-12 px-6 max-w-4xl mx-auto space-y-6">
+      <div className="py-12 px-6 max-w-6xl mx-auto space-y-6">
         <Skeleton className="h-10 w-48" />
         <Skeleton className="h-32" />
         <Skeleton className="h-32" />
@@ -49,7 +49,7 @@ export default function TokenProfilesPage() {
   }
 
   return (
-    <div className="py-12 px-4  max-w-4xl mx-auto">
+    <div className="py-12 px-4  max-w-6xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl title text-text-primary flex items-center gap-4">
           Token Profiles

@@ -147,7 +147,7 @@ export default function SettingsPage() {
   // Not connected
   if (!isConnected) {
     return (
-      <div className="max-w-3xl mx-auto py-24 px-4 text-center space-y-6">
+      <div className="max-w-6xl mx-auto py-24 px-4 text-center space-y-6">
         <div className="text-5xl opacity-30">🔒</div>
         <h1 className="text-2xl font-bold text-text-primary">
           Connect Wallet to Access Settings
@@ -161,7 +161,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 space-y-8">
+    <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 space-y-8">
       {/* Page Header */}
       <div className="space-y-1">
         <h1 className="text-2xl title text-text-primary">

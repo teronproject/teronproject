@@ -137,7 +137,7 @@ export default function TasksPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-4 space-y-6">
+      <div className="max-w-6xl mx-auto py-12 px-4 space-y-6">
         <Skeleton className="h-10 w-48" />
         <div className="space-y-4">
           {[...Array(4)].map((_, i) => (
@@ -149,7 +149,7 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="max-w-6xl w-full mx-auto py-12 px-4 space-y-8">
+    <div className="max-w-6xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-2xl title text-text-primary flex items-center gap-3">

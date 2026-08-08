@@ -90,7 +90,7 @@ export default function RewardsPage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-4 space-y-6">
+      <div className="max-w-6xl mx-auto py-12 px-4 space-y-6">
         <Skeleton className="h-10 w-48" />
         <Skeleton className="h-40 w-full rounded-2xl" />
         <Skeleton className="h-64 w-full rounded-2xl" />
@@ -102,7 +102,7 @@ export default function RewardsPage() {
   const grants = rewardData?.grants || [];
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4 space-y-8">
+    <div className="max-w-6xl mx-auto py-12 px-4 space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-2xl title text-text-primary">

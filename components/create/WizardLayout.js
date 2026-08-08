@@ -32,7 +32,7 @@ export default function WizardLayout({
   nextLabel = "Continue",
 }) {
   return (
-    <div className="max-w-5xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Left Sidebar: Progress Tracker & Heavy Context */}
       <div className="lg:col-span-4 space-y-8">
         <div>
