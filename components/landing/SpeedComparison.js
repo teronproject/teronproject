@@ -39,7 +39,7 @@ export default function SpeedComparison() {
         </div>
 
         {/* Graph Section */}
-        <div className="relative w-full border-y border-white/5 py-12 sm:py-16 my-10 flex items-center justify-center min-h-[400px] lg:min-h-[500px]">
+        <div className="relative w-full border-y border-dashed border-white/5 py-12 sm:py-16 my-10 flex items-center justify-center min-h-[400px] lg:min-h-[500px]">
            
            {/* Y-axis Label */}
            <div className="hidden sm:block absolute left-4 top-[60%] -translate-y-1/2 -rotate-90 origin-left text-[11px] font-semibold text-text-tertiary ">

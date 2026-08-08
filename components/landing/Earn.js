@@ -36,9 +36,9 @@ export default function Earn() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
            {/* Card 1: Referrals */}
-           <div className="card rounded-3xl p-8 lg:p-10 flex flex-col gap-6 backdrop-blur-2xl bg-[#0a0a0a]/70 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden group transition-transform">
-             <h3 className="text-2xl font-semibold text-white tracking-tight">Referrals</h3>
-             <p className="text-[15px] text-text-secondary leading-relaxed">
+           <div className="card rounded-3xl p-8 lg:p-10 flex flex-col gap-4 backdrop-blur-2xl bg-[#0a0a0a]/70 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden group transition-transform">
+             <h3 className="text-2xl title font-semibold text-white tracking-tight">Referrals</h3>
+             <p className="text-sm text-text-secondary leading-relaxed">
                Share your unique referral link with your community. Earn a massive <strong>30% commission</strong> in BNB on all premium upgrades made by users you refer, paid directly to your wallet.
              </p>
              
@@ -50,9 +50,9 @@ export default function Earn() {
            </div>
 
            {/* Card 2: Tasks */}
-           <div className="card rounded-3xl p-8 lg:p-10 flex flex-col gap-6 backdrop-blur-2xl bg-[#0a0a0a]/70 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden group transition-transform duration-300">
-             <h3 className="text-2xl font-semibold text-white tracking-tight">Task to Earn</h3>
-             <p className="text-[15px] text-text-secondary leading-relaxed">
+           <div className="card rounded-3xl p-8 lg:p-10 flex flex-col gap-4 backdrop-blur-2xl bg-[#0a0a0a]/70 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden group transition-transform duration-300">
+             <h3 className="text-2xl title font-semibold text-white tracking-tight">Task to Earn</h3>
+             <p className="text-sm text-text-secondary leading-relaxed">
                Engage with our ecosystem by following our socials, joining Discord, and launching tokens on testnet. Complete simple tasks to earn exclusive platform credits for free mainnet deployments.
              </p>
              
