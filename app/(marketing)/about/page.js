@@ -1,98 +1,238 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = {
-  title: "About Teron — Premium Token Launch Platform",
-  description: "Learn about Teron, the premium Web3 token launch platform built for BNB Smart Chain.",
-};
+import Link from "next/link";
+import { useEffect, useRef } from "react";
+import Header from "@/components/shared/Header";
+import Footer from "@/components/shared/Footer";
+import CTA from "@/components/landing/CTA";
+import { Shield01Icon, Rocket01Icon, CodeIcon, GlobalIcon } from "hugeicons-react";
 
 export default function AboutPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-20 sm:py-28">
-      <div className="text-center mb-16">
-        <p className="text-accent text-sm font-bold uppercase tracking-wider mb-3">About</p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary">
-          The Premium Token Launch Platform
-        </h1>
-        <p className="text-text-secondary mt-4 max-w-2xl mx-auto leading-relaxed">
-          Teron empowers Web3 creators to deploy production-grade BEP-20 tokens on BNB Smart Chain
-          with built-in verification, on-chain metadata, and a public token profile — all from a single dashboard.
-        </p>
-      </div>
-
-      {/* Mission */}
-      <div className="space-y-12 mb-20">
-        <div className="bg-surface-primary border border-border-primary rounded-2xl p-8">
-          <h2 className="text-xl font-bold text-text-primary mb-4">Our Mission</h2>
-          <p className="text-text-secondary leading-relaxed">
-            We believe launching a token should be as straightforward as creating a website. Too many
-            projects fail because deploying a smart contract requires deep Solidity expertise, and
-            getting verified on BscScan is a manual, error-prone process. Teron automates all of this
-            into a simple, guided wizard — so you can focus on building your community, not fighting
-            with tooling.
-          </p>
-        </div>
-
-        <div className="bg-surface-primary border border-border-primary rounded-2xl p-8">
-          <h2 className="text-xl font-bold text-text-primary mb-4">Why BNB Chain?</h2>
-          <p className="text-text-secondary leading-relaxed">
-            BNB Smart Chain offers the ideal balance of low fees, fast confirmation times, and a massive
-            ecosystem of DeFi protocols, wallets, and explorers. With average gas costs under $0.05 and
-            3-second block times, it's the most accessible chain for new token projects. Teron is built
-            exclusively for BNB Chain to provide the deepest possible integration — from BscScan
-            verification to Trust Wallet metadata publishing.
-          </p>
-        </div>
-
-        <div className="bg-surface-primary border border-border-primary rounded-2xl p-8">
-          <h2 className="text-xl font-bold text-text-primary mb-4">How We Work</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {[
-              {
-                title: "No Custodial Risk",
-                description: "We never hold your funds or private keys. You deploy directly from your own wallet. The contract is yours.",
-              },
-              {
-                title: "Open-Source Contracts",
-                description: "Our BEP-20 contract is based on OpenZeppelin's audited libraries. When verified, anyone can read the source code on BscScan.",
-              },
-              {
-                title: "Wallet-First Identity",
-                description: "No email signups, no passwords. Your wallet address IS your account. Connect and start building immediately.",
-              },
-              {
-                title: "Transparent Pricing",
-                description: "Basic deployment is free (gas only). Premium services have fixed USD prices converted to BNB using live market data.",
-              },
-            ].map((item) => (
-              <div key={item.title} className="space-y-2">
-                <h3 className="font-semibold text-text-primary">{item.title}</h3>
-                <p className="text-sm text-text-secondary leading-relaxed">{item.description}</p>
-              </div>
-            ))}
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative w-full pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden border-t border-white/5">
+          {/* Canvas Background */}
+          <div className="absolute inset-0 pointer-events-none">
+             <CanvasBackground />
+             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#050403] to-transparent" />
+             <div className="absolute inset-0 bg-[#0a0a0a]/30" />
           </div>
-        </div>
-      </div>
+          
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 className="title text-5xl sm:text-6xl font-medium text-white tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
+              Build Your Token <br className="hidden sm:block" /> on BNB Chain
+            </h1>
+            <p className="text-sm sm:text-base text-text-secondary max-w-3xl mx-auto leading-relaxed mb-10">
+              We believe launching a token should be simple. Teron handles smart contract development, compilation, and BscScan verification. You get a single dashboard to manage everything.
+            </p>
+          </div>
+        </section>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
+        <section className="py-10 border-t border-white/5">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-left mb-10">
+              <h2 className="title text-3xl sm:text-4xl font-medium text-white tracking-tight mb-3">Our Core Philosophy</h2>
+              <p className="text-text-secondary">The principles that guide every feature we build</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+              
+              <div className="card rounded-3xl p-8 bg-[#0d0d0d] border border-white/5 shadow-xl transition-all hover:bg-[#111]">
+                <div className="w-12 h-12 card rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+                  <Shield01Icon size={24} className="text-accent" variant="solid" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-1 tracking-tight">Secure Smart Contracts</h3>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  Every token you deploy uses standard OpenZeppelin contracts. We do not add hidden fees or backdoors. You own your private keys. You control your contract.
+                </p>
+              </div>
 
-      {/* CTA */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-text-primary mb-4">
-          Ready to Launch Your Token?
-        </h2>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
-          <Link
-            href="/dashboard/create"
-            className="h-12 px-8 bg-accent text-accent-text font-bold rounded-xl inline-flex items-center justify-center hover:bg-accent-hover transition-all shadow-lg shadow-accent/20"
-          >
-            Launch Token
-          </Link>
-          <Link
-            href="/pricing"
-            className="h-12 px-8 border border-border-secondary text-text-primary font-semibold rounded-xl inline-flex items-center justify-center hover:bg-surface-primary transition-colors"
-          >
-            View Pricing
-          </Link>
-        </div>
-      </div>
+              <div className="card rounded-3xl p-8 bg-[#0d0d0d] border border-white/5 shadow-xl transition-all hover:bg-[#111]">
+                <div className="w-12 h-12 card rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+                  <Rocket01Icon size={24} className="text-white" variant="solid" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-1 tracking-tight">Simple Creation Process</h3>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  Building a crypto project can be complex. We replace command-line tools with a clear dashboard. You can create and publish your verified token fast.
+                </p>
+              </div>
+
+              <div className="card rounded-3xl p-8 bg-[#0d0d0d] border border-white/5 shadow-xl transition-all hover:bg-[#111]">
+                <div className="w-12 h-12 card rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-6 shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+                  <CodeIcon size={24} className="text-white" variant="solid" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-1 tracking-tight">Clear Transparency</h3>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  Trust is important for any blockchain project. We built automatic BscScan verification into our platform. Your exact source code is published to the block explorer for anyone to read.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </section>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
+        {/* Why BNB Chain Section */}
+        <section className="py-14 border-t border-white/5 relative overflow-hidden">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col lg:flex-row items-center gap-16">
+              <div className="w-full">
+                <h2 className="title text-3xl sm:text-4xl font-medium text-white tracking-tight mb-6 leading-tight">
+                  Built for <span className="text-accent">BNB Chain</span>
+                </h2>
+                <div className="space-y-2 text-balance text-text-tertiary leading-relaxed">
+                  <p>
+                    BNB Chain is the best network for launching new tokens. It offers high liquidity, fast block times, and low fees. Average gas fees are under $0.05. It is highly accessible for users.
+                  </p>
+                  <p>
+                    By focusing only on BNB Chain, we built deep native integrations. Teron connects directly to BscScan and follows the BEP-20 standard perfectly.
+                  </p>
+                  <p>
+                    This approach allows us to publish on-chain metadata for your project automatically. You get features that are optimized for a single, trusted network.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
+        <section className="py-10 border-t border-white/5">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+             <h2 className="title text-3xl sm:text-4xl font-medium text-white tracking-tight mb-3">
+                Manage Your Project
+             </h2>
+             <p className=" text-text-secondary mb-3 text-balance">
+                Deploying a contract is just the first step. Teron gives you an ecosystem for your project. Every token receives a public profile page. We also maintain a leaderboard to give your project visibility.
+             </p>
+             <p className="text-text-secondary">
+                Our creator dashboard lets you manage your contract easily. You can mint, burn, and transfer ownership from one simple interface.
+             </p>
+          </div>
+        </section>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
+        <CTA />
+      </main>
     </div>
+  );
+}
+
+// Custom Canvas Background - Transparent
+function CanvasBackground() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: true });
+    
+    let width = canvas.offsetWidth;
+    let height = canvas.offsetHeight;
+    
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+    
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        width = entry.contentRect.width;
+        height = entry.contentRect.height;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+      }
+    });
+    
+    resizeObserver.observe(canvas);
+
+    let time = 0;
+    let animationFrameId;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      
+      const spacing = 16;
+      const cols = Math.ceil(width / spacing);
+      const rows = Math.ceil(height / spacing);
+      
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          const x = i * spacing + spacing / 2;
+          const y = j * spacing + spacing / 2;
+          
+          const bx1 = Math.floor(i / 10);
+          const by1 = Math.floor(j / 10);
+          const bx2 = Math.floor(i / 4);
+          const by2 = Math.floor(j / 4);
+          
+          const t = time * 0.5;
+          
+          const n1 = Math.sin(bx1 * 0.4 + t) * Math.cos(by1 * 0.4 + t * 0.7);
+          const n2 = Math.sin(bx2 * 0.7 - t * 1.1) * Math.cos(by2 * 0.7 + t * 0.8);
+          
+          const scatter = Math.abs(Math.sin(i * 12.9898 + j * 78.233) * 43758.5453) % 1;
+          
+          let density = (n1 * 0.6) + (n2 * 0.4);
+          density = (density + 1) / 2; 
+          
+          let dotSize = 0;
+          let alpha = 0;
+          let glow = 0;
+
+          if (density > 0.72) {
+            dotSize = spacing * 0.35;
+            alpha = 0.85 + scatter * 0.15;
+            glow = 6;
+          } else if (density > 0.55) {
+            dotSize = spacing * 0.22;
+            alpha = 0.4 + scatter * 0.2;
+            glow = 0;
+          } else if (density > 0.4 && scatter > 0.65) {
+            dotSize = spacing * 0.12;
+            alpha = 0.25 + scatter * 0.2;
+            glow = 0;
+          } else if (scatter > 0.96) {
+            dotSize = spacing * 0.08;
+            alpha = 0.15;
+            glow = 0;
+          }
+          
+          if (dotSize > 0) {
+            ctx.beginPath();
+            ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+            
+            const lightness = 60 + scatter * 15;
+            ctx.fillStyle = `hsla(45, 95%, ${lightness}%, ${alpha})`;
+            
+            if (glow > 0) {
+                ctx.shadowBlur = glow;
+                ctx.shadowColor = `hsla(45, 100%, 55%, ${alpha})`;
+            } else {
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.fill();
+          }
+        }
+      }
+      
+      time += 0.015;
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      resizeObserver.disconnect();
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return (
+    <canvas 
+      ref={canvasRef} 
+      className="w-full h-full opacity-50"
+    />
   );
 }
