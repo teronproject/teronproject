@@ -184,7 +184,7 @@ export default function AdminTasksPage() {
           }}
           className="cta"
         >
-          <PlusSignIcon size={16} className="mr-1.5" />
+          <PlusSignIcon size={16} className="mr-1.5 inline-block" />
           Create Task
         </Button>
       </div>
