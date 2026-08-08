@@ -21,7 +21,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-bg-primary/60 backdrop-blur-2xl">
-      <div className="max-w-7xl mx-auto border-b border-l border-r border-border-primary flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+      <div className="border-b border-border-primary flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group shrink-0">
           <div className="w-8 h-8 rounded-[10px] bg-gradient-to-b from-[#F4D86A] to-[#E5AC2B] flex items-center justify-center shadow-[0_2px_10px_rgba(244,216,106,0.3),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-transform group-hover:scale-105">

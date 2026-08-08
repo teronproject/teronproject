@@ -29,9 +29,9 @@ export default function Sidebar() {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-64 border-r border-border-primary backdrop-blur-xl min-h-[calc(100vh-64px)] sticky top-16 shrink-0 z-10">
         <div className="p-6">
-          <h2 className="text-md text-text-tertiary stitle mb-4">
+          {/* <h2 className="text-md text-text-tertiary stitle mb-4">
             Dashboard
-          </h2>
+          </h2> */}
           <nav className="space-y-2">
             {navItems.map((item) => {
               const isActive = item.href === '/dashboard' 

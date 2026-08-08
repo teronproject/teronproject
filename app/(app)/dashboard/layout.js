@@ -36,7 +36,7 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-64px)] max-w-7xl mx-auto w-full border-l border-r border-border-primary overflow-hidden">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-64px)] w-full overflow-hidden">
       <Sidebar />
       <main className="flex-1 w-full overflow-y-auto pb-20 md:pb-0">
         {children}
