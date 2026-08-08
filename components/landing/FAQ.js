@@ -13,7 +13,7 @@ const faqs = [
   },
   {
     question: "Are the smart contracts secure and who owns them?",
-    answer: "Yes, completely. We use battle-tested, standard OpenZeppelin libraries that are industry-recognized for maximum security. Once deployed, you have 100% exclusive ownership of your contract—we do not have any access to your tokens."
+    answer: "Yes, completely. We use battle-tested, standard OpenZeppelin libraries that are industry-recognized for maximum security. Once deployed, you have 100% exclusive ownership of your contract we do not have any access to your tokens."
   },
   {
     question: "Why should I verify my contract on BscScan?",
@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     question: "How much does it cost to use Teron?",
-    answer: "Core contract generation and deployment is completely free—you only pay the standard BNB gas fee to the network. Optional premium features like BscScan verification and on-chain metadata cost a small, flat fee paid directly in BNB."
+    answer: "Core contract generation and deployment is completely free you only pay the standard BNB gas fee to the network. Optional premium features like BscScan verification and on-chain metadata cost a small, flat fee paid directly in BNB."
   }
 ];
 
@@ -33,7 +33,7 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="w-full py-20 relative z-10 border-t border-white/5">
+    <section className="w-full pt-20 relative z-10 border-t border-white/5">
       <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8 pb-10">
         
         {/* Header */}

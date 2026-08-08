@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function CTA() {
   return (
-    <section className="py-20 sm:py-28 bg-surface-primary/50 border-t border-border-primary">
+    <section className="py-20 bg-surface-primary/50 border-t border-border-primary">
       <div className="max-w-3xl mx-auto px-4 text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-text-primary">
           Ready to Launch Your Token?
