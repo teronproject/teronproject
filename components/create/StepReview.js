@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useWallet } from "@/hooks/useWallet";
-import { CheckmarkBadge01Icon, SecurityCheckIcon, Rocket01Icon } from "hugeicons-react";
-import { motion } from "motion/react";
+import { CheckmarkBadge01Icon, SecurityCheckIcon, Rocket01Icon, Mail01Icon } from "hugeicons-react";
 
 /**
- * Step 4: Final Review & Deploy
+ * Step 3: Final Review & Deploy
  */
 export default function StepReview({ getValues, setValue, watch }) {
   const { address } = useWallet();
@@ -19,23 +18,17 @@ export default function StepReview({ getValues, setValue, watch }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch pricing
     fetch("/api/pricing")
       .then(res => res.json())
       .then(data => {
-        if (data.success) {
-          setPricing(data.services);
-        }
+        if (data.success) setPricing(data.services);
       })
       .catch(console.error);
 
-    // Fetch BNB price
     fetch("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT")
       .then(res => res.json())
       .then(data => {
-        if (data && data.price) {
-          setBnbPriceUsd(parseFloat(data.price));
-        }
+        if (data?.price) setBnbPriceUsd(parseFloat(data.price));
       })
       .catch(console.error)
       .finally(() => setIsLoading(false));
@@ -45,39 +38,49 @@ export default function StepReview({ getValues, setValue, watch }) {
   const metadataPrice = pricing.find(p => p.serviceKey === "metadata")?.priceBnb || 0.005;
 
   let totalBnbCost = 0;
-  if (addVerification) totalBnbCost += verificationPrice;
-  if (addMetadata) totalBnbCost += metadataPrice;
+  if (addVerification) totalBnbCost += Number(verificationPrice);
+  if (addMetadata) totalBnbCost += Number(metadataPrice);
 
   const formatUsd = (bnb) => {
-    return (bnb * bnbPriceUsd).toLocaleString("en-US", { style: "currency", currency: "USD" });
+    return (Number(bnb) * bnbPriceUsd).toLocaleString("en-US", { style: "currency", currency: "USD" });
   };
 
   return (
     <div className="space-y-8">
-      <div className="bg-warning/5 border border-warning/30 p-5 rounded-xl flex items-start gap-4 shadow-sm card">
-        <div>
-          <h3 className="text-lg title text-warning mb-1">
-            Final Review
-          </h3>
-          <p className="text-xs text-text-tertiary leading-relaxed">
-            Please review your token details carefully. Once you click "Deploy", a transaction
-            will be sent to the BNB Chain. <strong className="font-bold">Smart contracts are immutable</strong>  you will not
-            be able to change the Name, Symbol, Decimals, or Initial Supply after deployment.
-          </p>
-        </div>
+      {/* Warning Banner */}
+      <div className="bg-warning/5 border border-warning/30 p-5 rounded-xl shadow-sm card">
+        <h3 className="text-lg title text-warning mb-1">
+          Final Review
+        </h3>
+        <p className="text-xs text-text-tertiary leading-relaxed">
+          Please review your token details carefully. Once you click "Deploy", a transaction
+          will be sent to the BNB Chain. <strong className="font-bold">Smart contracts are immutable</strong> — you will not
+          be able to change the Name, Symbol, Decimals, or Initial Supply after deployment.
+        </p>
       </div>
 
-      <div className="bg-surface-primary border border-border-primary rounded-lg overflow-hidden card">
-        <div className="p-6 pt-10">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-text-primary">
-              {values.name || "Token Name"} <span className="text-text-tertiary font-normal">({values.symbol || "SYMBOL"})</span>
-            </h2>
-            {values.shortDescription && (
-              <p className="text-sm text-text-secondary mt-1 max-w-lg">
-                {values.shortDescription}
-              </p>
+      {/* Token Summary Card */}
+      <div className="bg-surface-primary border border-border-primary rounded-xl overflow-hidden card">
+        <div className="p-6 pt-8">
+          <div className="flex items-center gap-4 mb-6">
+            {values.logoUrl && (
+              <img
+                src={values.logoUrl}
+                alt={values.name}
+                className="w-14 h-14 rounded-xl object-cover border border-border-secondary shadow-sm"
+              />
             )}
+            <div>
+              <h2 className="text-xl font-bold text-text-primary">
+                {values.name || "Token Name"}{" "}
+                <span className="text-text-tertiary font-normal">({values.symbol || "SYMBOL"})</span>
+              </h2>
+              {values.shortDescription && (
+                <p className="text-sm text-text-secondary mt-0.5 max-w-lg">
+                  {values.shortDescription}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
@@ -88,61 +91,108 @@ export default function StepReview({ getValues, setValue, watch }) {
             
             <div className="space-y-1 py-3 border-t border-border-secondary">
               <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">Initial Supply</span>
-              <p className="text-sm text-text-primary font-medium">{values.totalSupply || "0"}</p>
+              <p className="text-sm text-text-primary font-medium">
+                {values.totalSupply ? Number(values.totalSupply).toLocaleString() : "0"}
+              </p>
             </div>
 
-            <div className="space-y-1 py-3 border-t border-border-secondary md:col-span-2">
-              <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">Deployer Wallet</span>
-              <p className="text-sm text-text-primary font-mono">{address || "Not connected"}</p>
+            <div className="space-y-1 py-3 border-t border-border-secondary">
+              <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">Chain</span>
+              <p className="text-sm text-text-primary font-medium">BNB Smart Chain (BSC)</p>
             </div>
+
+            <div className="space-y-1 py-3 border-t border-border-secondary">
+              <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">Deployer Wallet</span>
+              <p className="text-sm text-text-primary font-mono text-xs truncate">{address || "Not connected"}</p>
+            </div>
+
+            {values.contactEmail && (
+              <div className="space-y-1 py-3 border-t border-border-secondary md:col-span-2">
+                <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                  <Mail01Icon size={12} /> Contact Email
+                </span>
+                <p className="text-sm text-text-primary">{values.contactEmail}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Cost Summary */}
-      <div className="pt-4">
-        <h3 className="text-lg title text-text-primary mb-4 flex items-center gap-2">
-          Deployment Cost Summary
-        </h3>
-        
-        <div className="bg-surface-secondary border border-border-secondary rounded-xl p-6 card">
-          <div className="space-y-3 mb-6">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-text-secondary">Smart Contract Deployment</span>
-              <span className="font-semibold text-text-primary">Free (+ Gas)</span>
-            </div>
-            
+      {/* Add-ons Summary */}
+      {(addVerification || addMetadata) && (
+        <div>
+          <h3 className="text-sm title text-text-primary mb-3">Selected Premium Services</h3>
+          <div className="space-y-2">
             {addVerification && (
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-text-secondary flex items-center gap-1.5">
-                  <CheckmarkBadge01Icon size={16} className="text-accent" variant="solid" />
-                  Contract Verification
-                </span>
-                <span className="font-semibold text-text-primary">{verificationPrice} BNB</span>
+              <div className="flex items-center gap-3 bg-accent/5 border border-accent/20 rounded-lg p-3">
+                <CheckmarkBadge01Icon size={18} className="text-accent" variant="solid" />
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-text-primary">Contract Verification</p>
+                  <p className="text-[10px] text-text-tertiary">Source code verified on BscScan</p>
+                </div>
+                <span className="text-xs font-bold text-accent">{Number(verificationPrice).toFixed(4)} BNB</span>
               </div>
             )}
-
             {addMetadata && (
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-text-secondary flex items-center gap-1.5">
-                  <SecurityCheckIcon size={16} className="text-accent" variant="solid" />
-                  On-Chain Logo & Info
-                </span>
-                <span className="font-semibold text-text-primary">{metadataPrice} BNB</span>
+              <div className="flex items-center gap-3 bg-accent/5 border border-accent/20 rounded-lg p-3">
+                <SecurityCheckIcon size={18} className="text-accent" variant="solid" />
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-text-primary">On-Chain Logo & Info</p>
+                  <p className="text-[10px] text-text-tertiary">Logo, website, socials published on-chain</p>
+                </div>
+                <span className="text-xs font-bold text-accent">{Number(metadataPrice).toFixed(4)} BNB</span>
               </div>
             )}
           </div>
+        </div>
+      )}
 
-          <div className="pt-4 border-t border-border-primary flex justify-between items-end">
-            <span className="text-sm font-semibold text-text-primary">Total Payable</span>
-            <div className="text-right">
-              <div className="text-xl font-bold text-accent">{totalBnbCost} BNB</div>
-              <div className="text-xs text-text-secondary mt-1">~{formatUsd(totalBnbCost)} USD</div>
+      {/* Cost Summary */}
+      <div className="bg-surface-secondary border border-border-secondary rounded-xl p-6 card">
+        <h3 className="text-sm title text-text-primary mb-4">
+          Deployment Cost Summary
+        </h3>
+        
+        <div className="space-y-3 mb-6">
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-text-secondary">Smart Contract Deployment</span>
+            <span className="font-semibold text-text-primary">Free (+ Gas)</span>
+          </div>
+          
+          {addVerification && (
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-text-secondary flex items-center gap-1.5">
+                <CheckmarkBadge01Icon size={16} className="text-accent" variant="solid" />
+                Contract Verification
+              </span>
+              <span className="font-semibold text-text-primary">{Number(verificationPrice).toFixed(4)} BNB</span>
             </div>
+          )}
+
+          {addMetadata && (
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-text-secondary flex items-center gap-1.5">
+                <SecurityCheckIcon size={16} className="text-accent" variant="solid" />
+                On-Chain Logo & Info
+              </span>
+              <span className="font-semibold text-text-primary">{Number(metadataPrice).toFixed(4)} BNB</span>
+            </div>
+          )}
+        </div>
+
+        <div className="pt-4 border-t border-border-primary flex justify-between items-end">
+          <div>
+            <span className="text-sm font-semibold text-text-primary">Total Payable</span>
+            {totalBnbCost > 0 && (
+              <p className="text-[10px] text-text-tertiary mt-0.5">Sent to Teron service wallet + network gas</p>
+            )}
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-accent">{totalBnbCost.toFixed(4)} BNB</div>
+            <div className="text-xs text-text-secondary mt-1">≈ {formatUsd(totalBnbCost)} USD</div>
           </div>
         </div>
       </div>
     </div>
   );
 }
- 

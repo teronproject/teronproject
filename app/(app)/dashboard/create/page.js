@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { tokenCreateSchema } from "@/lib/zod-schemas/token";
@@ -12,14 +12,38 @@ import { useToastContext } from "@/components/ToastProvider";
 import { useWallet } from "@/hooks/useWallet";
 import { useRouter } from "next/navigation";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
+import { parseEther } from "viem";
+
+const COLD_WALLET = process.env.NEXT_PUBLIC_COLD_WALLET_ADDRESS;
 
 export default function CreateTokenPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isDeploying, setIsDeploying] = useState(false);
+  const [deployStatus, setDeployStatus] = useState(""); // "paying" | "submitting" | "done"
   const { addToast } = useToastContext();
   const { address, isConnected, isBnbChain } = useWallet();
   const router = useRouter();
   const { open } = useWeb3Modal();
+
+  // Wagmi send transaction
+  const { sendTransactionAsync } = useSendTransaction();
+
+  // Pricing state (fetched once for BNB cost calc)
+  const [pricing, setPricing] = useState([]);
+  const [bnbPriceUsd, setBnbPriceUsd] = useState(600);
+
+  useEffect(() => {
+    fetch("/api/pricing")
+      .then(res => res.json())
+      .then(data => { if (data.success) setPricing(data.services); })
+      .catch(console.error);
+
+    fetch("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT")
+      .then(res => res.json())
+      .then(data => { if (data?.price) setBnbPriceUsd(parseFloat(data.price)); })
+      .catch(console.error);
+  }, []);
 
   const {
     register,
@@ -58,11 +82,13 @@ export default function CreateTokenPage() {
       fieldsToValidate = ["name", "symbol", "decimals", "totalSupply"];
     } else if (currentStep === 2) {
       const formValues = getValues();
+      // Always validate email
+      fieldsToValidate.push("contactEmail");
       if (formValues.addVerification) {
-        fieldsToValidate.push("projectCategory", "contactEmail");
+        fieldsToValidate.push("projectCategory");
       }
       if (formValues.addMetadata) {
-        fieldsToValidate.push("logoUrl", "website", "twitter", "telegram", "discord");
+        fieldsToValidate.push("logoUrl", "website");
       }
     }
 
@@ -77,6 +103,19 @@ export default function CreateTokenPage() {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
+  /**
+   * Calculate total BNB cost for premium add-ons.
+   */
+  function getTotalBnbCost(data) {
+    const verificationPrice = pricing.find(p => p.serviceKey === "verification")?.priceBnb || 0.0033;
+    const metadataPrice = pricing.find(p => p.serviceKey === "metadata")?.priceBnb || 0.005;
+
+    let total = 0;
+    if (data.addVerification) total += Number(verificationPrice);
+    if (data.addMetadata) total += Number(metadataPrice);
+    return total;
+  }
+
   const onSubmit = async (data) => {
     if (!isConnected) {
       addToast({ variant: "error", message: "Please connect your wallet first." });
@@ -88,15 +127,50 @@ export default function CreateTokenPage() {
     }
 
     setIsDeploying(true);
-    
+    let paymentTxHash = null;
+
     try {
+      const totalCost = getTotalBnbCost(data);
+
+      // Step 1: If there's a premium cost, send BNB to cold wallet
+      if (totalCost > 0) {
+        setDeployStatus("paying");
+        addToast({ variant: "info", message: `Sending ${totalCost.toFixed(4)} BNB to Teron service wallet...` });
+
+        const coldWalletAddress = COLD_WALLET || process.env.COLD_WALLET_ADDRESS;
+        if (!coldWalletAddress) {
+          throw new Error("Cold wallet address not configured. Please contact support.");
+        }
+
+        try {
+          const txHash = await sendTransactionAsync({
+            to: coldWalletAddress,
+            value: parseEther(totalCost.toFixed(18)),
+          });
+
+          paymentTxHash = txHash;
+          addToast({ variant: "success", message: "Payment confirmed! Processing deployment..." });
+        } catch (txError) {
+          // User rejected or tx failed
+          if (txError.message?.includes("User rejected") || txError.message?.includes("denied")) {
+            throw new Error("Transaction was rejected. Deployment cancelled.");
+          }
+          throw new Error(`Payment failed: ${txError.shortMessage || txError.message}`);
+        }
+      }
+
+      // Step 2: Submit to backend
+      setDeployStatus("submitting");
       const response = await fetch("/api/launch/create", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "x-wallet-address": address // Note: In production this should be a cryptographically signed payload
+          "x-wallet-address": address,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          paymentTxHash,
+        }),
       });
 
       const result = await response.json();
@@ -105,21 +179,32 @@ export default function CreateTokenPage() {
         throw new Error(result.message || "Failed to initiate deployment");
       }
 
-      addToast({ variant: "success", message: "Token deployment initiated!" });
+      setDeployStatus("done");
+      addToast({ variant: "success", message: "Token deployment initiated! 🚀" });
       
       // Redirect to the deployment status page
       router.push(`/dashboard/deployments/${result.deploymentId}`);
     } catch (error) {
       addToast({ variant: "error", message: error.message });
       setIsDeploying(false);
+      setDeployStatus("");
     }
   };
+
+  // Deploy button label
+  function getDeployLabel() {
+    if (!isDeploying) return "Deploy Token";
+    if (deployStatus === "paying") return "Confirm Payment...";
+    if (deployStatus === "submitting") return "Deploying...";
+    if (deployStatus === "done") return "Redirecting...";
+    return "Deploying...";
+  }
 
   return (
     <div className="py-12 px-4">
       {!isConnected && currentStep === 3 ? (
         <div className="max-w-xl mx-auto text-center py-20">
-          <h2 className="text-2xl font-bold mb-4">Connect Wallet to Deploy</h2>
+          <h2 className="text-2xl font-bold mb-4 text-text-primary">Connect Wallet to Deploy</h2>
           <p className="text-text-secondary mb-8">
             You need a connected wallet to sign the deployment transaction.
           </p>
@@ -145,7 +230,7 @@ export default function CreateTokenPage() {
           }
           onNext={currentStep === 3 ? handleSubmit(onSubmit) : nextStep}
           onBack={currentStep > 1 ? prevStep : null}
-          nextLabel={currentStep === 3 ? (isDeploying ? "Deploying..." : "Deploy Token") : "Continue"}
+          nextLabel={currentStep === 3 ? getDeployLabel() : "Continue"}
           isNextLoading={isDeploying}
         >
           <form onSubmit={(e) => e.preventDefault()}>
