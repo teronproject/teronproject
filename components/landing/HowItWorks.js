@@ -61,11 +61,9 @@ export default function HowItWorks() {
             </div>
 
           </div>
-
-          {/* Bottom Striping Texture */}
-          <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
         </div>
       </div>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
     </section>
   );
 }
@@ -144,8 +142,6 @@ function VisualVerify() {
         <line x1="200" y1="0" x2="200" y2="180" stroke="url(#domeGlow)" strokeWidth="1.5" />
         
       </svg>
-      {/* Bottom gradient to blend into container seamlessly */}
-      <div className="absolute bottom-0 inset-x-0 h-16 bg-linear-to-t from-[#09090b] to-transparent" />
     </div>
   );
 }

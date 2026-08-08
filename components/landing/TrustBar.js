@@ -42,6 +42,7 @@ export default function TrustBar() {
           </h2>
         </div>
       </div>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
     </section>
   );
 }

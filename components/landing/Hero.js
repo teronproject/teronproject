@@ -20,14 +20,14 @@ export default function Hero() {
       {/* Top Section - Typography and CTA */}
       <div className="max-w-5xl w-full mx-auto px-4 z-10 flex flex-col items-center text-center">
         {/* Big Premium Headline */}
-        <h1 className="title text-5xl sm:text-6xl font-semibold text-text-primary tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
+        <h1 className="title text-3xl sm:text-5xl lg:text-6xl font-semibold text-text-primary tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
           Launch Your Token
           <br className="hidden sm:block" />
           Secure, Simple, Trusted
         </h1>
 
         {/* Minimal Subheading */}
-        <p className="text-lg text-balance text-text-secondary max-w-2xl leading-relaxed mb-10">
+        <p className="text-sm sm:text-lg text-balance text-text-secondary max-w-2xl leading-relaxed mb-10">
           Create secure BEP-20 smart contracts. Manage your project from a simple dashboard. Fast and trusted by builders.
         </p>
 
@@ -73,13 +73,13 @@ export default function Hero() {
                         <div className="text-sm text-text-secondary mt-0.5">Let's build your project</div>
                      </div>
                   </div>
-                  <div className="text-xs font-semibold card px-3 py-1.5 bg-white/5 rounded-full text-text-secondary border border-white/5 whitespace-nowrap">
+                  <div className="text-xs font-semibold card w-fit px-3 py-1.5 bg-white/5 rounded-full text-text-secondary border border-white/5 whitespace-nowrap">
                     BEP-20 Standard
                   </div>
                </div>
                
                <div className="flex flex-col sm:flex-row items-center gap-3 mt-2">
-                 <Link href="/dashboard/create" className="w-full sm:w-auto h-11 px-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[14px] font-medium text-text-primary transition-colors flex items-center justify-center gap-2 cta">
+                 <Link href="/dashboard/create" className="w-full sm:w-auto h-11 px-5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[14px] font-medium text-text-primary transition-colors flex items-center justify-center gap-2 cta opacity-50">
                     Start Building
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                  </Link>
@@ -91,6 +91,7 @@ export default function Hero() {
             </div>
          </div>
       </div>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
     </section>
   );
 }
