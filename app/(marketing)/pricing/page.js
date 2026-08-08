@@ -1,159 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { CheckmarkBadge01Icon, SecurityCheckIcon } from "hugeicons-react";
+import Pricing from "@/components/landing/Pricing";
+import FAQ from "@/components/landing/FAQ";
+import CTA from "@/components/landing/CTA";
+import CanvasBackground from "@/components/landing/CanvasBackground";
 
 export default function PricingPage() {
-  const [pricing, setPricing] = useState([]);
-  const [bnbPrice, setBnbPrice] = useState(600);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const [pricingRes, bnbRes] = await Promise.all([
-          fetch("/api/pricing"),
-          fetch("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT"),
-        ]);
-        const pricingData = await pricingRes.json();
-        const bnbData = await bnbRes.json();
-
-        if (pricingData.success) setPricing(pricingData.services);
-        if (bnbData?.price) setBnbPrice(parseFloat(bnbData.price));
-      } catch (err) {
-        console.error("Pricing load error:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    load();
-  }, []);
-
-  const verificationService = pricing.find(p => p.serviceKey === "verification");
-  const metadataService = pricing.find(p => p.serviceKey === "metadata");
-
   return (
-    <div className="max-w-5xl mx-auto px-4 py-20 sm:py-28">
-      <div className="text-center mb-16">
-        <p className="text-accent text-sm font-bold uppercase tracking-wider mb-3">Pricing</p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary">
-          Simple, Transparent Pricing
-        </h1>
-        <p className="text-text-secondary mt-3 max-w-lg mx-auto">
-          Deploy your token for free. Only pay for optional premium services. All payments in BNB with live market conversion.
-        </p>
-        {!isLoading && (
-          <p className="text-xs text-text-tertiary mt-4">
-            Current BNB Price: <span className="font-mono text-text-secondary">${bnbPrice.toFixed(2)}</span>
-          </p>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-        {/* Free Tier */}
-        <div className="bg-surface-primary border border-border-primary rounded-2xl p-8">
-          <h3 className="text-lg font-bold text-text-primary mb-1">Free Launch</h3>
-          <p className="text-xs text-text-tertiary mb-6">Deploy your BEP-20 token</p>
-          <p className="text-4xl font-extrabold text-text-primary mb-1">$0</p>
-          <p className="text-xs text-text-tertiary mb-8">+ ~$0.05 gas</p>
-          <ul className="space-y-3 text-sm text-text-secondary mb-8">
-            <li className="flex gap-2"><span className="text-success">✓</span> BEP-20 smart contract</li>
-            <li className="flex gap-2"><span className="text-success">✓</span> Public token profile</li>
-            <li className="flex gap-2"><span className="text-success">✓</span> Leaderboard listing</li>
-            <li className="flex gap-2"><span className="text-success">✓</span> Creator dashboard</li>
-            <li className="flex gap-2"><span className="text-success">✓</span> Logo & banner upload</li>
-          </ul>
-          <Link href="/dashboard/create" className="h-11 w-full bg-surface-secondary border border-border-secondary text-text-primary font-semibold rounded-lg flex items-center justify-center hover:bg-surface-tertiary transition-colors text-sm">
-            Start Free
-          </Link>
-        </div>
-
-        {/* Verification */}
-        <div className="bg-surface-primary border-2 border-accent rounded-2xl p-8 relative shadow-xl shadow-accent/5">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-accent text-accent-text text-xs font-bold rounded-full">
-            Recommended
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-1">
+        <section className="relative w-full pt-32 pb-10 sm:pt-40 sm:pb-16 overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none">
+             <CanvasBackground />
+             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#050403] to-transparent" />
+             <div className="absolute inset-0 bg-[#0a0a0a]/30" />
           </div>
-          <h3 className="text-lg font-bold text-text-primary mb-1 flex items-center gap-2">
-            <CheckmarkBadge01Icon size={20} className="text-accent" variant="solid" />
-            Contract Verification
-          </h3>
-          <p className="text-xs text-text-tertiary mb-6">Verified source code on BscScan</p>
-          <p className="text-4xl font-extrabold text-accent mb-1">
-            {verificationService ? `$${verificationService.priceUsd?.toFixed(2)}` : "~$2.00"}
-          </p>
-          <p className="text-xs text-text-tertiary mb-8">
-            {verificationService ? `≈ ${verificationService.priceBnb?.toFixed(4)} BNB` : "≈ 0.0033 BNB"}
-          </p>
-          <ul className="space-y-3 text-sm text-text-secondary mb-8">
-            <li className="flex gap-2"><span className="text-success">✓</span> Everything in Free</li>
-            <li className="flex gap-2"><span className="text-accent">★</span> Verified source code</li>
-            <li className="flex gap-2"><span className="text-accent">★</span> Green ✓ on BscScan</li>
-            <li className="flex gap-2"><span className="text-accent">★</span> Investor confidence</li>
-          </ul>
-          <Link href="/dashboard/create" className="h-11 w-full bg-accent text-accent-text font-bold rounded-lg flex items-center justify-center hover:bg-accent-hover transition-colors text-sm shadow-lg shadow-accent/20">
-            Launch + Verify
-          </Link>
-        </div>
+          
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h1 className="title text-5xl sm:text-6xl font-medium text-white tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
+              Simple Pricing <br className="hidden sm:block" /> No Hidden Fees
+            </h1>
+            <p className="text-[18px] sm:text-[20px] text-text-secondary max-w-2xl mx-auto leading-relaxed mb-10">
+              Deploy your core smart contract for free. Only pay when you need premium ecosystem features like BscScan verification or custom on-chain metadata.
+            </p>
+          </div>
+        </section>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
+        {/* Integrated Components */}
+        <Pricing />
 
-        {/* Full Suite */}
-        <div className="bg-surface-primary border border-border-primary rounded-2xl p-8">
-          <h3 className="text-lg font-bold text-text-primary mb-1 flex items-center gap-2">
-            <SecurityCheckIcon size={20} className="text-accent" variant="solid" />
-            Full Suite
-          </h3>
-          <p className="text-xs text-text-tertiary mb-6">Verification + On-chain metadata</p>
-          <p className="text-4xl font-extrabold text-text-primary mb-1">
-            {verificationService && metadataService
-              ? `$${(verificationService.priceUsd + metadataService.priceUsd).toFixed(2)}`
-              : "~$5.00"}
-          </p>
-          <p className="text-xs text-text-tertiary mb-8">
-            {verificationService && metadataService
-              ? `≈ ${(verificationService.priceBnb + metadataService.priceBnb).toFixed(4)} BNB`
-              : "≈ 0.0083 BNB"}
-          </p>
-          <ul className="space-y-3 text-sm text-text-secondary mb-8">
-            <li className="flex gap-2"><span className="text-success">✓</span> Everything in Verification</li>
-            <li className="flex gap-2"><span className="text-accent">★</span> On-chain logo & info</li>
-            <li className="flex gap-2"><span className="text-accent">★</span> Trust Wallet visibility</li>
-            <li className="flex gap-2"><span className="text-accent">★</span> Priority support</li>
-          </ul>
-          <Link href="/dashboard/create" className="h-11 w-full bg-surface-secondary border border-border-secondary text-text-primary font-semibold rounded-lg flex items-center justify-center hover:bg-surface-tertiary transition-colors text-sm">
-            Launch Full Suite
-          </Link>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-2xl font-bold text-text-primary text-center mb-8">FAQ</h2>
-        <div className="space-y-4">
-          {[
-            {
-              q: "Is deploying a token really free?",
-              a: "Yes. You only pay the BNB Chain network gas fee (~$0.05). Teron does not charge any fee for the basic token deployment.",
-            },
-            {
-              q: "How does the BNB pricing work?",
-              a: "Prices are set in USD and converted to BNB using live market data. The BNB amount you see is the actual amount you'll pay at the time of the transaction.",
-            },
-            {
-              q: "What does Contract Verification do?",
-              a: "It publishes your token's Solidity source code on BscScan so anyone can read and verify the contract logic. Verified contracts get a green checkmark and build trust with investors.",
-            },
-            {
-              q: "Can I add premium services later?",
-              a: "Yes. After deploying your token, you can purchase verification and metadata publishing from your dashboard at any time.",
-            },
-          ].map((faq) => (
-            <div key={faq.q} className="bg-surface-primary border border-border-primary rounded-xl p-5">
-              <h3 className="font-semibold text-text-primary text-sm">{faq.q}</h3>
-              <p className="text-sm text-text-secondary mt-2 leading-relaxed">{faq.a}</p>
+        {/* Content-heavy Value Section */}
+        <section className="py-14 border-t border-white/5">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 text-left">
+            <h2 className="title text-3xl sm:text-4xl font-medium text-white tracking-tight mb-6">Why we charge for premium features</h2>
+            <div className="text-[16px] text-text-tertiary text-balance leading-relaxed space-y-3 text-left">
+              <p>
+                The core BEP-20 smart contract deployment is completely free because we believe basic access to Web3 should not be gated. You only pay the standard network gas fee required by the BNB Chain to process the transaction.
+              </p>
+              <p>
+                Premium features like automated BscScan Verification and On-Chain Metadata require us to maintain complex server infrastructure. We pay external API costs, maintain high-speed indexing nodes, and manage automated compiler microservices to ensure your contract is verified within seconds of deployment. 
+              </p>
+              <p>
+                By charging a flat, transparent fee for these upgrades, we ensure the Teron platform remains fast, reliable, and entirely ad-free. You pay once, and your token's premium status lives on the blockchain forever.
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </section>
+        <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
+        <FAQ />
+        
+        <CTA />
+      </main>
     </div>
   );
 }
