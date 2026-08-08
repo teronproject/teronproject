@@ -5,7 +5,7 @@ import { useState } from "react";
 const faqs = [
   {
     question: "What is Teron and how does it work?",
-    answer: "Teron is a premium smart contract launchpad built natively for the BNB Smart Chain. It allows you to create, deploy, and verify standard BEP-20 tokens in minutes without writing a single line of code."
+    answer: "Teron is a  smart contract launchpad built natively for the BNB Smart Chain. It allows you to create, deploy, and verify standard BEP-20 tokens in minutes without writing a single line of code."
   },
   {
     question: "Do I need coding experience to launch a token?",
@@ -25,7 +25,7 @@ const faqs = [
   },
   {
     question: "How much does it cost to use Teron?",
-    answer: "Core contract generation and deployment is completely free you only pay the standard BNB gas fee to the network. Optional premium features like BscScan verification and on-chain metadata cost a small, flat fee paid directly in BNB."
+    answer: "Core contract generation and deployment is completely free you only pay the standard BNB gas fee to the network. Optional  features like BscScan verification and on-chain metadata cost a small, flat fee paid directly in BNB."
   }
 ];
 
@@ -63,7 +63,7 @@ export default function FAQ() {
                     {faq.question}
                   </span>
                   
-                  {/* Premium Morphing Plus/Minus Icon */}
+                  {/*  Morphing Plus/Minus Icon */}
                   <div className="shrink-0 ml-4 relative w-6 h-6 flex items-center justify-center">
                      {/* Horizontal line (always visible, changes color) */}
                      <div className={`absolute w-3.5 h-[1.5px] rounded-full transition-colors duration-300 ${isOpen ? 'bg-accent' : 'bg-text-tertiary group-hover:bg-text-secondary'}`} />
