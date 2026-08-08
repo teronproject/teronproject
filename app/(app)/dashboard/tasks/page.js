@@ -149,7 +149,7 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="mx-auto py-12 px-4 space-y-8">
+    <div className="max-w-6xl w-full mx-auto py-12 px-4 space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-2xl title text-text-primary flex items-center gap-3">
