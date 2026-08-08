@@ -54,9 +54,9 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] mx-auto w-full">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-64px)] mx-auto w-full overflow-hidden">
       {/* Admin Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-border-primary  backdrop-blur-xl min-h-[calc(100vh-64px)] sticky top-16 shrink-0 z-10">
+      <aside className="hidden md:flex flex-col w-64 border-r border-border-primary  backdrop-blur-xl h-full sticky top-16 shrink-0 z-10">
         <div className="p-6">
           <h2 className="text-xs font-bold text-error uppercase tracking-wider mb-1">Admin Panel</h2>
           <p className="text-[10px] text-text-tertiary font-mono mb-4 truncate">{address}</p>
@@ -103,7 +103,7 @@ export default function AdminLayout({ children }) {
         </div>
       </nav>
 
-      <main className="flex-1 w-full pb-20 md:pb-0">{children}</main>
+      <main className="flex-1 w-full pb-20 md:pb-0 overflow-y-auto">{children}</main>
     </div>
   );
 }
