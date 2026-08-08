@@ -7,7 +7,7 @@ import Logo from "./Logo";
 export default function Footer() {
   return (
     <footer className="border-t border-border-primary ">
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="max-w-[1400px] mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
@@ -100,7 +100,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border-primary flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-12 pt-8 border-t border-dashed border-border-primary flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-text-tertiary">
             © {new Date().getFullYear()} Teron. All rights reserved.
           </p>
