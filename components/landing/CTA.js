@@ -6,6 +6,7 @@ import { ArrowRight01Icon } from "hugeicons-react";
 
 export default function CTA() {
   return (
+    <>
     <section className="relative w-full py-20 overflow-hidden border-t border-white/5 bg-[#0a0a0a]">
       <div className="absolute inset-0 pointer-events-none">
          <CanvasBackground />
@@ -28,6 +29,8 @@ export default function CTA() {
         </Link>
       </div>
     </section>
+     <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
+    </>
   );
 }
 

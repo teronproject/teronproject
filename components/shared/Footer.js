@@ -6,13 +6,13 @@ import Logo from "./Logo";
  */
 export default function Footer() {
   return (
-    <footer className="border-t border-border-primary bg-bg-secondary">
+    <footer className="border-t border-border-primary ">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Logo size="lg" />
-            <p className="mt-3 text-sm text-text-tertiary max-w-xs">
+            <p className="mt-3 text-xs text-balance text-text-tertiary max-w-xs">
               Premium Web3 token launch platform for BNB Chain.
             </p>
           </div>
@@ -103,9 +103,6 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-border-primary flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-text-tertiary">
             © {new Date().getFullYear()} Teron. All rights reserved.
-          </p>
-          <p className="text-sm text-text-tertiary">
-            Built for BNB Chain
           </p>
         </div>
       </div>
