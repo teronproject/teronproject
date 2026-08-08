@@ -7,7 +7,7 @@ import Logo from "./Logo";
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border-primary bg-bg-primary/80 backdrop-blur-xl border-left border-right">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Logo size="md" />
           <nav className="hidden md:flex items-center gap-6">
@@ -34,8 +34,8 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
           <Link
-            href="/dashboard/create"
-            className="inline-flex items-center justify-center h-10 px-6 bg-accent text-accent-text font-semibold rounded text-sm hover:bg-accent-hover active:bg-accent-active transition-colors"
+            href="/dashboard"
+            className="inline-flex cta items-center justify-center h-10 px-6 bg-accent text-accent-text font-semibold rounded text-sm hover:bg-accent-hover active:bg-accent-active transition-colors"
           >
             Launch Token
           </Link>
