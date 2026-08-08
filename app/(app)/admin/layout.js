@@ -54,9 +54,9 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] max-w-7xl mx-auto w-full">
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] mx-auto w-full">
       {/* Admin Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 border-r border-border-primary bg-surface-primary/50 backdrop-blur-xl min-h-[calc(100vh-64px)] sticky top-16 shrink-0 z-10">
+      <aside className="hidden md:flex flex-col w-64 border-r border-border-primary  backdrop-blur-xl min-h-[calc(100vh-64px)] sticky top-16 shrink-0 z-10">
         <div className="p-6">
           <h2 className="text-xs font-bold text-error uppercase tracking-wider mb-1">Admin Panel</h2>
           <p className="text-[10px] text-text-tertiary font-mono mb-4 truncate">{address}</p>
@@ -70,17 +70,10 @@ export default function AdminLayout({ children }) {
                   href={item.href}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden ${
                     isActive
-                      ? "text-accent font-semibold"
+                      ? "text-accent cta font-semibold"
                       : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
                   }`}
                 >
-                  {isActive && (
-                    <motion.div
-                      layoutId="admin-sidebar-active"
-                      className="absolute inset-0 bg-accent/10 border border-accent/20 rounded-xl"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )}
                   <Icon variant={isActive ? "solid" : "stroke-rounded"} size={20} className="relative z-10" />
                   <span className="relative z-10 text-sm">{item.name}</span>
                 </Link>

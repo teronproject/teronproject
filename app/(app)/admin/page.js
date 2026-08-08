@@ -64,7 +64,7 @@ export default function AdminOverviewPage() {
   return (
     <div className="py-12 px-4 sm:px-6">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-text-primary">Platform Overview</h1>
+        <h1 className="text-2xl title text-text-primary">Platform Overview</h1>
         <p className="text-sm text-text-secondary mt-1">
           Real-time stats and metrics for the Teron platform.
         </p>
@@ -75,9 +75,9 @@ export default function AdminOverviewPage() {
         {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
-            <div key={stat.label} className="bg-surface-primary border border-border-primary rounded-xl p-5 space-y-3">
+            <div key={stat.label} className="bg-surface-primary card border border-border-primary rounded-xl p-5 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">{stat.label}</span>
+                <span className="text-sm text-text-secondary stitle">{stat.label}</span>
                 <Icon size={18} className={stat.color} variant="stroke-rounded" />
               </div>
               <p className={`text-2xl font-extrabold ${stat.color}`}>{stat.value}</p>
@@ -87,12 +87,12 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-surface-primary border border-border-primary rounded-xl p-6">
-        <h2 className="font-bold text-text-primary mb-4">Quick Actions</h2>
+      <div className="bg-surface-primary border card border-border-primary rounded-xl p-6">
+        <h2 className="title text-text-primary mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
             href="/admin/tokens"
-            className="flex items-center gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
+            className="flex items-center card gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
           >
             <CoinsSwapIcon size={20} className="text-text-tertiary group-hover:text-accent" />
             <div>
@@ -103,7 +103,7 @@ export default function AdminOverviewPage() {
 
           <Link
             href="/admin/users"
-            className="flex items-center gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
+            className="flex items-center card gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
           >
             <UserMultiple02Icon size={20} className="text-text-tertiary group-hover:text-accent" />
             <div>
@@ -114,7 +114,7 @@ export default function AdminOverviewPage() {
 
           <Link
             href="/admin/pricing"
-            className="flex items-center gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
+            className="flex items-center card gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
           >
             <MoneyBag02Icon size={20} className="text-text-tertiary group-hover:text-accent" />
             <div>
