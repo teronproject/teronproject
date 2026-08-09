@@ -77,7 +77,6 @@ export async function sendDeploymentSuccessEmail({
 
         <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
           <div style="text-align: center; margin-bottom: 24px;">
-            <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
             <h2 style="color: #fafafa; font-size: 20px; margin: 0;">Deployment Successful!</h2>
             <p style="color: #a1a1aa; font-size: 13px; margin: 8px 0 0;">
               Your token <strong style="color: #eab308;">${tokenName} (${symbol})</strong> has been deployed to BNB Smart Chain.
@@ -138,7 +137,7 @@ export async function sendDeploymentSuccessEmail({
 
   return sendEmail({
     to,
-    subject: `✅ ${tokenName} (${symbol}) — Deployed Successfully!`,
+    subject: `${tokenName} (${symbol}) - Deployed Successfully!`,
     html,
   });
 }
@@ -176,7 +175,7 @@ export async function sendPaymentInvoiceEmail({
     <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
       <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
         <div style="text-align: center; margin-bottom: 32px;">
-          <h1 style="color: #eab308; font-size: 24px; margin: 0;">🚀 Teron</h1>
+          <h1 style="color: #eab308; font-size: 24px; margin: 0;">Teron</h1>
           <p style="color: #71717a; font-size: 12px; margin: 8px 0 0;">Payment Receipt</p>
         </div>
 
@@ -226,7 +225,7 @@ export async function sendPaymentInvoiceEmail({
 
   return sendEmail({
     to,
-    subject: `🧾 Payment Receipt — ${tokenName} (${symbol})`,
+    subject: `Payment Receipt - ${tokenName} (${symbol})`,
     html,
   });
 }
