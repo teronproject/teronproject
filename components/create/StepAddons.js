@@ -212,17 +212,18 @@ export default function StepAddons({ register, errors, watch, setValue }) {
         </div>
 
         {/* ══════════════ Metadata Toggle ══════════════ */}
-        <div className={`rounded-xl border-2 transition-all duration-300 ${addMetadata ? "border-accent" : "border-border-secondary"}`}>
+        <div className={`rounded-xl border-2 transition-all duration-300 ${addMetadata ? "border-accent" : "border-border-secondary opacity-70"}`}>
           <button
             type="button"
-            onClick={() => setValue("addMetadata", !addMetadata, { shouldValidate: true })}
-            className="w-full cursor-pointer flex items-start p-5 select-none relative text-left"
+            disabled={true}
+            className="w-full flex items-start p-5 select-none relative text-left cursor-not-allowed"
           >
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <SecurityCheckIcon variant={addMetadata ? "solid" : "stroke-rounded"} size={20} className={addMetadata ? "text-accent" : "text-text-secondary"} />
-                <h4 className="font-semibold text-text-primary text-sm">
+                <h4 className="font-semibold text-text-primary text-sm flex items-center gap-2">
                   On-Chain Logo & Info
+                  <span className="text-[9px] uppercase font-bold bg-warning/20 text-warning px-1.5 py-0.5 rounded">Under Maintenance (Live Soon)</span>
                 </h4>
               </div>
               <p className="text-xs text-text-secondary mt-1.5 ml-7 leading-relaxed">
@@ -234,8 +235,8 @@ export default function StepAddons({ register, errors, watch, setValue }) {
               </div>
             </div>
             <div className="ml-4 flex items-center h-full pt-2 shrink-0">
-              <div className={`w-12 h-7 rounded-full transition-all duration-300 relative ${addMetadata ? 'bg-accent shadow-[0_0_10px_rgba(var(--color-accent-rgb,234,179,8),0.3)]' : 'bg-surface-tertiary'}`}>
-                <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300 ${addMetadata ? 'translate-x-5' : 'translate-x-0'}`} />
+              <div className={`w-12 h-7 rounded-full transition-all duration-300 relative bg-surface-tertiary/50`}>
+                <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-border-secondary shadow-sm transition-transform duration-300`} />
               </div>
             </div>
           </button>
