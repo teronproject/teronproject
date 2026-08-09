@@ -10,6 +10,7 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import Link from "next/link";
+import { WalletAdd02Icon } from "hugeicons-react";
 
 export default function DeploymentStatusPage({ params }) {
   // Unwrap params in Next.js 15/16 App Router
@@ -159,6 +160,35 @@ export default function DeploymentStatusPage({ params }) {
       });
     } catch (e) {
       console.error("Failed to update status in database:", e);
+    }
+  };
+
+  const handleAddTokenToWallet = async () => {
+    if (typeof window.ethereum !== 'undefined' && contractAddr && deploymentData?.token) {
+      try {
+        const wasAdded = await window.ethereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: contractAddr,
+              symbol: deploymentData.token.symbol,
+              decimals: deploymentData.token.decimals,
+              image: deploymentData.token.logoUrl || undefined,
+            },
+          },
+        });
+        if (wasAdded) {
+          addToast({ variant: 'success', message: 'Token added to wallet!' });
+        } else {
+          addToast({ variant: 'info', message: 'User rejected token addition' });
+        }
+      } catch (error) {
+        console.error(error);
+        addToast({ variant: 'error', message: 'Failed to add token to wallet' });
+      }
+    } else {
+      addToast({ variant: 'error', message: 'Wallet not connected or token not deployed yet.' });
     }
   };
 
@@ -317,6 +347,15 @@ export default function DeploymentStatusPage({ params }) {
               >
                 View on BscScan
               </a>
+            )}
+            {contractAddr && (
+              <button
+                onClick={handleAddTokenToWallet}
+                className="h-10 px-6 cta bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded inline-flex items-center gap-2 text-sm hover:bg-surface-secondary transition-colors"
+              >
+                <WalletAdd02Icon size={18} className="text-black" />
+                Add {token.symbol} to Wallet
+              </button>
             )}
           </div>
 
