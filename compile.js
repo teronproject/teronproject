@@ -9,12 +9,12 @@ try {
     fs.mkdirSync('./build');
   }
 
-  // Compile the contract to individual ABI and BIN files
-  execSync('npx -y solc@0.8.20 --abi --bin ERC20.sol -o build', { encoding: 'utf-8' });
+  // Compile the contract to individual ABI and BIN files with optimization ON (runs: 200)
+  execSync('npx -y solc@0.8.20 --optimize --optimize-runs 200 --abi --bin ERC20.sol -o build', { encoding: 'utf-8' });
   
-  // Read the generated files
-  const abiContent = fs.readFileSync('./build/ERC20_sol_StandardToken.abi', 'utf-8');
-  const binContent = fs.readFileSync('./build/ERC20_sol_StandardToken.bin', 'utf-8').trim();
+  // Read the generated files for TeronBEP20
+  const abiContent = fs.readFileSync('./build/ERC20_sol_TeronBEP20.abi', 'utf-8');
+  const binContent = fs.readFileSync('./build/ERC20_sol_TeronBEP20.bin', 'utf-8').trim();
 
   if (!abiContent || !binContent) {
     throw new Error("Compilation output files are empty or missing.");

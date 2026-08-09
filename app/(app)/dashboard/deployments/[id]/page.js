@@ -111,8 +111,9 @@ export default function DeploymentStatusPage({ params }) {
     if (isConfirmedChain && receipt) {
       const newContractAddress = receipt.contractAddress;
       setContractAddr(newContractAddress);
+      // The PATCH handler now auto-triggers BscScan verification + email in the background
       updateStatus("CONFIRMED", { txHash, contractAddress: newContractAddress });
-      addToast({ variant: "success", message: "Token successfully deployed on BNB Chain!" });
+      addToast({ variant: "success", message: "Token deployed! Verification starting in background..." });
     } else if (receiptError) {
       updateStatus("FAILED", { errorMessage: receiptError.message });
       addToast({ variant: "error", message: "Transaction failed on blockchain." });

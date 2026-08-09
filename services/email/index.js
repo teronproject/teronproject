@@ -1,26 +1,50 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 /**
- * Email Service
+ * Email Service — Gmail SMTP via Nodemailer
  *
- * Sends transactional emails via Resend.
+ * Uses Google App Passwords for authentication.
+ * Env vars: EMAIL_USER, EMAIL_APP_PASSWORD
  */
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Teron <noreply@teron.io>";
+function createTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_APP_PASSWORD,
+    },
+  });
+}
 
 /**
- * Send a deployment success email.
- *
- * @param {object} params
- * @param {string} params.to - Recipient email
- * @param {string} params.tokenName
- * @param {string} params.symbol
- * @param {string} params.contractAddress
- * @param {string} params.txHash
- * @param {string} params.totalSupply
- * @param {boolean} params.verified - Whether contract was verified on BscScan
- * @param {boolean} params.metadataSubmitted - Whether metadata was submitted
+ * Send a generic HTML email.
+ */
+async function sendEmail({ to, subject, html }) {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_APP_PASSWORD) {
+    console.warn("Email credentials not set. Skipping email.");
+    return { success: false, message: "Email credentials not configured" };
+  }
+
+  try {
+    const transporter = createTransporter();
+    const info = await transporter.sendMail({
+      from: `"Teron Protocol" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    });
+
+    console.log("Email sent:", info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (err) {
+    console.error("Email send error:", err);
+    return { success: false, message: err.message };
+  }
+}
+
+/**
+ * Send a deployment success email with token info.
  */
 export async function sendDeploymentSuccessEmail({
   to,
@@ -33,7 +57,6 @@ export async function sendDeploymentSuccessEmail({
   metadataSubmitted = false,
 }) {
   if (!to) return { success: false, message: "No recipient email" };
-  if (!process.env.RESEND_API_KEY) return { success: false, message: "RESEND_API_KEY not set" };
 
   const bscscanUrl = `https://bscscan.com/token/${contractAddress}`;
   const txUrl = `https://bscscan.com/tx/${txHash}`;
@@ -47,13 +70,11 @@ export async function sendDeploymentSuccessEmail({
     </head>
     <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
       <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
-        <!-- Header -->
         <div style="text-align: center; margin-bottom: 32px;">
           <h1 style="color: #eab308; font-size: 24px; margin: 0;">🚀 Teron</h1>
           <p style="color: #71717a; font-size: 12px; margin: 8px 0 0;">Token Deployment Platform</p>
         </div>
 
-        <!-- Main Card -->
         <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
           <div style="text-align: center; margin-bottom: 24px;">
             <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
@@ -63,7 +84,6 @@ export async function sendDeploymentSuccessEmail({
             </p>
           </div>
 
-          <!-- Token Details -->
           <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
@@ -93,7 +113,6 @@ export async function sendDeploymentSuccessEmail({
             </table>
           </div>
 
-          <!-- CTA -->
           <div style="text-align: center;">
             <a href="${bscscanUrl}" style="display: inline-block; background: #eab308; color: #0a0a0f; font-weight: 700; font-size: 13px; padding: 12px 32px; border-radius: 8px; text-decoration: none;">
               View on BscScan →
@@ -101,14 +120,12 @@ export async function sendDeploymentSuccessEmail({
           </div>
         </div>
 
-        <!-- TX Link -->
         <div style="text-align: center;">
           <a href="${txUrl}" style="color: #71717a; font-size: 11px; text-decoration: none;">
             Transaction: ${txHash.slice(0, 10)}...${txHash.slice(-8)}
           </a>
         </div>
 
-        <!-- Footer -->
         <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #27272a;">
           <p style="color: #52525b; font-size: 11px; margin: 0;">
             © ${new Date().getFullYear()} Teron Protocol. All rights reserved.
@@ -119,22 +136,97 @@ export async function sendDeploymentSuccessEmail({
     </html>
   `;
 
-  try {
-    const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
-      to,
-      subject: `✅ ${tokenName} (${symbol}) — Deployed Successfully!`,
-      html,
-    });
+  return sendEmail({
+    to,
+    subject: `✅ ${tokenName} (${symbol}) — Deployed Successfully!`,
+    html,
+  });
+}
 
-    if (error) {
-      console.error("Email send error:", error);
-      return { success: false, message: error.message };
-    }
+/**
+ * Send a payment invoice/receipt email.
+ */
+export async function sendPaymentInvoiceEmail({
+  to,
+  tokenName,
+  symbol,
+  services = [],
+  totalBnb,
+  paymentTxHash,
+  walletAddress,
+}) {
+  if (!to) return { success: false, message: "No recipient email" };
 
-    return { success: true, emailId: data?.id };
-  } catch (err) {
-    console.error("Email service error:", err);
-    return { success: false, message: err.message };
-  }
+  const txUrl = `https://bscscan.com/tx/${paymentTxHash}`;
+
+  const serviceRows = services.map(s => `
+    <tr>
+      <td style="color: #fafafa; font-size: 13px; padding: 10px 0; border-top: 1px solid #27272a;">${s.name}</td>
+      <td style="color: #eab308; font-size: 13px; text-align: right; padding: 10px 0; border-top: 1px solid #27272a; font-weight: 600;">${Number(s.amountBnb).toFixed(4)} BNB</td>
+    </tr>
+  `).join("");
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #eab308; font-size: 24px; margin: 0;">🚀 Teron</h1>
+          <p style="color: #71717a; font-size: 12px; margin: 8px 0 0;">Payment Receipt</p>
+        </div>
+
+        <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 48px; margin-bottom: 12px;">🧾</div>
+            <h2 style="color: #fafafa; font-size: 20px; margin: 0;">Payment Confirmed</h2>
+            <p style="color: #a1a1aa; font-size: 13px; margin: 8px 0 0;">
+              Premium services for <strong style="color: #eab308;">${tokenName} (${symbol})</strong>
+            </p>
+          </div>
+
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="color: #71717a; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 8px 0;">Service</td>
+                <td style="color: #71717a; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; text-align: right; padding: 8px 0;">Amount</td>
+              </tr>
+              ${serviceRows}
+              <tr>
+                <td style="color: #fafafa; font-size: 14px; font-weight: 700; padding: 12px 0; border-top: 2px solid #3f3f46;">Total</td>
+                <td style="color: #eab308; font-size: 14px; font-weight: 700; text-align: right; padding: 12px 0; border-top: 2px solid #3f3f46;">${Number(totalBnb).toFixed(4)} BNB</td>
+              </tr>
+            </table>
+          </div>
+
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+            <p style="color: #71717a; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 6px;">Transaction Hash</p>
+            <a href="${txUrl}" style="color: #eab308; font-size: 11px; font-family: monospace; text-decoration: none; word-break: break-all;">${paymentTxHash}</a>
+          </div>
+
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 16px;">
+            <p style="color: #71717a; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 6px;">Paid From</p>
+            <p style="color: #fafafa; font-size: 11px; font-family: monospace; margin: 0; word-break: break-all;">${walletAddress}</p>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #27272a;">
+          <p style="color: #52525b; font-size: 11px; margin: 0;">
+            © ${new Date().getFullYear()} Teron Protocol. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to,
+    subject: `🧾 Payment Receipt — ${tokenName} (${symbol})`,
+    html,
+  });
 }

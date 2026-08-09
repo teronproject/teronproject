@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
+import { processPostDeployment } from "@/services/token-deployment";
 
 /**
  * GET /api/deployments/[id]
@@ -39,15 +40,17 @@ export async function GET(request, { params }) {
 }
 
 const updateDeploymentSchema = z.object({
-  status: z.enum(["PENDING", "SIMULATING", "DEPLOYING", "CONFIRMED", "FAILED"]),
+  status: z.enum(["PENDING", "SIMULATING", "DEPLOYING", "DEPLOYED", "CONFIRMED", "FAILED"]),
   txHash: z.string().optional(),
   contractAddress: z.string().optional(),
   errorMessage: z.string().optional(),
+  constructorArgs: z.string().optional(),
 });
 
 /**
  * PATCH /api/deployments/[id]
  * Update deployment status (e.g., when transaction is broadcasted or confirmed).
+ * When status is CONFIRMED + contractAddress is provided, triggers BscScan verification.
  */
 export async function PATCH(request, { params }) {
   try {
@@ -65,18 +68,19 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ message: "Deployment not found" }, { status: 404 });
     }
 
-    // Use transaction to update both Deployment and Token status if needed
+    // Use transaction to update both Deployment and Token status
     const updated = await prisma.$transaction(async (tx) => {
       const dep = await tx.deployment.update({
         where: { id },
         data: {
           status: data.status,
           ...(data.txHash && { txHash: data.txHash }),
+          ...(data.contractAddress && { contractAddress: data.contractAddress }),
           ...(data.errorMessage && { errorMessage: data.errorMessage }),
         },
       });
 
-      // Update related Token status and address if confirmed or deploying
+      // Update related Token status and address
       if (data.status === "CONFIRMED") {
         await tx.token.update({
           where: { id: existing.tokenId },
@@ -105,6 +109,25 @@ export async function PATCH(request, { params }) {
 
       return dep;
     });
+
+    // ─────────────────────────────────────────────────────────────────
+    // TRIGGER POST-DEPLOYMENT: BscScan verification + email
+    // This runs AFTER the DB update is committed, in the background.
+    // ─────────────────────────────────────────────────────────────────
+    if (data.status === "CONFIRMED" && data.contractAddress && data.txHash) {
+      console.log(`[Deployment] Contract confirmed at ${data.contractAddress}. Triggering post-deployment...`);
+      
+      // Run in background — don't block the response
+      processPostDeployment(
+        id,
+        data.contractAddress,
+        data.txHash
+      ).then(result => {
+        console.log("[Deployment] Post-deployment completed:", JSON.stringify(result, null, 2));
+      }).catch(err => {
+        console.error("[Deployment] Post-deployment error:", err);
+      });
+    }
 
     return NextResponse.json({ deployment: updated });
   } catch (error) {

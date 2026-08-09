@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
-contract StandardToken {
+contract TeronBEP20 {
     string public name;
     string public symbol;
     uint8 public decimals;
@@ -46,8 +46,8 @@ contract StandardToken {
     }
 
     function transferFrom(address from, address to, uint256 value) public returns (bool success) {
-        require(value <= balanceOf[from], "Insufficient balance");
-        require(value <= allowance[from][msg.sender], "Allowance exceeded");
+        require(balanceOf[from] >= value, "Insufficient balance");
+        require(allowance[from][msg.sender] >= value, "Allowance exceeded");
         balanceOf[from] -= value;
         balanceOf[to] += value;
         allowance[from][msg.sender] -= value;

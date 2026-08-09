@@ -1,138 +1,220 @@
 import prisma from "@/lib/prisma";
 import { getActivePricing } from "@/services/pricing";
-import { verifyAndSubmitMetadata } from "@/services/bscscan";
-import { sendDeploymentSuccessEmail } from "@/services/email";
+import { FLATTENED_SOURCE_CODE, COMPILER_VERSION, CONTRACT_NAME } from "@/services/bscscan";
+import { sendDeploymentSuccessEmail, sendPaymentInvoiceEmail } from "@/services/email";
+import { encodeAbiParameters, parseUnits } from "viem";
 
 /**
  * Token Deployment Service
- *
- * Owns: Wizard state, contract deployment, transaction simulation, deployment history.
  */
 
-/**
- * Standard ERC-20 / BEP-20 token source code template for verification.
- * This is the exact Solidity code compiled and deployed on-chain.
- */
-const TOKEN_SOURCE_CODE = `
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
-
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
-contract TeronToken is ERC20 {
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        uint256 totalSupply_,
-        address owner_
-    ) ERC20(name_, symbol_) {
-        _mint(owner_, totalSupply_);
-    }
+// Etherscan V2 unified API — chainid in URL, not body
+const V2_POST_URL = "https://api.etherscan.io/v2/api?chainid=56";
+const CHAIN_ID = "56";
+function getApiKey() {
+  return process.env.ETHERSCAN_API_KEY || process.env.BSCSCAN_API_KEY;
 }
-`;
-
-const COMPILER_VERSION = "v0.8.20+commit.a1b79de6";
 
 /**
- * Initiate a new token deployment session.
- * Creates the Token, TokenProfile, and a PENDING Deployment record.
- * 
- * @param {string} userId - The ID of the deploying user
- * @param {object} data - The validated token data
- * @param {string} [paymentTxHash] - Optional BNB payment transaction hash
- * @returns {Promise<object>} The created Deployment record with nested Token
+ * Compute ABI-encoded constructor arguments using viem.
  */
+function computeConstructorArgs(tokenName, tokenSymbol, totalSupply, decimals, ownerAddress) {
+  const rawSupply = parseUnits(totalSupply.toString(), Number(decimals));
+  const encoded = encodeAbiParameters(
+    [
+      { name: "name_", type: "string" },
+      { name: "symbol_", type: "string" },
+      { name: "initialSupply_", type: "uint256" },
+      { name: "decimals_", type: "uint8" },
+      { name: "initialOwner_", type: "address" },
+    ],
+    [tokenName, tokenSymbol, rawSupply, Number(decimals), ownerAddress]
+  );
+  return encoded.slice(2);
+}
+
+/**
+ * Submit verification to BscScan and poll for result.
+ * Tries optimization ON then OFF.
+ */
+async function verifyOnBscScan(contractAddress, constructorArgs) {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return { verified: false, message: "ETHERSCAN_API_KEY not set" };
+  }
+
+  for (const attempt of [
+    { opt: "1", runs: "200", label: "optimization=1, runs=200" },
+    { opt: "0", runs: "200", label: "optimization=0" },
+  ]) {
+    console.log(`[BscScan] Attempt: ${attempt.label}`);
+
+    // V2: chainid is in V2_POST_URL, NOT in the body
+    const params = new URLSearchParams({
+      apikey: apiKey,
+      module: "contract",
+      action: "verifysourcecode",
+      contractaddress: contractAddress,
+      sourceCode: FLATTENED_SOURCE_CODE,
+      codeformat: "solidity-single-file",
+      contractname: CONTRACT_NAME,
+      compilerversion: COMPILER_VERSION,
+      optimizationUsed: attempt.opt,
+      runs: attempt.runs,
+      constructorArguements: constructorArgs,
+      licenseType: "3",
+    });
+
+    try {
+      const submitRes = await fetch(V2_POST_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params.toString(),
+      });
+      const submitData = await submitRes.json();
+      console.log(`[BscScan] Submit response:`, JSON.stringify(submitData));
+
+      if (submitData.status === "1" && submitData.result) {
+        const guid = submitData.result;
+        console.log(`[BscScan] GUID: ${guid}. Polling...`);
+
+        for (let i = 0; i < 18; i++) {
+          await new Promise(r => setTimeout(r, 5000));
+          const statusRes = await fetch(
+            `https://api.etherscan.io/v2/api?chainid=${CHAIN_ID}&module=contract&action=checkverifystatus&guid=${guid}&apikey=${apiKey}`
+          );
+          const statusData = await statusRes.json();
+          console.log(`[BscScan] Poll ${i + 1}:`, statusData.result);
+
+          if (statusData.result === "Pass - Verified") {
+            return { verified: true, message: "Contract verified on BscScan!" };
+          }
+          if (statusData.result !== "Pending in queue") {
+            console.log(`[BscScan] Failed:`, statusData.result);
+            break;
+          }
+        }
+      } else {
+        console.log(`[BscScan] Rejected:`, submitData.result);
+      }
+    } catch (err) {
+      console.error(`[BscScan] Error:`, err.message);
+    }
+  }
+
+  return { verified: false, message: "All verification attempts failed" };
+}
+
+/**
+ * Submit token metadata/info via V2 API.
+ */
+async function submitTokenInfo(contractAddress, tokenInfo) {
+  const apiKey = getApiKey();
+  if (!apiKey || !tokenInfo?.logoUrl) {
+    return { success: false, message: "Missing API key or logo URL" };
+  }
+
+  try {
+    const params = new URLSearchParams({
+      apikey: apiKey,
+      module: "token",
+      action: "tokeninfo",
+      contractAddress,
+      tokenName: tokenInfo.tokenName,
+      symbol: tokenInfo.symbol,
+      logoURL: tokenInfo.logoUrl,
+      websiteURL: tokenInfo.website || "",
+      email: tokenInfo.email || "",
+      description: (tokenInfo.description || "").slice(0, 300),
+      twitter: tokenInfo.twitter || "",
+      telegram: tokenInfo.telegram || "",
+      discord: tokenInfo.discord || "",
+      tokenType: "BEP-20",
+    });
+
+    const res = await fetch(V2_POST_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
+    const data = await res.json();
+    console.log("[BscScan] Token info response:", JSON.stringify(data));
+    return { success: data.status === "1", message: data.result || "Submitted" };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// initiateDeployment
+// ─────────────────────────────────────────────────────
+
 export async function initiateDeployment(userId, data, paymentTxHash = null) {
   const {
-    name,
-    symbol,
-    decimals,
-    totalSupply,
-    chain,
-    shortDescription,
-    description,
-    website,
-    twitter,
-    telegram,
-    discord,
-    logoUrl,
-    bannerUrl,
-    addVerification,
-    addMetadata,
-    projectCategory,
-    contactEmail
+    name, symbol, decimals, totalSupply, chain,
+    shortDescription, description, website, twitter, telegram, discord,
+    logoUrl, bannerUrl, addVerification, addMetadata, projectCategory, contactEmail
   } = data;
 
   const pricing = await getActivePricing();
   const verificationPrice = pricing.find(p => p.serviceKey === "verification")?.priceBnb || 0.0033;
   const metadataPrice = pricing.find(p => p.serviceKey === "metadata")?.priceBnb || 0.005;
 
-  // Use a transaction to ensure all records are created together
   const deployment = await prisma.$transaction(async (tx) => {
-    // 1. Create the base Token record
     const token = await tx.token.create({
       data: {
-        deployerId: userId,
-        name,
-        symbol,
-        decimals,
-        totalSupply,
-        chain: chain || "BSC",
-        deploymentStatus: "PENDING",
+        deployerId: userId, name, symbol, decimals, totalSupply,
+        chain: chain || "BSC", deploymentStatus: "PENDING",
       }
     });
 
-    // 2. Create the TokenProfile
     await tx.tokenProfile.create({
       data: {
-        tokenId: token.id,
-        shortDescription,
-        description,
-        website,
-        twitter,
-        telegram,
-        discord,
-        logoUrl,
-        bannerUrl,
-        projectCategory,
-        contactEmail,
+        tokenId: token.id, shortDescription, description,
+        website, twitter, telegram, discord, logoUrl, bannerUrl,
+        projectCategory, contactEmail,
       }
     });
 
-    // 3. Create the Deployment attempt record
     const newDeployment = await tx.deployment.create({
-      data: {
-        tokenId: token.id,
-        userId: userId,
-        status: "PENDING",
-      }
+      data: { tokenId: token.id, userId, status: "PENDING" }
     });
 
-    // 4. Create Payment records for optional services
+    const services = [];
+
     if (addVerification) {
       await tx.payment.create({
         data: {
-          userId,
-          tokenId: token.id,
-          serviceType: "VERIFICATION",
+          userId, tokenId: token.id, serviceType: "VERIFICATION",
           amountBnb: verificationPrice,
           status: paymentTxHash ? "CONFIRMED" : "PENDING",
           ...(paymentTxHash && { txHash: paymentTxHash }),
+          coldWalletAddress: process.env.COLD_WALLET_ADDRESS || null,
         }
       });
+      services.push({ name: "Contract Verification", amountBnb: verificationPrice });
     }
 
     if (addMetadata) {
       await tx.payment.create({
         data: {
-          userId,
-          tokenId: token.id,
-          serviceType: "METADATA",
+          userId, tokenId: token.id, serviceType: "METADATA",
           amountBnb: metadataPrice,
           status: paymentTxHash ? "CONFIRMED" : "PENDING",
           ...(paymentTxHash && { txHash: paymentTxHash }),
+          coldWalletAddress: process.env.COLD_WALLET_ADDRESS || null,
         }
       });
+      services.push({ name: "On-Chain Logo & Info", amountBnb: metadataPrice });
+    }
+
+    if (paymentTxHash && contactEmail && services.length > 0) {
+      const totalBnb = services.reduce((sum, s) => sum + s.amountBnb, 0);
+      sendPaymentInvoiceEmail({
+        to: contactEmail, tokenName: name, symbol, services, totalBnb,
+        paymentTxHash,
+        walletAddress: (await tx.user.findUnique({ where: { id: userId } }))?.walletAddress || "",
+      }).catch(err => console.error("Invoice email error:", err));
     }
 
     return { ...newDeployment, tokenId: token.id, token };
@@ -141,25 +223,18 @@ export async function initiateDeployment(userId, data, paymentTxHash = null) {
   return deployment;
 }
 
-/**
- * After a token is deployed on-chain, process post-deployment tasks:
- * - BscScan contract verification
- * - Token info/metadata submission
- * - Success email notification
- *
- * @param {string} deploymentId
- * @param {string} contractAddress - The on-chain contract address
- * @param {string} deployTxHash - The deployment transaction hash
- * @param {string} [constructorArgs] - ABI-encoded constructor arguments
- */
-export async function processPostDeployment(deploymentId, contractAddress, deployTxHash, constructorArgs = "") {
+// ─────────────────────────────────────────────────────
+// processPostDeployment
+// ─────────────────────────────────────────────────────
+
+export async function processPostDeployment(deploymentId, contractAddress, deployTxHash) {
+  console.log(`[PostDeploy] ═══════════════════════════════════════════`);
+  console.log(`[PostDeploy] Deployment: ${deploymentId}`);
+  console.log(`[PostDeploy] Contract: ${contractAddress}, TX: ${deployTxHash}`);
+
   const deployment = await prisma.deployment.findUnique({
     where: { id: deploymentId },
-    include: {
-      token: {
-        include: { profile: true, deployer: true }
-      },
-    },
+    include: { token: { include: { profile: true, deployer: true } } },
   });
 
   if (!deployment) throw new Error("Deployment not found");
@@ -168,140 +243,94 @@ export async function processPostDeployment(deploymentId, contractAddress, deplo
   const profile = token.profile;
   const user = token.deployer;
 
-  // Update token with contract address
-  await prisma.token.update({
-    where: { id: token.id },
-    data: {
-      contractAddress,
-      deploymentStatus: "DEPLOYED",
-    },
-  });
+  console.log(`[PostDeploy] Token: ${token.name} (${token.symbol}), Deployer: ${user?.walletAddress}`);
 
-  // Update deployment status
-  await prisma.deployment.update({
-    where: { id: deploymentId },
-    data: {
-      status: "DEPLOYED",
-      contractAddress,
-      txHash: deployTxHash,
-    },
-  });
-
-  // Check if premium services were purchased
-  const payments = await prisma.payment.findMany({
-    where: { tokenId: token.id },
-  });
-
+  const payments = await prisma.payment.findMany({ where: { tokenId: token.id } });
   const hasVerification = payments.some(p => p.serviceType === "VERIFICATION");
   const hasMetadata = payments.some(p => p.serviceType === "METADATA");
 
-  let verificationResult = { success: false };
-  let metadataResult = { success: false };
+  console.log(`[PostDeploy] Services: verification=${hasVerification}, metadata=${hasMetadata}`);
 
-  // Process BscScan verification + metadata
-  if (hasVerification || hasMetadata) {
-    try {
-      const results = await verifyAndSubmitMetadata({
-        contractAddress,
-        sourceCode: TOKEN_SOURCE_CODE,
-        contractName: "TeronToken",
-        compilerVersion: COMPILER_VERSION,
-        constructorArguments: constructorArgs,
-        tokenInfo: hasMetadata ? {
-          tokenName: token.name,
-          symbol: token.symbol,
-          logoUrl: profile?.logoUrl || "",
-          website: profile?.website || "",
-          email: profile?.contactEmail || "",
-          description: profile?.shortDescription || "",
-          twitter: profile?.twitter || "",
-          telegram: profile?.telegram || "",
-          discord: profile?.discord || "",
-          category: profile?.projectCategory || "",
-        } : null,
-      });
+  let verificationResult = { verified: false, message: "Not purchased" };
+  let metadataResult = { success: false, message: "Not purchased" };
 
-      verificationResult = results.verification;
-      metadataResult = results.tokenInfo;
+  // ─── VERIFICATION ──────────────────────────────────
+  if (hasVerification && user?.walletAddress) {
+    const constructorArgs = computeConstructorArgs(
+      token.name, token.symbol, token.totalSupply, token.decimals, user.walletAddress
+    );
+    console.log(`[PostDeploy] Constructor args: ${constructorArgs.slice(0, 120)}...`);
 
-      // Update payment records
-      if (hasVerification) {
-        await prisma.payment.updateMany({
-          where: { tokenId: token.id, serviceType: "VERIFICATION" },
-          data: {
-            status: verificationResult.success ? "COMPLETED" : "CONFIRMED",
-          },
-        });
-      }
+    verificationResult = await verifyOnBscScan(contractAddress, constructorArgs);
+    console.log(`[PostDeploy] Verification:`, JSON.stringify(verificationResult));
 
-      if (hasMetadata) {
-        await prisma.payment.updateMany({
-          where: { tokenId: token.id, serviceType: "METADATA" },
-          data: {
-            status: metadataResult.success ? "COMPLETED" : "CONFIRMED",
-          },
-        });
-      }
-    } catch (err) {
-      console.error("Post-deployment BscScan processing error:", err);
-    }
+    await prisma.payment.updateMany({
+      where: { tokenId: token.id, serviceType: "VERIFICATION" },
+      data: { status: verificationResult.verified ? "COMPLETED" : "CONFIRMED" },
+    });
+    await prisma.token.update({
+      where: { id: token.id },
+      data: { verificationStatus: verificationResult.verified ? "VERIFIED" : "PENDING" },
+    });
   }
 
-  // Send success email
+  // ─── METADATA ──────────────────────────────────────
+  if (hasMetadata && profile?.logoUrl) {
+    metadataResult = await submitTokenInfo(contractAddress, {
+      tokenName: token.name, symbol: token.symbol,
+      logoUrl: profile.logoUrl, website: profile.website || "",
+      email: profile.contactEmail || "",
+      description: profile.shortDescription || "",
+      twitter: profile.twitter || "", telegram: profile.telegram || "",
+      discord: profile.discord || "",
+    });
+    console.log(`[PostDeploy] Metadata:`, JSON.stringify(metadataResult));
+
+    await prisma.payment.updateMany({
+      where: { tokenId: token.id, serviceType: "METADATA" },
+      data: { status: metadataResult.success ? "COMPLETED" : "CONFIRMED" },
+    });
+  }
+
+  // ─── EMAIL ─────────────────────────────────────────
   const contactEmail = profile?.contactEmail || user?.email;
   if (contactEmail) {
     try {
       await sendDeploymentSuccessEmail({
-        to: contactEmail,
-        tokenName: token.name,
-        symbol: token.symbol,
-        contractAddress,
-        txHash: deployTxHash,
-        totalSupply: token.totalSupply,
-        verified: verificationResult.success,
-        metadataSubmitted: metadataResult.success,
+        to: contactEmail, tokenName: token.name, symbol: token.symbol,
+        contractAddress, txHash: deployTxHash, totalSupply: token.totalSupply,
+        verified: verificationResult.verified || false,
+        metadataSubmitted: metadataResult.success || false,
       });
+      console.log(`[PostDeploy] Email sent to ${contactEmail}`);
     } catch (err) {
-      console.error("Failed to send deployment email:", err);
+      console.error("[PostDeploy] Email error:", err.message);
     }
   }
 
-  return {
-    contractAddress,
-    verification: verificationResult,
-    metadata: metadataResult,
-    emailSent: !!contactEmail,
-  };
+  console.log(`[PostDeploy] ═══════════════════════════════════════════`);
+  return { contractAddress, verification: verificationResult, metadata: metadataResult, emailSent: !!contactEmail };
 }
+
+// ─────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────
 
 export async function getDeploymentHistory(userId) {
   return prisma.deployment.findMany({
     where: { userId },
-    include: {
-      token: {
-        include: {
-          profile: true
-        }
-      }
-    },
-    orderBy: { createdAt: "desc" }
+    include: { token: { include: { profile: true } } },
+    orderBy: { createdAt: "desc" },
   });
 }
 
 export async function getTokenById(tokenId) {
-  return prisma.token.findUnique({
-    where: { id: tokenId },
-    include: { profile: true }
-  });
+  return prisma.token.findUnique({ where: { id: tokenId }, include: { profile: true } });
 }
 
 export async function getDeploymentById(deploymentId) {
   return prisma.deployment.findUnique({
     where: { id: deploymentId },
-    include: {
-      token: {
-        include: { profile: true }
-      },
-    },
+    include: { token: { include: { profile: true } } },
   });
 }

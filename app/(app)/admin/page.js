@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useWallet } from "@/hooks/useWallet";
 import Link from "next/link";
 import Skeleton from "@/components/ui/Skeleton";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import { 
   UserMultiple02Icon, 
   CoinsSwapIcon, 
@@ -17,6 +19,11 @@ export default function AdminOverviewPage() {
   const { address } = useWallet();
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Verify Contract state
+  const [verifyAddress, setVerifyAddress] = useState("");
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [verifyResult, setVerifyResult] = useState(null);
 
   useEffect(() => {
     if (!address) return;
@@ -37,6 +44,29 @@ export default function AdminOverviewPage() {
 
     loadStats();
   }, [address]);
+
+  const handleVerifyContract = async () => {
+    if (!verifyAddress || !address) return;
+    setVerifyLoading(true);
+    setVerifyResult(null);
+
+    try {
+      const res = await fetch("/api/admin/verify-contract", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-wallet-address": address,
+        },
+        body: JSON.stringify({ contractAddress: verifyAddress }),
+      });
+      const data = await res.json();
+      setVerifyResult(data);
+    } catch (err) {
+      setVerifyResult({ success: false, message: err.message });
+    } finally {
+      setVerifyLoading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -87,7 +117,7 @@ export default function AdminOverviewPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-surface-primary border card border-border-primary rounded-xl p-6">
+      <div className="bg-surface-primary border card border-border-primary rounded-xl p-6 mb-8">
         <h2 className="title text-text-primary mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Link
@@ -123,6 +153,65 @@ export default function AdminOverviewPage() {
             </div>
           </Link>
         </div>
+      </div>
+
+      {/* Manual Contract Verification Tool */}
+      <div className="bg-surface-primary border card border-border-primary rounded-xl p-6">
+        <h2 className="title text-text-primary mb-2">🔍 Contract Verification Tool</h2>
+        <p className="text-xs text-text-tertiary mb-4">
+          Manually trigger BscScan verification for a deployed contract. This will try
+          optimization ON and OFF, compute constructor args, and return detailed logs.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          <Input
+            placeholder="Contract address (0x...)"
+            value={verifyAddress}
+            onChange={(e) => setVerifyAddress(e.target.value)}
+            className="flex-1"
+          />
+          <Button
+            variant="primary"
+            onClick={handleVerifyContract}
+            disabled={verifyLoading || !verifyAddress}
+            isLoading={verifyLoading}
+            className="sm:w-auto w-full"
+          >
+            {verifyLoading ? "Verifying..." : "Verify Contract"}
+          </Button>
+        </div>
+
+        {verifyLoading && (
+          <div className="flex items-center gap-3 p-4 bg-accent/5 border border-accent/20 rounded-lg">
+            <span className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+            <span className="text-sm text-text-secondary">
+              Submitting to BscScan and polling... This can take up to 90 seconds.
+            </span>
+          </div>
+        )}
+
+        {verifyResult && (
+          <div className={`p-4 rounded-lg border ${verifyResult.success ? 'bg-success-subtle border-success/30' : 'bg-error-subtle border-error/30'}`}>
+            <p className={`text-sm font-bold mb-2 ${verifyResult.success ? 'text-success' : 'text-error'}`}>
+              {verifyResult.success ? '🎉 ' : '❌ '}{verifyResult.message}
+            </p>
+            {verifyResult.alreadyVerified && (
+              <p className="text-xs text-text-secondary">
+                Contract Name: {verifyResult.contractName} | Compiler: {verifyResult.compiler}
+              </p>
+            )}
+            {verifyResult.logs && (
+              <details className="mt-3">
+                <summary className="text-xs text-text-tertiary cursor-pointer hover:text-text-secondary">
+                  Show detailed logs ({verifyResult.logs.length} entries)
+                </summary>
+                <pre className="mt-2 p-3 bg-surface-secondary rounded text-xs text-text-secondary overflow-x-auto max-h-80 overflow-y-auto whitespace-pre-wrap font-mono">
+                  {verifyResult.logs.join('\n')}
+                </pre>
+              </details>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

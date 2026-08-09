@@ -1,27 +1,100 @@
 /**
  * BscScan Contract Verification Service
  *
- * Uses the BscScan API to verify smart contract source code on-chain.
- * Also handles token-info metadata submissions.
+ * Uses the Etherscan V2 unified API for contract verification.
+ * IMPORTANT: Requires an Etherscan API key (from etherscan.io), NOT a BscScan key.
+ * The BscScan-specific V1 API has been fully deprecated.
  *
- * API Docs: https://docs.bscscan.com/api-endpoints/contracts
+ * V2 API rules:
+ * - Base URL: https://api.etherscan.io/v2/api
+ * - chainid MUST be in the URL query string (NOT the POST body)
+ * - BSC Mainnet chainid = 56
  */
 
-const BSCSCAN_API_URL = "https://api.bscscan.com/api";
-const BSCSCAN_API_KEY = process.env.BSCSCAN_API_KEY;
+// V2 API: chainid goes in the URL, everything else in the body
+const V2_BASE = "https://api.etherscan.io/v2/api";
+const CHAIN_ID = "56"; // BSC Mainnet
+
+// Use Etherscan key for V2, fall back to BscScan key
+function getApiKey() {
+  return process.env.ETHERSCAN_API_KEY || process.env.BSCSCAN_API_KEY;
+}
+
+// Build V2 GET URL
+function v2Get(params) {
+  return `${V2_BASE}?chainid=${CHAIN_ID}&apikey=${getApiKey()}&${params}`;
+}
+
+// V2 POST URL (chainid in URL, rest in body)
+const V2_POST_URL = `${V2_BASE}?chainid=${CHAIN_ID}`;
 
 /**
- * Verify a smart contract on BscScan.
- *
- * @param {object} params
- * @param {string} params.contractAddress - Deployed contract address
- * @param {string} params.sourceCode - Solidity source code (flattened)
- * @param {string} params.contractName - Name of the contract
- * @param {string} params.compilerVersion - e.g. "v0.8.20+commit.a1b79de6"
- * @param {string} [params.constructorArguments] - ABI-encoded constructor args (hex, no 0x)
- * @param {number} [params.optimizationUsed] - 0 or 1
- * @param {number} [params.runs] - Optimizer runs (default 200)
- * @returns {Promise<{ success: boolean, guid?: string, message?: string }>}
+ * The exact flattened Solidity source code matching the bytecode in lib/contracts/bep20.js.
+ * Compiled with solc 0.8.20, optimizer ON, 200 runs.
+ */
+export const FLATTENED_SOURCE_CODE = `// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract TeronBEP20 {
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    uint256 public totalSupply;
+    address public owner;
+
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        uint256 initialSupply_,
+        uint8 decimals_,
+        address initialOwner_
+    ) {
+        name = name_;
+        symbol = symbol_;
+        decimals = decimals_;
+        totalSupply = initialSupply_;
+        owner = initialOwner_;
+        balanceOf[initialOwner_] = initialSupply_;
+        emit Transfer(address(0), initialOwner_, initialSupply_);
+    }
+
+    function transfer(address to, uint256 value) public returns (bool success) {
+        require(balanceOf[msg.sender] >= value, "Insufficient balance");
+        balanceOf[msg.sender] -= value;
+        balanceOf[to] += value;
+        emit Transfer(msg.sender, to, value);
+        return true;
+    }
+
+    function approve(address spender, uint256 value) public returns (bool success) {
+        allowance[msg.sender][spender] = value;
+        emit Approval(msg.sender, spender, value);
+        return true;
+    }
+
+    function transferFrom(address from, address to, uint256 value) public returns (bool success) {
+        require(balanceOf[from] >= value, "Insufficient balance");
+        require(allowance[from][msg.sender] >= value, "Allowance exceeded");
+        balanceOf[from] -= value;
+        balanceOf[to] += value;
+        allowance[from][msg.sender] -= value;
+        emit Transfer(from, to, value);
+        return true;
+    }
+}`;
+
+export const COMPILER_VERSION = "v0.8.20+commit.a1b79de6";
+export const CONTRACT_NAME = "TeronBEP20";
+
+/**
+ * Verify a smart contract via Etherscan V2 API.
  */
 export async function verifyContract({
   contractAddress,
@@ -32,12 +105,14 @@ export async function verifyContract({
   optimizationUsed = 1,
   runs = 200,
 }) {
-  if (!BSCSCAN_API_KEY) {
-    throw new Error("BSCSCAN_API_KEY is not set");
-  }
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error("ETHERSCAN_API_KEY (or BSCSCAN_API_KEY) is not set");
 
+  console.log(`[BscScan] Verifying ${contractAddress} via V2 API`);
+
+  // POST body — NO chainid here (it's in the URL)
   const params = new URLSearchParams({
-    apikey: BSCSCAN_API_KEY,
+    apikey: apiKey,
     module: "contract",
     action: "verifysourcecode",
     contractaddress: contractAddress,
@@ -47,210 +122,85 @@ export async function verifyContract({
     compilerversion: compilerVersion,
     optimizationUsed: String(optimizationUsed),
     runs: String(runs),
-    constructorArguements: constructorArguments, // BscScan typo is intentional
-    licenseType: "3", // MIT
+    constructorArguements: constructorArguments,
+    licenseType: "3",
   });
 
-  const response = await fetch(BSCSCAN_API_URL, {
+  const response = await fetch(V2_POST_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params.toString(),
   });
 
   const data = await response.json();
+  console.log("[BscScan] Response:", JSON.stringify(data));
 
   if (data.status === "1") {
     return { success: true, guid: data.result };
   }
-
-  return { success: false, message: data.result || "Verification submission failed" };
+  return { success: false, message: data.result || "Verification failed" };
 }
 
 /**
- * Check verification status by GUID.
- *
- * @param {string} guid - GUID returned from verifyContract()
- * @returns {Promise<{ verified: boolean, pending: boolean, message: string }>}
+ * Poll verification status.
  */
 export async function checkVerificationStatus(guid) {
-  const params = new URLSearchParams({
-    apikey: BSCSCAN_API_KEY,
-    module: "contract",
-    action: "checkverifystatus",
-    guid,
-  });
-
-  const response = await fetch(`${BSCSCAN_API_URL}?${params.toString()}`);
+  const url = v2Get(`module=contract&action=checkverifystatus&guid=${guid}`);
+  const response = await fetch(url);
   const data = await response.json();
+  console.log(`[BscScan] Status:`, data.result);
 
-  if (data.result === "Pass - Verified") {
-    return { verified: true, pending: false, message: "Contract verified successfully" };
-  }
-
-  if (data.result === "Pending in queue") {
-    return { verified: false, pending: true, message: "Verification pending in queue" };
-  }
-
-  return { verified: false, pending: false, message: data.result || "Unknown status" };
+  if (data.result === "Pass - Verified") return { verified: true, pending: false, message: "Verified" };
+  if (data.result === "Pending in queue") return { verified: false, pending: true, message: "Pending" };
+  return { verified: false, pending: false, message: data.result || "Unknown" };
 }
 
 /**
- * Submit token information to BscScan (logo, socials, website).
- * This uses the BscScan Token Info Update API.
- *
- * Note: BscScan requires the contract to be verified first before
- * token info can be submitted. In practice, this is handled through
- * BscScan's token-info self-service portal or their API.
- *
- * @param {object} params
- * @param {string} params.contractAddress
- * @param {string} params.tokenName
- * @param {string} params.symbol
- * @param {string} params.logoUrl
- * @param {string} params.website
- * @param {string} [params.email]
- * @param {string} [params.description]
- * @param {string} [params.twitter]
- * @param {string} [params.telegram]
- * @param {string} [params.discord]
- * @param {string} [params.category]
- * @returns {Promise<{ success: boolean, message: string }>}
+ * Check if already verified.
+ */
+export async function isContractVerified(contractAddress) {
+  try {
+    const url = v2Get(`module=contract&action=getsourcecode&address=${contractAddress}`);
+    const res = await fetch(url);
+    const data = await res.json();
+    return !!(data.result?.[0]?.SourceCode && data.result[0].SourceCode !== "");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Submit token info metadata.
  */
 export async function submitTokenInfo({
-  contractAddress,
-  tokenName,
-  symbol,
-  logoUrl,
-  website,
-  email = "",
-  description = "",
-  twitter = "",
-  telegram = "",
-  discord = "",
-  category = "",
+  contractAddress, tokenName, symbol, logoUrl,
+  website, email = "", description = "",
+  twitter = "", telegram = "", discord = "",
 }) {
-  if (!BSCSCAN_API_KEY) {
-    throw new Error("BSCSCAN_API_KEY is not set");
-  }
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error("API key not set");
 
-  // BscScan token info submission
   const params = new URLSearchParams({
-    apikey: BSCSCAN_API_KEY,
+    apikey: apiKey,
     module: "token",
     action: "tokeninfo",
-    contractAddress,
-    tokenName,
-    symbol,
-    logoURL: logoUrl,
-    websiteURL: website,
-    email,
+    contractAddress, tokenName, symbol,
+    logoURL: logoUrl, websiteURL: website, email,
     description: description.slice(0, 300),
-    twitter,
-    telegram,
-    discord,
+    twitter, telegram, discord,
     tokenType: "BEP-20",
-    category,
   });
 
   try {
-    const response = await fetch(BSCSCAN_API_URL, {
+    const res = await fetch(V2_POST_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params.toString(),
     });
-
-    const data = await response.json();
-
-    if (data.status === "1") {
-      return { success: true, message: "Token info submitted successfully" };
-    }
-
-    // BscScan may require manual submission for some features
-    // We'll store the metadata and mark as submitted
-    return {
-      success: false,
-      message: data.result || "Token info submission returned non-success status",
-    };
+    const data = await res.json();
+    console.log("[BscScan] Token info:", JSON.stringify(data));
+    return { success: data.status === "1", message: data.result || "Submitted" };
   } catch (err) {
     return { success: false, message: err.message };
   }
-}
-
-/**
- * Full verification + metadata flow.
- * Orchestrates contract verification and token info submission.
- *
- * @param {object} params
- * @param {string} params.contractAddress
- * @param {string} params.sourceCode
- * @param {string} params.contractName
- * @param {string} params.compilerVersion
- * @param {string} [params.constructorArguments]
- * @param {object} params.tokenInfo - Token metadata for submission
- * @returns {Promise<object>}
- */
-export async function verifyAndSubmitMetadata({
-  contractAddress,
-  sourceCode,
-  contractName,
-  compilerVersion,
-  constructorArguments = "",
-  tokenInfo = {},
-}) {
-  const results = {
-    verification: { success: false, guid: null, message: "" },
-    tokenInfo: { success: false, message: "" },
-  };
-
-  // 1. Verify contract source code
-  try {
-    const verifyResult = await verifyContract({
-      contractAddress,
-      sourceCode,
-      contractName,
-      compilerVersion,
-      constructorArguments,
-    });
-    results.verification = verifyResult;
-
-    // 2. If verification submitted, poll for result (max 60s)
-    if (verifyResult.success && verifyResult.guid) {
-      let attempts = 0;
-      const maxAttempts = 12; // 12 * 5s = 60s
-      
-      while (attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        const status = await checkVerificationStatus(verifyResult.guid);
-        
-        if (status.verified) {
-          results.verification.message = "Contract verified on BscScan";
-          break;
-        }
-        
-        if (!status.pending) {
-          results.verification.message = status.message;
-          break;
-        }
-        
-        attempts++;
-      }
-    }
-  } catch (err) {
-    results.verification.message = err.message;
-  }
-
-  // 3. Submit token info/metadata
-  if (tokenInfo && tokenInfo.logoUrl) {
-    try {
-      const infoResult = await submitTokenInfo({
-        contractAddress,
-        ...tokenInfo,
-      });
-      results.tokenInfo = infoResult;
-    } catch (err) {
-      results.tokenInfo.message = err.message;
-    }
-  }
-
-  return results;
 }
