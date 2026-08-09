@@ -156,7 +156,7 @@ export default function StepAddons({ register, errors, watch, setValue }) {
 
       <div className="space-y-5">
         {/* ══════════════ Verification Toggle ══════════════ */}
-        <div className={`rounded-xl border-2 transition-all duration-300 ${addVerification ? "border-accent bg-accent/5 shadow-[0_0_20px_rgba(var(--color-accent-rgb,234,179,8),0.08)]" : "border-border-secondary bg-surface-secondary hover:border-border-primary"}`}>
+        <div className={`rounded-xl border-2 transition-all duration-300 ${addVerification ? "border-accent " : "border-border-secondary  hover:border-border-primary"}`}>
           <button
             type="button"
             onClick={() => setValue("addVerification", !addVerification, { shouldValidate: true })}
