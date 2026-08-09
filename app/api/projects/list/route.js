@@ -37,6 +37,11 @@ export async function GET(request) {
       skip,
       include: {
         profile: true,
+        deployments: {
+          select: { id: true, status: true },
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
         deployer: {
           select: {
             id: true,

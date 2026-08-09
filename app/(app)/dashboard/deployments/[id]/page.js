@@ -276,11 +276,11 @@ export default function DeploymentStatusPage({ params }) {
 
   if (!deploymentData) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <h2 className="text-xl font-bold text-text-primary">Deployment Session Not Found</h2>
+      <div className="max-w-6xl mx-auto py-12 px-4 text-center">
+        <h2 className="text-2xl title font-bold text-text-primary">Deployment Session Not Found</h2>
         <p className="text-text-secondary text-sm mt-2">The requested deployment ID does not exist.</p>
-        <Link href="/dashboard/create" className="inline-block mt-6 text-accent hover:underline">
-          &larr; Launch a New Token
+        <Link href="/dashboard/create" className="inline-block cta p-3 mt-6 text-accent hover:underline">
+           Launch a New Token
         </Link>
       </div>
     );

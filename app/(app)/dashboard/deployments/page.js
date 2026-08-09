@@ -8,7 +8,6 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import { 
-  Layers01Icon, 
   Coins01Icon,
   PlusSignIcon
 } from "hugeicons-react";
@@ -55,13 +54,10 @@ export default function DeploymentsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 space-y-8">
+    <div className="max-w-6xl mx-auto py-8 px-4 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-text-primary title flex items-center gap-2">
-            <div className="size-8 rounded-full bg-accent/10 flex items-center justify-center">
-              <Layers01Icon size={18} className="text-accent" />
-            </div>
             Your Deployments
           </h1>
           <p className="text-text-secondary text-sm mt-2">
@@ -159,14 +155,14 @@ export default function DeploymentsPage() {
                     
                     {token.deploymentStatus !== "PENDING" ? (
                       <Link
-                        href={`/dashboard/deployments/${token.deployments?.[0]?.id || token.id}`}
+                        href={`/dashboard/deployments/${token.deployments?.[0]?.id}`}
                         className="px-4 py-2 bg-surface-primary border border-border-primary rounded text-xs font-semibold text-text-primary hover:bg-surface-secondary transition-colors"
                       >
                         Deployment Status
                       </Link>
                     ) : (
                       <Link
-                        href={`/dashboard/deployments/${token.id}`}
+                        href={`/dashboard/deployments/${token.deployments?.[0]?.id}`}
                         className="px-4 py-2 bg-surface-primary border border-border-primary rounded text-xs font-semibold text-text-primary hover:bg-surface-secondary transition-colors"
                       >
                         Deploy Now
