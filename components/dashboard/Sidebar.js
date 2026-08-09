@@ -9,12 +9,14 @@ import {
   Layout01Icon,
   Task01Icon,
   Coins01Icon,
+  Layers01Icon,
 } from "hugeicons-react";
 import { motion } from "motion/react";
 
 const navItems = [
   { name: "Overview", href: "/dashboard", icon: Home01Icon },
   { name: "Launch Token", href: "/dashboard/create", icon: Rocket01Icon },
+  { name: "Deployments", href: "/dashboard/deployments", icon: Layers01Icon },
   { name: "Tasks", href: "/dashboard/tasks", icon: Task01Icon },
   { name: "Rewards", href: "/dashboard/rewards", icon: Coins01Icon },
   { name: "Token Profiles", href: "/dashboard/profiles", icon: Layout01Icon },
