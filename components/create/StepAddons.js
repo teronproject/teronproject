@@ -191,9 +191,9 @@ export default function StepAddons({ register, errors, watch, setValue }) {
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="overflow-hidden"
+                className="overflow-hidden w-full border-t border-dashed border-accent/10"
               >
-                <div className="px-5 pb-5 ml-7 pt-2 border-t border-accent/10">
+                <div className="px-5 pb-5 ml-7 pt-2 ">
                   <p className="text-xs text-text-secondary mb-4">Provide the following details required by BscScan for verification:</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Select
@@ -212,7 +212,7 @@ export default function StepAddons({ register, errors, watch, setValue }) {
         </div>
 
         {/* ══════════════ Metadata Toggle ══════════════ */}
-        <div className={`rounded-xl border-2 transition-all duration-300 ${addMetadata ? "border-accent bg-accent/5 shadow-[0_0_20px_rgba(var(--color-accent-rgb,234,179,8),0.08)]" : "border-border-secondary bg-surface-secondary hover:border-border-primary"}`}>
+        <div className={`rounded-xl border-2 transition-all duration-300 ${addMetadata ? "border-accent" : "border-border-secondary"}`}>
           <button
             type="button"
             onClick={() => setValue("addMetadata", !addMetadata, { shouldValidate: true })}
