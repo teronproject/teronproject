@@ -264,9 +264,9 @@ export default function DeploymentStatusPage({ params }) {
   const totalPendingBnb = pendingPayments.reduce((acc, curr) => acc + curr.amountBnb, 0);
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4 space-y-8">
+    <div className="max-w-6xl mx-auto py-12 px-4 space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-primary pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-dashed border-border-primary pb-6">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Smart Contract Deployment</h1>
           <p className="text-text-secondary text-sm">
@@ -288,11 +288,11 @@ export default function DeploymentStatusPage({ params }) {
             ✓
           </div>
           <h2 className="text-xl font-bold text-text-primary">Token Successfully Deployed!</h2>
-          <p className="text-text-secondary text-sm max-w-lg mx-auto">
+          <p className="text-text-secondary text-sm max-w-lg text-balance mx-auto">
             Your token <strong className="text-text-primary">{token.name} ({token.symbol})</strong> has been permanently written to the BNB Smart Chain.
           </p>
           {contractAddr && (
-            <div className="p-4 bg-surface-primary border border-border-secondary rounded-lg inline-block max-w-full overflow-hidden text-left">
+            <div className="p-4 bg-surface-primary border card border-border-secondary rounded-lg inline-block max-w-full overflow-hidden text-left">
               <p className="text-xs text-text-tertiary font-semibold uppercase mb-1">BEP-20 Contract Address</p>
               <a
                 href={getBscScanUrl(contractAddr)}
@@ -305,7 +305,7 @@ export default function DeploymentStatusPage({ params }) {
             </div>
           )}
           <div className="pt-2 flex flex-wrap gap-4 justify-center">
-            <Link href={`/t/${token.symbol.toLowerCase()}`} className="h-10 px-6 bg-accent text-accent-text font-semibold rounded inline-flex items-center text-sm hover:bg-accent-hover transition-colors">
+            <Link href={`/t/${token.symbol.toLowerCase()}`} className="h-10 px-6 bg-accent text-accent-text font-semibold rounded inline-flex items-center text-sm hover:bg-accent-hover transition-colors cta">
               View Token Profile
             </Link>
             {txHash && (
@@ -313,7 +313,7 @@ export default function DeploymentStatusPage({ params }) {
                 href={getBscScanUrl(txHash, true)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="h-10 px-6 bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded inline-flex items-center text-sm hover:bg-surface-secondary transition-colors"
+                className="h-10 px-6 card bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded inline-flex items-center text-sm hover:bg-surface-secondary transition-colors"
               >
                 View on BscScan
               </a>
@@ -364,10 +364,7 @@ export default function DeploymentStatusPage({ params }) {
       ) : (
         <Card className="p-8 space-y-6 bg-surface-secondary">
           <div className="flex flex-col items-center text-center space-y-3">
-            <div className="w-14 h-14 rounded-full bg-accent-subtle flex items-center justify-center text-accent text-2xl">
-              🚀
-            </div>
-            <h2 className="text-lg font-bold text-text-primary">Ready to Broadcast to BNB Chain</h2>
+            <h2 className="text-lg title font-bold text-text-primary">Ready to Broadcast to BNB Chain</h2>
             <p className="text-text-secondary text-sm max-w-md">
               Click below to initiate the wallet signature. MetaMask or your connected Web3 wallet will prompt you to approve the deployment gas fee.
             </p>
@@ -423,7 +420,7 @@ export default function DeploymentStatusPage({ params }) {
 
       {/* Token Spec Review Box */}
       <Card>
-        <Card.Header className="bg-surface-primary">
+        <Card.Header className="bg-surface-primary card">
           <h3 className="font-semibold text-text-primary text-sm">Immutable Contract Parameters</h3>
         </Card.Header>
         <Card.Body className="divide-y divide-border-primary">
