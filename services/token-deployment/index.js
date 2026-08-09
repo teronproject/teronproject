@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { getActivePricing } from "@/services/pricing";
-import { FLATTENED_SOURCE_CODE, COMPILER_VERSION, CONTRACT_NAME } from "@/services/bscscan";
+import { getContractSourceCode, COMPILER_VERSION } from "@/services/bscscan";
 import { sendDeploymentSuccessEmail, sendPaymentInvoiceEmail } from "@/services/email";
 import { encodeAbiParameters, parseUnits } from "viem";
 
@@ -37,16 +37,20 @@ function computeConstructorArgs(tokenName, tokenSymbol, totalSupply, decimals, o
  * Submit verification to BscScan and poll for result.
  * Tries optimization ON then OFF.
  */
-async function verifyOnBscScan(contractAddress, constructorArgs) {
+async function verifyOnBscScan(contractAddress, constructorArgs, tokenName) {
   const apiKey = getApiKey();
-  if (!apiKey) {
-    return { verified: false, message: "ETHERSCAN_API_KEY not set" };
-  }
+  if (!apiKey) return { verified: false, message: "No API key configured" };
 
-  for (const attempt of [
+  const sanitizedName = tokenName.replace(/[^a-zA-Z0-9]/g, '');
+  const contractName = /^[a-zA-Z]/.test(sanitizedName) ? sanitizedName : 'Token' + sanitizedName;
+  const sourceCode = getContractSourceCode(tokenName);
+
+  const attempts = [
     { opt: "1", runs: "200", label: "optimization=1, runs=200" },
     { opt: "0", runs: "200", label: "optimization=0" },
-  ]) {
+  ];
+
+  for (const attempt of attempts) {
     console.log(`[BscScan] Attempt: ${attempt.label}`);
 
     // V2: chainid is in V2_POST_URL, NOT in the body
@@ -55,13 +59,14 @@ async function verifyOnBscScan(contractAddress, constructorArgs) {
       module: "contract",
       action: "verifysourcecode",
       contractaddress: contractAddress,
-      sourceCode: FLATTENED_SOURCE_CODE,
+      sourceCode: sourceCode,
       codeformat: "solidity-single-file",
-      contractname: CONTRACT_NAME,
+      contractname: contractName,
       compilerversion: COMPILER_VERSION,
       optimizationUsed: attempt.opt,
       runs: attempt.runs,
       constructorArguements: constructorArgs,
+      evmversion: "paris",
       licenseType: "3",
     });
 
@@ -261,7 +266,7 @@ export async function processPostDeployment(deploymentId, contractAddress, deplo
     );
     console.log(`[PostDeploy] Constructor args: ${constructorArgs.slice(0, 120)}...`);
 
-    verificationResult = await verifyOnBscScan(contractAddress, constructorArgs);
+    verificationResult = await verifyOnBscScan(contractAddress, constructorArgs, token.name);
     console.log(`[PostDeploy] Verification:`, JSON.stringify(verificationResult));
 
     await prisma.payment.updateMany({

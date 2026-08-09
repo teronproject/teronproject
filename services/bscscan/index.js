@@ -15,6 +15,9 @@
 const V2_BASE = "https://api.etherscan.io/v2/api";
 const CHAIN_ID = "56"; // BSC Mainnet
 
+import fs from 'fs';
+import path from 'path';
+
 // Use Etherscan key for V2, fall back to BscScan key
 function getApiKey() {
   return process.env.ETHERSCAN_API_KEY || process.env.BSCSCAN_API_KEY;
@@ -29,69 +32,19 @@ function v2Get(params) {
 const V2_POST_URL = `${V2_BASE}?chainid=${CHAIN_ID}`;
 
 /**
- * The exact flattened Solidity source code matching the bytecode in lib/contracts/bep20.js.
- * Compiled with solc 0.8.20, optimizer ON, 200 runs.
+ * Reads ERC20.sol and replaces the placeholder with the actual sanitized token name.
  */
-export const FLATTENED_SOURCE_CODE = `// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
-
-contract TeronBEP20 {
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-    uint256 public totalSupply;
-    address public owner;
-
-    mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        uint256 initialSupply_,
-        uint8 decimals_,
-        address initialOwner_
-    ) {
-        name = name_;
-        symbol = symbol_;
-        decimals = decimals_;
-        totalSupply = initialSupply_;
-        owner = initialOwner_;
-        balanceOf[initialOwner_] = initialSupply_;
-        emit Transfer(address(0), initialOwner_, initialSupply_);
-    }
-
-    function transfer(address to, uint256 value) public returns (bool success) {
-        require(balanceOf[msg.sender] >= value, "Insufficient balance");
-        balanceOf[msg.sender] -= value;
-        balanceOf[to] += value;
-        emit Transfer(msg.sender, to, value);
-        return true;
-    }
-
-    function approve(address spender, uint256 value) public returns (bool success) {
-        allowance[msg.sender][spender] = value;
-        emit Approval(msg.sender, spender, value);
-        return true;
-    }
-
-    function transferFrom(address from, address to, uint256 value) public returns (bool success) {
-        require(balanceOf[from] >= value, "Insufficient balance");
-        require(allowance[from][msg.sender] >= value, "Allowance exceeded");
-        balanceOf[from] -= value;
-        balanceOf[to] += value;
-        allowance[from][msg.sender] -= value;
-        emit Transfer(from, to, value);
-        return true;
-    }
-}`;
+export function getContractSourceCode(tokenName) {
+  const sanitizedName = tokenName.replace(/[^a-zA-Z0-9]/g, '');
+  const contractName = /^[a-zA-Z]/.test(sanitizedName) ? sanitizedName : 'Token' + sanitizedName;
+  
+  const templatePath = path.join(process.cwd(), 'ERC20.sol');
+  const templateSource = fs.readFileSync(templatePath, 'utf8');
+  
+  return templateSource.replace(/\{\{CONTRACT_NAME\}\}/g, contractName);
+}
 
 export const COMPILER_VERSION = "v0.8.20+commit.a1b79de6";
-export const CONTRACT_NAME = "TeronBEP20";
 
 /**
  * Verify a smart contract via Etherscan V2 API.
@@ -123,6 +76,7 @@ export async function verifyContract({
     optimizationUsed: String(optimizationUsed),
     runs: String(runs),
     constructorArguements: constructorArguments,
+    evmversion: "paris",
     licenseType: "3",
   });
 

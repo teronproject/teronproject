@@ -9,7 +9,6 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
-import { BEP20_ABI, BEP20_BYTECODE } from "@/lib/contracts/bep20";
 import Link from "next/link";
 
 export default function DeploymentStatusPage({ params }) {
@@ -22,6 +21,7 @@ export default function DeploymentStatusPage({ params }) {
   const [dbStatus, setDbStatus] = useState("PENDING");
   const [contractAddr, setContractAddr] = useState(null);
   const [coldWalletAddr, setColdWalletAddr] = useState(null);
+  const [isCompiling, setIsCompiling] = useState(false);
 
   const { address, isConnected, isBnbChain, chain } = useWallet();
   const { addToast } = useToastContext();
@@ -162,7 +162,7 @@ export default function DeploymentStatusPage({ params }) {
     }
   };
 
-  const handleTriggerDeploy = () => {
+  const handleTriggerDeploy = async () => {
     if (!isConnected) {
       addToast({ variant: "error", message: "Please connect your wallet first." });
       return;
@@ -176,12 +176,26 @@ export default function DeploymentStatusPage({ params }) {
     if (!token) return;
 
     try {
+      setIsCompiling(true);
+      // 1. Fetch dynamic compilation from backend
+      const compileRes = await fetch("/api/compile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tokenName: token.name }),
+      });
+      const compileData = await compileRes.json();
+      
+      if (!compileRes.ok || !compileData.success) {
+        throw new Error(compileData.error || "Failed to compile contract");
+      }
+
       // Calculate supply with exact decimals using BigInt
       const rawSupply = parseUnits(token.totalSupply.toString(), token.decimals);
 
+      // 2. Deploy using dynamic bytecode and ABI
       deployContract({
-        abi: BEP20_ABI,
-        bytecode: BEP20_BYTECODE,
+        abi: compileData.abi,
+        bytecode: compileData.bytecode,
         args: [
           token.name,
           token.symbol,
@@ -192,7 +206,9 @@ export default function DeploymentStatusPage({ params }) {
         gas: 3000000n, // Hardcoded gas limit to bypass wallet estimation issues
       });
     } catch (err) {
-      addToast({ variant: "error", message: "Failed to format contract arguments: " + err.message });
+      addToast({ variant: "error", message: err.message || "Failed to initiate deployment" });
+    } finally {
+      setIsCompiling(false);
     }
   };
 
@@ -242,7 +258,7 @@ export default function DeploymentStatusPage({ params }) {
 
   const { token } = deploymentData;
   const isComplete = dbStatus === "CONFIRMED";
-  const isInProgress = isDeployingWallet || isConfirmingChain || dbStatus === "DEPLOYING" || dbStatus === "SIMULATING";
+  const isInProgress = isCompiling || isDeployingWallet || isConfirmingChain || dbStatus === "DEPLOYING" || dbStatus === "SIMULATING";
 
   const pendingPayments = token?.payments?.filter(p => p.status === "PENDING") || [];
   const totalPendingBnb = pendingPayments.reduce((acc, curr) => acc + curr.amountBnb, 0);
@@ -363,7 +379,9 @@ export default function DeploymentStatusPage({ params }) {
               <div className="flex items-center gap-3">
                 <span className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin shrink-0" />
                 <span className="text-sm font-medium text-text-primary">
-                  {isDeployingWallet
+                  {isCompiling
+                    ? "Preparing dynamic contract source... (takes a few seconds)"
+                    : isDeployingWallet
                     ? "Waiting for wallet signature..."
                     : isConfirmingChain
                     ? "Transaction broadcasted! Waiting for block inclusion on BNB Chain..."
@@ -391,6 +409,8 @@ export default function DeploymentStatusPage({ params }) {
                 ? "Connect Wallet to Deploy"
                 : !isBnbChain
                 ? "Switch to BNB Chain"
+                : isCompiling
+                ? "Preparing Contract..."
                 : isDeployingWallet
                 ? "Check Wallet..."
                 : isConfirmingChain
