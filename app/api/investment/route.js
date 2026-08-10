@@ -5,9 +5,12 @@ import { sendInvestmentAdminEmail, sendInvestmentUserEmail } from "@/services/em
 const investmentSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
   email: z.string().email("Invalid email address"),
+  role: z.string().optional(),
   telegram: z.string().min(2, "Telegram username is required"),
-  amount: z.string().min(1, "Please select an investment amount"),
   company: z.string().optional(),
+  linkedin: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  amount: z.string().min(1, "Please select an investment amount"),
+  timeline: z.string().optional(),
   message: z.string().min(10, "Message must be at least 10 characters").max(2000),
 });
 

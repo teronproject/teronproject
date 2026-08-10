@@ -334,7 +334,7 @@ export async function sendContactUserEmail({ name, email }) {
 /**
  * Send investment form submission to admin
  */
-export async function sendInvestmentAdminEmail({ name, email, telegram, amount, company, message }) {
+export async function sendInvestmentAdminEmail({ name, email, telegram, role, company, linkedin, amount, timeline, message }) {
   const adminEmail = process.env.EMAIL_USER;
   if (!adminEmail) return { success: false, message: "Admin email not configured" };
 
@@ -366,16 +366,28 @@ export async function sendInvestmentAdminEmail({ name, email, telegram, amount, 
                 <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${email}</td>
               </tr>
               <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Role:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${role || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Company/Fund:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${company || "N/A"}</td>
+              </tr>
+              <tr>
                 <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Telegram:</td>
                 <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${telegram || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">LinkedIn:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${linkedin || "N/A"}</td>
               </tr>
               <tr>
                 <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Amount:</td>
                 <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a; font-weight: 600;">${amount}</td>
               </tr>
               <tr>
-                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Company:</td>
-                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${company || "N/A"}</td>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Timeline:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${timeline || "N/A"}</td>
               </tr>
             </table>
           </div>
