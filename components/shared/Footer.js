@@ -82,6 +82,11 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
+                <Link href="/investment" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+                  Investment
+                </Link>
+              </li>
+              <li>
                 <Link href="/legal/disclaimer" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
                   Disclaimer
                 </Link>
@@ -89,11 +94,6 @@ export default function Footer() {
               <li>
                 <Link href="/legal/cookies" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
                   Cookies
-                </Link>
-              </li>
-              <li>
-                <Link href="/legal/risk-disclosure" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-                  Risk Disclosure
                 </Link>
               </li>
               <li>
