@@ -82,7 +82,7 @@ export default function AdminTokensPage() {
   const getStatusBadge = (status) => {
     const map = {
       CONFIRMED: "success", PENDING: "warning", FAILED: "error",
-      APPROVED: "success", REJECTED: "error", PUBLISHED: "success",
+      VERIFIED: "success", PUBLISHED: "success",
       NOT_REQUESTED: "neutral",
     };
     return <Badge variant={map[status] || "neutral"} size="sm">{status || "N/A"}</Badge>;
@@ -185,14 +185,14 @@ export default function AdminTokensPage() {
                           {token.verificationStatus === "PENDING" && paidVerification && (
                             <>
                               <button
-                                onClick={() => handleAction(token.id, "verification", "APPROVED")}
+                                onClick={() => handleAction(token.id, "verification", "VERIFIED")}
                                 className="p-1.5 rounded-md bg-success/10 text-success hover:bg-success/20 transition-colors"
                                 title="Approve Verification"
                               >
                                 <CheckmarkBadge01Icon size={16} variant="solid" />
                               </button>
                               <button
-                                onClick={() => handleAction(token.id, "verification", "REJECTED")}
+                                onClick={() => handleAction(token.id, "verification", "FAILED")}
                                 className="p-1.5 rounded-md bg-error/10 text-error hover:bg-error/20 transition-colors"
                                 title="Reject Verification"
                               >
