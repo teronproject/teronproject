@@ -15,7 +15,6 @@ export default function SwapInfoPage() {
           <CanvasBackground />
         </div>
         <div className="relative z-10 max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xs uppercase tracking-[0.2em] text-text-tertiary mb-4 font-medium">Token Swap</p>
           <h1 className="title text-4xl sm:text-5xl font-medium text-white tracking-tight leading-[1.1] mb-5">
             Swap & Convert Info
           </h1>
