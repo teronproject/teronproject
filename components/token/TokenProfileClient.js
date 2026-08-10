@@ -8,6 +8,7 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import { GlobalIcon, NewTwitterIcon, TelegramIcon, DiscordIcon, Search01Icon, Shield01Icon, Copy01Icon, File02Icon, Tag01Icon, Coins01Icon, Calendar01Icon, Wallet01Icon, InformationSquareIcon } from "hugeicons-react";
+import CanvasBackground from "../landing/CanvasBackground";
 
 export default function TokenProfileClient({ symbolOrAddr, initialToken, initialError }) {
   const [token, setToken] = useState(initialToken);
@@ -69,7 +70,7 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
 
   if (error || !token) {
     return (
-      <div className="max-w-3xl mx-auto py-32 px-4 text-center space-y-8">
+      <div className="max-w-5xl mx-auto py-32 px-4 text-center space-y-8">
         <div className="w-24 h-24 rounded-full bg-surface-secondary flex items-center justify-center mx-auto shadow-sm border border-border-secondary">
           <Search01Icon size={40} className="text-text-tertiary" variant="stroke-rounded" />
         </div>
@@ -97,7 +98,7 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
   return (
     <div className="min-h-screen pb-20 max-w-5xl mx-auto">
       {/* Banner Area */}
-      <div className="relative h-64 w-full bg-gradient-to-r from-bg-secondary via-surface-tertiary to-bg-secondary overflow-hidden rounded-b-xl">
+      <div className="relative h-64 w-full overflow-hidden rounded-b-xl">
         {profile.bannerUrl ? (
           <>
             <img 
@@ -108,8 +109,8 @@ export default function TokenProfileClient({ symbolOrAddr, initialToken, initial
             <div className="absolute inset-0 bg-gradient-to-t from-bg-primary to-transparent opacity-100 rounded-b-xl pointer-events-none"></div>
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center opacity-20 text-4xl">
-            BNB SMART CHAI5
+          <div className="w-full h-full border border-border-primary border-dashed border-t-0 relative overflow-hidden rounded-b-xl">
+            <CanvasBackground />
           </div>
         )}
       </div>
