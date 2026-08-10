@@ -1,4 +1,5 @@
 import CanvasBackground from "@/components/landing/CanvasBackground";
+import Link from "next/link";
 
 export const metadata = {
   title: "Privacy Policy - Teron",
@@ -67,10 +68,10 @@ export default function PrivacyPage() {
               We do not sell your personal data. We do not share your information with advertisers. We may share data with the following categories of third parties only as necessary to provide our services:
             </p>
             <ul className="list-none space-y-3 mb-10 pl-0">
-              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">Infrastructure providers</span> — hosting, database, and content delivery services</li>
-              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">BscScan / Etherscan</span> — for contract verification and on-chain metadata submission</li>
-              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">Email service providers</span> — to send transactional emails such as deployment receipts</li>
-              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">Analytics providers</span> — to understand platform usage in aggregate</li>
+              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">Infrastructure providers</span> - hosting, database, and content delivery services</li>
+              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">BscScan / Etherscan</span> - for contract verification and on-chain metadata submission</li>
+              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">Email service providers</span> - to send transactional emails such as deployment receipts</li>
+              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">Analytics providers</span> - to understand platform usage in aggregate</li>
             </ul>
 
             <h2 className="text-xl font-medium text-white mb-4 tracking-tight">4. Public Blockchain Data</h2>

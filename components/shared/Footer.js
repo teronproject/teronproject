@@ -67,6 +67,11 @@ export default function Footer() {
                   Privacy
                 </Link>
               </li>
+              <li>
+                <Link href="/legal" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+                  Legal
+                </Link>
+              </li>
             </ul>
           </div>
 
