@@ -229,3 +229,209 @@ export async function sendPaymentInvoiceEmail({
     html,
   });
 }
+
+/**
+ * Send contact form submission to admin
+ */
+export async function sendContactAdminEmail({ name, email, telegram, subject, message }) {
+  const adminEmail = process.env.EMAIL_USER;
+  if (!adminEmail) return { success: false, message: "Admin email not configured" };
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #fafafa; font-size: 24px; margin: 0;">Teron</h1>
+          <p style="color: #71717a; font-size: 12px; margin: 8px 0 0;">New Contact Submission</p>
+        </div>
+
+        <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+          <h2 style="color: #eab308; font-size: 18px; margin: 0 0 20px 0; border-bottom: 1px solid #27272a; padding-bottom: 16px;">Contact Details</h2>
+          
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; width: 100px;">Name:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0;">${name}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Email:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${email}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Telegram:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${telegram || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Subject:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${subject}</td>
+              </tr>
+            </table>
+          </div>
+
+          <h3 style="color: #71717a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 12px 0;">Message</h3>
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px; color: #a1a1aa; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${message}</div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `New Contact from ${name}: ${subject}`,
+    html,
+  });
+}
+
+/**
+ * Send contact auto-reply to user
+ */
+export async function sendContactUserEmail({ name, email }) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #fafafa; font-size: 24px; margin: 0;">Teron</h1>
+        </div>
+
+        <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+          <h2 style="color: #fafafa; font-size: 20px; margin: 0 0 16px 0;">Message Received</h2>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            Hello ${name},
+          </p>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            Thank you for reaching out to Teron. We have received your message and our team will review it shortly. We typically respond within 24-48 hours.
+          </p>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0;">
+            Best regards,<br/>The Teron Team
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: "We received your message - Teron",
+    html,
+  });
+}
+
+/**
+ * Send investment form submission to admin
+ */
+export async function sendInvestmentAdminEmail({ name, email, telegram, amount, company, message }) {
+  const adminEmail = process.env.EMAIL_USER;
+  if (!adminEmail) return { success: false, message: "Admin email not configured" };
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #fafafa; font-size: 24px; margin: 0;">Teron</h1>
+          <p style="color: #71717a; font-size: 12px; margin: 8px 0 0;">New Investment Inquiry</p>
+        </div>
+
+        <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+          <h2 style="color: #eab308; font-size: 18px; margin: 0 0 20px 0; border-bottom: 1px solid #27272a; padding-bottom: 16px;">Inquiry Details</h2>
+          
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; width: 120px;">Name:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0;">${name}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Email:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${email}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Telegram:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${telegram || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Amount:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a; font-weight: 600;">${amount}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Company:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${company || "N/A"}</td>
+              </tr>
+            </table>
+          </div>
+
+          <h3 style="color: #71717a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 12px 0;">Background & Message</h3>
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px; color: #a1a1aa; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${message}</div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `Investment Inquiry from ${name} - ${amount}`,
+    html,
+  });
+}
+
+/**
+ * Send investment auto-reply to user
+ */
+export async function sendInvestmentUserEmail({ name, email }) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #fafafa; font-size: 24px; margin: 0;">Teron</h1>
+        </div>
+
+        <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+          <h2 style="color: #fafafa; font-size: 20px; margin: 0 0 16px 0;">Inquiry Received</h2>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            Hello ${name},
+          </p>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            Thank you for your interest in Teron. We have successfully received your investment inquiry. Our core team reviews all applications carefully and will be in touch with you shortly.
+          </p>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0;">
+            Best regards,<br/>The Teron Team
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: "We received your investment inquiry - Teron",
+    html,
+  });
+}
