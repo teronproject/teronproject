@@ -1,4 +1,5 @@
 import CanvasBackground from "@/components/landing/CanvasBackground";
+import Link from "next/link";
 
 export const metadata = {
   title: "Security Policy - Teron",
