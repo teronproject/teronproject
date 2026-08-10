@@ -1,7 +1,7 @@
-import Link from "next/link";
+import CanvasBackground from "@/components/landing/CanvasBackground";
 
 export const metadata = {
-  title: "Privacy Policy — Teron",
+  title: "Privacy Policy - Teron",
   description: "Teron Privacy Policy. Learn how we collect, use, and protect your data on our BNB Chain token launch platform. Covers wallet data, analytics, cookies, and your rights.",
   keywords: "Teron privacy policy, crypto privacy, BNB Chain data protection, Web3 privacy, token creator privacy, blockchain platform privacy",
 };
@@ -10,9 +10,11 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero */}
-      <section className="w-full pt-32 pb-16 sm:pt-40 sm:pb-20 border-b border-white/5">
-        <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/legal" className="text-xs uppercase tracking-[0.2em] text-text-tertiary mb-4 font-medium inline-block hover:text-accent transition-colors">← Legal</Link>
+      <section className="relative w-full pt-32 pb-16 sm:pt-40 sm:pb-20 border-b border-white/5 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <CanvasBackground/>
+        </div>
+        <div className="relative z-10 max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="title text-4xl sm:text-5xl font-medium text-white tracking-tight leading-[1.1] mb-5">
             Privacy Policy
           </h1>
@@ -94,7 +96,7 @@ export default function PrivacyPage() {
               Depending on your jurisdiction, you may have the right to access, correct, or delete the personal data we hold about you. You may also have the right to object to or restrict certain processing activities.
             </p>
             <p className="text-text-secondary leading-relaxed mb-10">
-              To exercise any of these rights, contact us at privacy@teron.io. We will respond to your request within 30 days. Note that data stored on the blockchain cannot be deleted by us or any party, as it is immutable by design.
+              To exercise any of these rights, contact us at teronproject@gmail.com. We will respond to your request within 30 days. Note that data stored on the blockchain cannot be deleted by us or any party, as it is immutable by design.
             </p>
 
             <h2 className="text-xl font-medium text-white mb-4 tracking-tight">8. Data Retention</h2>
@@ -117,7 +119,7 @@ export default function PrivacyPage() {
               For any privacy-related questions or requests, contact us at:
             </p>
             <p className="text-text-secondary leading-relaxed">
-              <span className="text-white">Email:</span> privacy@teron.io
+              <span className="text-white">Email:</span> teronproject@gmail.com
             </p>
           </div>
         </div>

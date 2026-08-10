@@ -1,7 +1,7 @@
-import Link from "next/link";
+import CanvasBackground from "@/components/landing/CanvasBackground";
 
 export const metadata = {
-  title: "Risk Disclosure — Teron",
+  title: "Risk Disclosure - Teron",
   description: "Teron Risk Disclosure. Understand the financial, technical, and regulatory risks of creating and holding digital tokens on BNB Smart Chain before using our platform.",
   keywords: "crypto risk disclosure, BNB Chain risks, token creation risks, smart contract risks, blockchain investment risks, digital asset risks",
 };
@@ -10,9 +10,11 @@ export default function RiskDisclosurePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero */}
-      <section className="w-full pt-32 pb-16 sm:pt-40 sm:pb-20 border-b border-white/5">
-        <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/legal" className="text-xs uppercase tracking-[0.2em] text-text-tertiary mb-4 font-medium inline-block hover:text-accent transition-colors">← Legal</Link>
+      <section className="relative w-full pt-32 pb-16 sm:pt-40 sm:pb-20 border-b border-white/5 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <CanvasBackground/>
+        </div>
+        <div className="relative z-10 max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="title text-4xl sm:text-5xl font-medium text-white tracking-tight leading-[1.1] mb-5">
             Risk Disclosure
           </h1>
@@ -98,7 +100,7 @@ export default function RiskDisclosurePage() {
               If you have questions about the risks described in this document, contact us at:
             </p>
             <p className="text-text-secondary leading-relaxed">
-              <span className="text-white">Email:</span> legal@teron.io
+              <span className="text-white">Email:</span> teronproject@gmail.com
             </p>
           </div>
         </div>

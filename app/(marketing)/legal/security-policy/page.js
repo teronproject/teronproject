@@ -1,7 +1,7 @@
-import Link from "next/link";
+import CanvasBackground from "@/components/landing/CanvasBackground";
 
 export const metadata = {
-  title: "Security Policy — Teron",
+  title: "Security Policy - Teron",
   description: "Teron Security Policy. Learn how we protect the platform, our smart contract security approach, infrastructure safeguards, and how to report security vulnerabilities.",
   keywords: "Teron security, blockchain security, smart contract security, crypto platform security, BNB Chain security, vulnerability disclosure",
 };
@@ -10,9 +10,11 @@ export default function SecurityPolicyPage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero */}
-      <section className="w-full pt-32 pb-16 sm:pt-40 sm:pb-20 border-b border-white/5">
-        <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/legal" className="text-xs uppercase tracking-[0.2em] text-text-tertiary mb-4 font-medium inline-block hover:text-accent transition-colors">← Legal</Link>
+      <section className="relative w-full pt-32 pb-16 sm:pt-40 sm:pb-20 border-b border-white/5 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <CanvasBackground/>
+        </div>
+        <div className="relative z-10 max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="title text-4xl sm:text-5xl font-medium text-white tracking-tight leading-[1.1] mb-5">
             Security Policy
           </h1>
@@ -89,7 +91,7 @@ export default function SecurityPolicyPage() {
               Please do not publicly disclose vulnerabilities before giving us reasonable time to investigate and patch the issue. We aim to acknowledge reports within 48 hours and provide updates on remediation progress.
             </p>
             <p className="text-text-secondary leading-relaxed mb-10">
-              Send vulnerability reports to: <span className="text-white">security@teron.io</span>
+              Send vulnerability reports to: <span className="text-white">teronproject@gmail.com</span>
             </p>
 
             <h2 className="text-xl font-medium text-white mb-4 tracking-tight">7. Incident Response</h2>
@@ -114,7 +116,7 @@ export default function SecurityPolicyPage() {
               For general security questions, contact us at:
             </p>
             <p className="text-text-secondary leading-relaxed">
-              <span className="text-white">Email:</span> security@teron.io
+              <span className="text-white">Email:</span> teronproject@gmail.com
             </p>
           </div>
         </div>
