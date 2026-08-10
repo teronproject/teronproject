@@ -1,7 +1,7 @@
-import Link from "next/link";
+import CanvasBackground from "@/components/landing/CanvasBackground";
 
 export const metadata = {
-  title: "Cookie Policy — Teron",
+  title: "Cookie Policy - Teron",
   description: "Teron Cookie Policy. Learn what cookies we use, why we use them, and how to manage your cookie preferences on our BNB Chain token creation platform.",
   keywords: "Teron cookies, cookie policy, crypto platform cookies, Web3 cookies, BNB Chain cookie settings",
 };
@@ -9,10 +9,11 @@ export const metadata = {
 export default function CookiesPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero */}
-      <section className="w-full pt-32 pb-16 sm:pt-40 sm:pb-20 border-b border-white/5">
-        <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
-          <Link href="/legal" className="text-xs uppercase tracking-[0.2em] text-text-tertiary mb-4 font-medium inline-block hover:text-accent transition-colors">← Legal</Link>
+      <section className="relative w-full pt-32 pb-16 sm:pt-40 sm:pb-20 border-b border-white/5 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <CanvasBackground/>
+        </div>
+        <div className="relative z-10 max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="title text-4xl sm:text-5xl font-medium text-white tracking-tight leading-[1.1] mb-5">
             Cookie Policy
           </h1>
@@ -51,8 +52,8 @@ export default function CookiesPage() {
               Some third-party services integrated into Teron may set their own cookies:
             </p>
             <ul className="list-none space-y-3 mb-10 pl-0">
-              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">WalletConnect</span> — may store session data for wallet connections</li>
-              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">Cloudinary</span> — may set cookies when serving uploaded images such as token logos</li>
+              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">WalletConnect</span> - may store session data for wallet connections</li>
+              <li className="text-text-secondary leading-relaxed pl-5 relative before:content-['—'] before:absolute before:left-0 before:text-text-tertiary"><span className="text-white">Cloudinary</span> - may set cookies when serving uploaded images such as token logos</li>
             </ul>
 
             <h2 className="text-xl font-medium text-white mb-4 tracking-tight">4. What We Do Not Use</h2>
@@ -83,7 +84,7 @@ export default function CookiesPage() {
               For questions about our cookie practices, contact us at:
             </p>
             <p className="text-text-secondary leading-relaxed">
-              <span className="text-white">Email:</span> privacy@teron.io
+              <span className="text-white">Email:</span> teronproject@gmail.com
             </p>
           </div>
         </div>
