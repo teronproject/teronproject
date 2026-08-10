@@ -43,10 +43,10 @@ export default function AdminLayout({ children }) {
         </div>
         <div>
           <h1 className="text-2xl font-bold text-text-primary mb-2">Admin Access Required</h1>
-          <p className="text-text-secondary text-sm max-w-md mx-auto">
+          <p className="text-text-secondary text-sm max-w-md text-balance mx-auto">
             {!isConnected
               ? "Connect your wallet to access the admin panel."
-              : "Your wallet does not have admin privileges. Only wallets listed in ADMIN_WALLET_ADDRESSES can access this panel."}
+              : "Your wallet does not have admin privileges. Only wallets listed in can access this panel."}
           </p>
         </div>
       </div>
