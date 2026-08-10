@@ -129,18 +129,18 @@ export default function AdminTokensPage() {
           <p className="text-text-secondary">No tokens found.</p>
         </div>
       ) : (
-        <div className="bg-surface-primary border border-border-primary rounded-xl overflow-hidden">
+        <div className="bg-surface- border border-border-primary rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="border-b border-border-primary bg-surface-secondary">
                 <tr>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Token</th>
-                  <th className="text-left px-4 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Deployer</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Deploy</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Verification</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Metadata</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Payments</th>
-                  <th className="text-right px-4 py-3 text-xs font-bold text-text-tertiary uppercase tracking-wider">Actions</th>
+                  <th className="text-left title px-4 py-3 text-sm text-text-secondary ">Token</th>
+                  <th className="text-left title px-4 py-3 text-sm text-text-secondary">Deployer</th>
+                  <th className="text-center title px-4 py-3 text-sm text-text-secondary">Deploy</th>
+                  <th className="text-center title px-4 py-3 text-sm text-text-secondary">Verification</th>
+                  <th className="text-center title px-4 py-3 text-sm text-text-secondary">Metadata</th>
+                  <th className="text-center title px-4 py-3 text-sm text-text-secondary">Payments</th>
+                  <th className="text-right title px-4 py-3 text-sm text-text-secondary">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-primary">
