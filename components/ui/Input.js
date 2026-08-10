@@ -9,11 +9,12 @@ const Input = forwardRef(function Input(
     helperText,
     className = "",
     id,
+    required,
     ...props
   },
   ref
 ) {
-  const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
+  const inputId = id || (typeof label === "string" ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
 
   return (
     <div className="space-y-2">
@@ -23,6 +24,7 @@ const Input = forwardRef(function Input(
           className="input-label"
         >
           {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
 

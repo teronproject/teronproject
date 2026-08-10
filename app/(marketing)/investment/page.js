@@ -123,12 +123,12 @@ export default function InvestmentPage() {
                     <CheckmarkBadge01Icon size={32} variant="solid" />
                   </div>
                   <h2 className="text-2xl font-medium text-white mb-3 tracking-tight">Inquiry Received</h2>
-                  <p className="text-text-secondary mb-8 leading-relaxed">
+                  <p className="text-text-secondary text-sm mb-8 leading-relaxed">
                     Thank you for your interest in Teron. Our core team reviews all applications carefully and will be in touch with you shortly at the email provided.
                   </p>
                   <button 
                     onClick={() => setIsSuccess(false)}
-                    className="text-accent cta hover:text-accent-hover font-medium transition-colors"
+                    className="text-accent cta p-3 hover:text-accent-hover font-medium transition-colors"
                   >
                     Submit another inquiry 
                   </button>
@@ -151,6 +151,7 @@ export default function InvestmentPage() {
                         <Input
                           label="Full Name"
                           placeholder="Jane Doe"
+                          required
                           {...register("name")}
                           error={errors.name?.message}
                         />
@@ -158,6 +159,7 @@ export default function InvestmentPage() {
                           label="Work Email"
                           type="email"
                           placeholder="jane@company.com"
+                          required
                           {...register("email")}
                           error={errors.email?.message}
                         />
@@ -182,6 +184,7 @@ export default function InvestmentPage() {
                         <Input
                           label="Telegram Username"
                           placeholder="@username"
+                          required
                           {...register("telegram")}
                           error={errors.telegram?.message}
                         />
@@ -195,7 +198,7 @@ export default function InvestmentPage() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div className="space-y-2">
-                          <label className="input-label">Investment Amount</label>
+                          <label className="input-label">Investment Amount <span className="text-red-500 ml-1">*</span></label>
                           <select
                             className={`input appearance-none ${errors.amount ? "input-error" : ""}`}
                             {...register("amount")}
@@ -224,7 +227,7 @@ export default function InvestmentPage() {
                       </div>
 
                       <div className="space-y-2 pt-1">
-                        <label className="input-label">Background & Value Add</label>
+                        <label className="input-label">Background & Value Add <span className="text-red-500 ml-1">*</span></label>
                         <textarea
                           rows={4}
                           className={`input min-h-[120px] !h-auto resize-none py-3 ${errors.message ? "input-error" : ""}`}
@@ -263,18 +266,19 @@ export default function InvestmentPage() {
 
         </div>
       </section>
-
+      <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
       {/* Post-Form Content */}
       <section className="py-12 border-t border-white/5">
-        <div className="max-w-[800px] px-4 sm:px-6 lg:px-8 text-left">
-          <p className="text-xs text-text-tertiary leading-relaxed mb-4">
+        <div className="max-w- px-4 sm:px-6 lg:px-8 text-left">
+          <p className="text-xs text-text-tertiary text-balance leading-relaxed mb-4">
             Teron Protocol operates in strict compliance with data privacy standards. The information provided in this form is transmitted securely and is exclusively used by the core executive team for the purpose of evaluating strategic partnerships and investment opportunities. We do not sell, rent, or distribute your personal or corporate data to any third-party entities.
           </p>
-          <p className="text-xs text-text-tertiary leading-relaxed">
+          <p className="text-xs text-text-tertiary text-balance leading-relaxed">
             By submitting this inquiry, you acknowledge that this is not an offer or solicitation of an offer to buy or sell securities. Any potential investment will be subject to appropriate due diligence, legal agreements, and compliance with applicable regulations in your jurisdiction.
           </p>
         </div>
       </section>
+      <div className="h-12 w-full border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-70" />
     </div>
   );
 }

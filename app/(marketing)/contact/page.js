@@ -107,7 +107,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Name */}
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-text-primary mb-2">Name <span className="text-red-400">*</span></label>
+                    <label htmlFor="name" className="block text-sm font-medium text-text-primary mb-2">Name <span className="text-red-500 ml-1">*</span></label>
                     <input
                       id="name"
                       type="text"
@@ -120,7 +120,7 @@ export default function ContactPage() {
 
                   {/* Email */}
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-2">Email <span className="text-red-400">*</span></label>
+                    <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-2">Email <span className="text-red-500 ml-1">*</span></label>
                     <input
                       id="email"
                       type="email"
@@ -152,7 +152,7 @@ export default function ContactPage() {
 
                 {/* Subject */}
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-text-primary mb-2">Subject <span className="text-red-400">*</span></label>
+                  <label htmlFor="subject" className="block text-sm font-medium text-text-primary mb-2">Subject <span className="text-red-500 ml-1">*</span></label>
                   <input
                     id="subject"
                     type="text"
@@ -165,7 +165,7 @@ export default function ContactPage() {
 
                 {/* Message */}
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-text-primary mb-2">Message <span className="text-red-400">*</span></label>
+                  <label htmlFor="message" className="block text-sm font-medium text-text-primary mb-2">Message <span className="text-red-500 ml-1">*</span></label>
                   <textarea
                     id="message"
                     rows={6}
