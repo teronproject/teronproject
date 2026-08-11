@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./public/logo.png" alt="Teron Logo" width="120" />
+  <!-- <img src="./public/logo.png" alt="Teron Logo" width="120" /> -->
   <h1>Teron</h1>
   <p><strong>Enterprise-Grade Token Infrastructure on BNB Smart Chain</strong></p>
 </div>
