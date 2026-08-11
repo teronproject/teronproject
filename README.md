@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div align="center">
+  <img src="./public/logo.png" alt="Teron Logo" width="120" />
+  <h1>Teron</h1>
+  <p><strong>Enterprise-Grade Token Infrastructure on BNB Smart Chain</strong></p>
+</div>
 
-## Getting Started
+<br />
 
-First, run the development server:
+Teron is a decentralized finance infrastructure layer designed to streamline, secure, and standardize token creation and management on the BNB Smart Chain (BSC). We provide the foundational architecture required for founders, developers, and institutions to launch and maintain robust digital assets without technical friction.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## The Problem
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The current landscape of token deployment is fragmented and fraught with risk. Legitimate projects face high technical barriers to entry, requiring specialized Solidity developers, expensive audits, and complex integrations to launch successfully. Conversely, investors navigate an ecosystem filled with unverified contracts, hidden mint functions, and opaque tokenomics, leading to a profound lack of trust.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## The Teron Solution
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Teron resolves this core industry friction by abstracting the complexities of smart contract engineering into a secure, intuitive, and highly scalable platform. We act as a trusted intermediary layer that enforces on-chain best practices by default.
 
-## Learn More
+- **Zero-Code Deployment:** Deploy rigorously tested, immutable smart contracts instantly, bypassing the need for manual solidity coding and drastically reducing time-to-market.
+- **Automated Verification:** Seamlessly integrate with the BSCScan API for automatic, immediate contract verification upon deployment, establishing instant trust and transparency.
+- **Comprehensive Metadata Management:** Centralize the administration of critical token information, social metrics, and branding directly on-chain and through our indexing system.
+- **Liquidity Architecture:** Leverage built-in mechanisms to securely provision and lock decentralized exchange liquidity.
+- **Incentive Economy:** Cultivate an active ecosystem through the native reward system, aligning user engagement with protocol growth and sustainability.
 
-To learn more about Next.js, take a look at the following resources:
+## Security and Compliance Architecture
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Security is the core of our infrastructure. Teron mitigates the risks of arbitrary code execution by standardizing deployment templates. We provide unparalleled transparency into contract logic, ensuring that all deployed assets are safe from malicious backdoors or hidden inflation mechanics. Our economic model is driven by premium utility, advanced architectural services, and institutional support—ensuring long-term viability over short-term speculation.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Strategic Operations
 
-## Deploy on Vercel
+Teron is actively scaling operations and expanding our strategic network. We collaborate with venture funds, liquidity providers, and Web3 visionaries who understand the critical necessity for robust infrastructure in decentralized finance.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For partnership inquiries, infrastructure integration, or investment opportunities, please access our secure portal at [teron.app/investment](https://teron.app/investment).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<br />
+
+<div align="center">
+  <p>Engineered for the future of decentralized finance.</p>
+  <p><strong>© 2026 Teron. All rights reserved.</strong></p>
+</div>
