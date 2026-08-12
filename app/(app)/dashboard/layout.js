@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Sidebar from "@/components/dashboard/Sidebar";
 import WalletButton from "@/components/WalletButton";
+import Footer from "@/components/shared/Footer";
 
 export default function DashboardLayout({ children }) {
   const { isConnected } = useWallet();
@@ -21,12 +22,13 @@ export default function DashboardLayout({ children }) {
 
   if (!isConnected) {
     return (
-      <div className="max-w-3xl mx-auto py-32 px-4 text-center space-y-6 min-h-[60vh] flex flex-col justify-center items-center">
+      <>
+      <div className="max-w-3xl mx-auto py-32 px-4 text-center space-y-6 min-h-[70vh] flex flex-col justify-center items-center">
         <div className="w-20 h-20 bg-surface-secondary border border-border-secondary rounded-full flex items-center justify-center text-text-tertiary shadow-sm">
           <LockPasswordIcon size={36} variant="stroke-rounded" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text-primary mb-2">
+          <h1 className="text-2xl font-bold title text-text-primary mb-2">
             Connect Wallet to Access
           </h1>
           <p className="text-text-secondary text-sm max-w-md mx-auto">
@@ -37,7 +39,7 @@ export default function DashboardLayout({ children }) {
           <WalletButton />
         </div>
 
-        <div className="pt-8 max-w-sm mx-auto text-xs text-text-tertiary leading-relaxed border-t border-white/5 space-y-3 text-left">
+        <div className="pt-8 max-w-sm mx-auto text-xs text-text-tertiary leading-relaxed border-t border-dashed border-white/5 space-y-3 text-left">
           <p>
             <strong className="text-text-secondary font-semibold">Important Note:</strong> Connect the exact wallet you intend to use as the owner of your token. You will need a small amount of BNB in this wallet to cover standard network gas fees during deployment.
           </p>
@@ -53,6 +55,8 @@ export default function DashboardLayout({ children }) {
           </p>
         </div>
       </div>
+      <Footer/>
+      </>
     );
   }
 
