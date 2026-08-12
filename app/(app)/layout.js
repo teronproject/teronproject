@@ -1,5 +1,4 @@
-import Footer from "@/components/shared/Footer";
-import Header from "@/components/shared/Header";
+import Header from "@/components/Header";
 
 
 export const metadata = {
@@ -15,7 +14,6 @@ export default function AppLayout({ children }) {
     <div className="min-h-dvh flex flex-col">
       <Header/>
       <main className="flex-1 flex flex-col">{children}</main>
-      <Footer/>
     </div>
   );
 }

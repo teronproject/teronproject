@@ -3,7 +3,9 @@
 import { useWallet } from "@/hooks/useWallet";
 import { LockPasswordIcon } from "hugeicons-react";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Sidebar from "@/components/dashboard/Sidebar";
+import WalletButton from "@/components/WalletButton";
 
 export default function DashboardLayout({ children }) {
   const { isConnected } = useWallet();
@@ -29,6 +31,25 @@ export default function DashboardLayout({ children }) {
           </h1>
           <p className="text-text-secondary text-sm max-w-md mx-auto">
             You need to connect your Web3 wallet to deploy new tokens, manage existing ones, and view your dashboard.
+          </p>
+        </div>
+        <div className="pt-2">
+          <WalletButton />
+        </div>
+
+        <div className="pt-8 max-w-sm mx-auto text-xs text-text-tertiary leading-relaxed border-t border-white/5 space-y-3 text-left">
+          <p>
+            <strong className="text-text-secondary font-semibold">Important Note:</strong> Connect the exact wallet you intend to use as the owner of your token. You will need a small amount of BNB in this wallet to cover standard network gas fees during deployment.
+          </p>
+          <p>
+            By connecting your wallet and using the Teron dashboard, you acknowledge that you have read and agree to our{" "}
+            <Link href="/legal/terms" className="text-text-secondary hover:text-white underline decoration-white/20 underline-offset-2 transition-colors">
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link href="/legal/privacy" className="text-text-secondary hover:text-white underline decoration-white/20 underline-offset-2 transition-colors">
+              Privacy Policy
+            </Link>.
           </p>
         </div>
       </div>
