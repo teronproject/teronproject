@@ -12,6 +12,11 @@ import {
   MoneyBag02Icon,
   SecurityCheckIcon,
   Task01Icon,
+  ToggleOnIcon,
+  Activity01Icon,
+  CreditCardIcon,
+  SeoIcon,
+  HelpCircleIcon,
 } from "hugeicons-react";
 import { motion } from "motion/react";
 
@@ -21,6 +26,11 @@ const adminNavItems = [
   { name: "Users", href: "/admin/users", icon: UserMultiple02Icon },
   { name: "Tasks", href: "/admin/tasks", icon: Task01Icon },
   { name: "Pricing", href: "/admin/pricing", icon: MoneyBag02Icon },
+  { name: "Deployments", href: "/admin/deployments", icon: SecurityCheckIcon },
+  { name: "Feature Flags", href: "/admin/feature-flags", icon: ToggleOnIcon },
+  { name: "Monitoring", href: "/admin/monitoring", icon: Activity01Icon },
+  { name: "SEO", href: "/admin/seo", icon: SeoIcon },
+  { name: "Assistance", href: "/admin/assistance", icon: HelpCircleIcon },
 ];
 
 export default function AdminLayout({ children }) {

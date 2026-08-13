@@ -75,6 +75,12 @@ export default function CreateTokenPage() {
     },
   });
 
+  // Check BNB balance
+  const { useBalance } = require("wagmi");
+  const { formatEther } = require("viem");
+  const { data: balanceData } = useBalance({ address, query: { enabled: !!address } });
+  const bnbBalance = balanceData ? Number(formatEther(balanceData.value)) : 0;
+
   const nextStep = async () => {
     let fieldsToValidate = [];
     
@@ -115,6 +121,8 @@ export default function CreateTokenPage() {
     if (data.addMetadata) total += Number(metadataPrice);
     return total;
   }
+
+  const isInsufficientBnb = currentStep === 3 && (getTotalBnbCost(getValues()) + 0.001 > bnbBalance);
 
   const onSubmit = async (data) => {
     if (!isConnected) {
@@ -193,6 +201,7 @@ export default function CreateTokenPage() {
 
   // Deploy button label
   function getDeployLabel() {
+    if (isInsufficientBnb) return "Insufficient BNB";
     if (!isDeploying) return "Deploy Token";
     if (deployStatus === "paying") return "Confirm Payment...";
     if (deployStatus === "submitting") return "Deploying...";
@@ -231,6 +240,7 @@ export default function CreateTokenPage() {
           onNext={currentStep === 3 ? handleSubmit(onSubmit) : nextStep}
           onBack={currentStep > 1 ? prevStep : null}
           nextLabel={currentStep === 3 ? getDeployLabel() : "Continue"}
+          isNextDisabled={isInsufficientBnb}
           isNextLoading={isDeploying}
         >
           <form onSubmit={(e) => e.preventDefault()}>

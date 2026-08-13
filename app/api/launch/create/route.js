@@ -36,6 +36,19 @@ export async function POST(request) {
       return NextResponse.json({ message: "Invalid payload", errors: error.errors }, { status: 400 });
     }
     console.error("Token creation error:", error);
+    
+    // Log to central monitoring
+    import("@/services/monitoring").then(({ logEvent }) => {
+      const walletAddress = request.headers.get("x-wallet-address");
+      logEvent({
+        type: "DEPLOYMENT_FAILURE",
+        severity: "HIGH",
+        message: error.message || "Internal server error during token launch",
+        stackTrace: error.stack,
+        metadata: { walletAddress },
+      });
+    }).catch(e => console.error("Failed to load monitoring service", e));
+
     return NextResponse.json({ message: error.message || "Internal server error" }, { status: 500 });
   }
 }

@@ -5,6 +5,8 @@
  * Every catch block in the app must route errors here — no silent failures.
  */
 
+import prisma from "@/lib/prisma";
+
 /**
  * Log a monitoring event.
  * @param {object} event
@@ -16,8 +18,21 @@
  * @param {object} [event.metadata]
  */
 export async function logEvent(event) {
-  // TODO: Implement with Prisma — write to MonitoringEvent table
-  console.error(`[MONITORING] [${event.severity}] ${event.type}: ${event.message}`);
+  try {
+    console.error(`[MONITORING] [${event.severity}] ${event.type}: ${event.message}`);
+    await prisma.monitoringEvent.create({
+      data: {
+        type: event.type,
+        severity: event.severity,
+        message: event.message,
+        stackTrace: event.stackTrace,
+        affectedUserId: event.affectedUserId,
+        metadata: event.metadata,
+      },
+    });
+  } catch (err) {
+    console.error("[MONITORING] Failed to save event to DB:", err);
+  }
 }
 
 export async function queryEvents(filters) {

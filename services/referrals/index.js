@@ -55,8 +55,19 @@ export async function getReferralStats(userId) {
     take: 50,
   });
 
+  let refCode = user?.referralCode;
+
+  // Auto-generate for legacy users who don't have one
+  if (user && !refCode) {
+    refCode = crypto.randomUUID().replace(/-/g, "").slice(0, 8);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { referralCode: refCode },
+    });
+  }
+
   return {
-    referralCode: user?.referralCode || "",
+    referralCode: refCode || "",
     totalReferrals: referralCount,
     totalEarnings: referralGrants._sum?.amount || 0,
     referralGrantCount: referralGrants._count || 0,

@@ -408,9 +408,9 @@ export async function sendInvestmentAdminEmail({ name, email, telegram, role, co
 }
 
 /**
- * Send investment auto-reply to user
+ * Send assistance request auto-reply to user
  */
-export async function sendInvestmentUserEmail({ name, email }) {
+export async function sendAssistanceUserEmail({ email, telegram }) {
   const html = `
     <!DOCTYPE html>
     <html>
@@ -425,12 +425,12 @@ export async function sendInvestmentUserEmail({ name, email }) {
         </div>
 
         <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
-          <h2 style="color: #fafafa; font-size: 20px; margin: 0 0 16px 0;">Inquiry Received</h2>
+          <h2 style="color: #fafafa; font-size: 20px; margin: 0 0 16px 0;">Assistance Request Received</h2>
           <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
-            Hello ${name},
+            Hello,
           </p>
           <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
-            Thank you for your interest in Teron. We have successfully received your investment inquiry. Our core team reviews all applications carefully and will be in touch with you shortly.
+            We received your request for BNB assistance to deploy your token. Our team will review your project and get back to you${telegram ? ` via Telegram (@${telegram})` : ` via this email`} soon.
           </p>
           <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0;">
             Best regards,<br/>The Teron Team
@@ -443,7 +443,67 @@ export async function sendInvestmentUserEmail({ name, email }) {
 
   return sendEmail({
     to: email,
-    subject: "We received your investment inquiry - Teron",
+    subject: "BNB Assistance Request Received - Teron",
+    html,
+  });
+}
+
+/**
+ * Send assistance request to admin
+ */
+export async function sendAssistanceAdminEmail({ email, telegram, walletAddress, description, totalBnbCost }) {
+  const adminEmail = process.env.EMAIL_USER;
+  if (!adminEmail) return { success: false, message: "Admin email not configured" };
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #fafafa; font-size: 24px; margin: 0;">Teron</h1>
+          <p style="color: #71717a; font-size: 12px; margin: 8px 0 0;">New BNB Assistance Request</p>
+        </div>
+
+        <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+          <h2 style="color: #eab308; font-size: 18px; margin: 0 0 20px 0; border-bottom: 1px solid #27272a; padding-bottom: 16px;">Request Details</h2>
+          
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; width: 120px;">Email:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0;">${email}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Telegram:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${telegram || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Wallet:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a;">${walletAddress}</td>
+              </tr>
+              <tr>
+                <td style="color: #71717a; font-size: 12px; padding: 8px 0; border-top: 1px solid #27272a;">Required BNB:</td>
+                <td style="color: #fafafa; font-size: 14px; padding: 8px 0; border-top: 1px solid #27272a; font-weight: 600;">${totalBnbCost} BNB</td>
+              </tr>
+            </table>
+          </div>
+
+          <h3 style="color: #71717a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 12px 0;">Project Description</h3>
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px; color: #a1a1aa; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${description || "No description provided."}</div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `BNB Assistance Request - ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`,
     html,
   });
 }

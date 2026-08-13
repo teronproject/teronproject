@@ -3,12 +3,18 @@
 import { useEffect, useState } from "react";
 import { useWallet } from "@/hooks/useWallet";
 import { CheckmarkBadge01Icon, SecurityCheckIcon, Rocket01Icon, Mail01Icon } from "hugeicons-react";
+import { useBalance } from "wagmi";
+import { formatEther } from "viem";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import { useToastContext } from "@/components/ToastProvider";
 
 /**
  * Step 3: Final Review & Deploy
  */
 export default function StepReview({ getValues, setValue, watch }) {
   const { address } = useWallet();
+  const { addToast } = useToastContext();
   const values = getValues();
   const addVerification = watch("addVerification");
   const addMetadata = watch("addMetadata");
@@ -16,6 +22,15 @@ export default function StepReview({ getValues, setValue, watch }) {
   const [bnbPriceUsd, setBnbPriceUsd] = useState(600);
   const [pricing, setPricing] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Assistance state
+  const [assistanceForm, setAssistanceForm] = useState({ telegram: "", description: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  
+  // Check BNB balance
+  const { data: balanceData } = useBalance({ address, query: { enabled: !!address } });
+  const bnbBalance = balanceData ? Number(formatEther(balanceData.value)) : 0;
 
   useEffect(() => {
     fetch("/api/pricing")
@@ -41,8 +56,46 @@ export default function StepReview({ getValues, setValue, watch }) {
   if (addVerification) totalBnbCost += Number(verificationPrice);
   if (addMetadata) totalBnbCost += Number(metadataPrice);
 
+  const totalRequired = totalBnbCost + 0.001; // Adding a small buffer for gas
+  const isInsufficientBnb = bnbBalance < totalRequired;
+
   const formatUsd = (bnb) => {
     return (Number(bnb) * bnbPriceUsd).toLocaleString("en-US", { style: "currency", currency: "USD" });
+  };
+
+  const handleRequestAssistance = async () => {
+    if (!values.contactEmail) {
+      addToast({ variant: "error", message: "Please provide a contact email in Step 2 first." });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/assistance/request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-wallet-address": address,
+        },
+        body: JSON.stringify({
+          contactEmail: values.contactEmail,
+          telegram: assistanceForm.telegram,
+          description: assistanceForm.description,
+          totalBnbCost: totalBnbCost,
+        }),
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        setSubmitSuccess(true);
+      } else {
+        addToast({ variant: "error", message: data.message || "Failed to submit request" });
+      }
+    } catch (err) {
+      addToast({ variant: "error", message: "Network error submitting request" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -193,6 +246,62 @@ export default function StepReview({ getValues, setValue, watch }) {
           </div>
         </div>
       </div>
+
+      {/* BNB Assistance Card */}
+      {isInsufficientBnb && (
+        <div className="bg-error/5 border border-error/20 rounded-xl p-6 card shadow-sm mt-6">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="p-2 bg-error/10 rounded-full shrink-0">
+              <SecurityCheckIcon size={24} className="text-error" variant="solid" />
+            </div>
+            <div>
+              <h3 className="text-sm title text-text-primary mb-1">Insufficient BNB Balance</h3>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Your wallet balance ({bnbBalance.toFixed(4)} BNB) is below the required {totalRequired.toFixed(4)} BNB (including gas buffer). 
+                If you are a promising project, you can request BNB assistance from the Teron team to cover your deployment costs.
+              </p>
+            </div>
+          </div>
+
+          {submitSuccess ? (
+            <div className="bg-success/10 border border-success/20 rounded-lg p-4 text-center">
+              <CheckmarkBadge01Icon size={24} className="text-success mx-auto mb-2" variant="solid" />
+              <p className="text-sm font-bold text-success">Assistance Request Sent!</p>
+              <p className="text-xs text-text-secondary mt-1">Our team will review your project and get back to you shortly.</p>
+            </div>
+          ) : (
+            <div className="space-y-4 pt-2 border-t border-error/10">
+              <div className="grid grid-cols-1 gap-4">
+                <Input
+                  label="Telegram Username (Optional)"
+                  placeholder="@yourusername"
+                  value={assistanceForm.telegram}
+                  onChange={(e) => setAssistanceForm({ ...assistanceForm, telegram: e.target.value })}
+                />
+                <div className="space-y-2">
+                  <label className="input-label">Why should we sponsor your deployment?</label>
+                  <textarea
+                    value={assistanceForm.description}
+                    onChange={(e) => setAssistanceForm({ ...assistanceForm, description: e.target.value })}
+                    placeholder="Tell us about your project, team, and goals..."
+                    className="input text-sm"
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button 
+                  onClick={handleRequestAssistance} 
+                  isLoading={isSubmitting}
+                  className="bg-error text-white hover:bg-error/90"
+                >
+                  Request BNB Assistance
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

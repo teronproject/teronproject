@@ -60,6 +60,7 @@ export async function getPlatformStats() {
     pendingMetadata,
     totalPayments,
     confirmedPayments,
+    pendingTasks,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.token.count(),
@@ -68,6 +69,7 @@ export async function getPlatformStats() {
     prisma.token.count({ where: { metadataStatus: "PENDING" } }),
     prisma.payment.count(),
     prisma.payment.count({ where: { status: "CONFIRMED" } }),
+    prisma.taskCompletion.count({ where: { status: "PENDING" } }),
   ]);
 
   // Sum BNB from confirmed payments
@@ -84,6 +86,7 @@ export async function getPlatformStats() {
     pendingMetadata,
     totalPayments,
     confirmedPayments,
+    pendingTasks,
     totalRevenueBnb: paymentSum._sum.amountBnb || 0,
   };
 }

@@ -89,6 +89,7 @@ export default function AdminOverviewPage() {
     { label: "Total Payments", value: stats?.totalPayments || 0, icon: MoneyBag02Icon, color: "text-text-primary" },
     { label: "Confirmed Payments", value: stats?.confirmedPayments || 0, icon: CheckmarkBadge01Icon, color: "text-success" },
     { label: "Pending Metadata", value: stats?.pendingMetadata || 0, icon: Loading02Icon, color: "text-warning" },
+    { label: "Pending Tasks", value: stats?.pendingTasks || 0, icon: Task01Icon, color: "text-warning" },
   ];
 
   return (
@@ -143,6 +144,17 @@ export default function AdminOverviewPage() {
           </Link>
 
           <Link
+            href="/admin/tasks"
+            className="flex items-center card gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
+          >
+            <Task01Icon size={20} className="text-text-tertiary group-hover:text-accent" />
+            <div>
+              <span className="text-sm font-semibold text-text-primary">Manage Tasks</span>
+              <p className="text-xs text-text-tertiary">Review task completions</p>
+            </div>
+          </Link>
+
+          <Link
             href="/admin/pricing"
             className="flex items-center card gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
           >
@@ -150,6 +162,39 @@ export default function AdminOverviewPage() {
             <div>
               <span className="text-sm font-semibold text-text-primary">Edit Pricing</span>
               <p className="text-xs text-text-tertiary">Update verification & metadata fees</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/feature-flags"
+            className="flex items-center card gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
+          >
+            <SecurityCheckIcon size={20} className="text-text-tertiary group-hover:text-accent" />
+            <div>
+              <span className="text-sm font-semibold text-text-primary">Feature Flags</span>
+              <p className="text-xs text-text-tertiary">Toggle platform modules on/off</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/deployments"
+            className="flex items-center card gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
+          >
+            <CoinsSwapIcon size={20} className="text-text-tertiary group-hover:text-accent" />
+            <div>
+              <span className="text-sm font-semibold text-text-primary">Deployments & Payments</span>
+              <p className="text-xs text-text-tertiary">Track transactions & cold wallet</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/monitoring"
+            className="flex items-center card gap-3 p-4 bg-surface-secondary border border-border-secondary rounded-lg hover:border-accent transition-colors group"
+          >
+            <Loading02Icon size={20} className="text-text-tertiary group-hover:text-accent" />
+            <div>
+              <span className="text-sm font-semibold text-text-primary">Monitoring</span>
+              <p className="text-xs text-text-tertiary">Error logs & platform health</p>
             </div>
           </Link>
         </div>
