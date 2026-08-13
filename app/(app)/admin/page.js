@@ -12,7 +12,8 @@ import {
   CheckmarkBadge01Icon, 
   MoneyBag02Icon,
   SecurityCheckIcon,
-  Loading02Icon
+  Loading02Icon,
+  Task01Icon
 } from "hugeicons-react";
 
 export default function AdminOverviewPage() {
