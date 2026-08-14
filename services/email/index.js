@@ -497,6 +497,7 @@ export async function sendAssistanceAdminEmail({ email, telegram, walletAddress,
           <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 20px; color: #a1a1aa; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${description || "No description provided."}</div>
         </div>
       </div>
+      </div>
     </body>
     </html>
   `;
@@ -504,6 +505,70 @@ export async function sendAssistanceAdminEmail({ email, telegram, walletAddress,
   return sendEmail({
     to: adminEmail,
     subject: `BNB Assistance Request - ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`,
+    html,
+  });
+}
+
+/**
+ * Send assistance request status update to user
+ */
+export async function sendAssistanceStatusUpdateEmail({ email, status, adminNotes }) {
+  const isApproved = status === "APPROVED" || status === "COMPLETED";
+  const statusColor = isApproved ? "#22c55e" : status === "REJECTED" ? "#ef4444" : "#eab308";
+  
+  const statusMessage = isApproved
+    ? "Your request for BNB assistance has been approved! The BNB has been sent to your wallet, and you can now proceed with deploying your token."
+    : status === "REJECTED"
+    ? "Unfortunately, your request for BNB assistance could not be approved at this time."
+    : "The status of your BNB assistance request has been updated.";
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #fafafa; font-size: 24px; margin: 0;">Teron</h1>
+        </div>
+
+        <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+          <h2 style="color: #fafafa; font-size: 20px; margin: 0 0 16px 0;">Request Status Update</h2>
+          <div style="margin-bottom: 24px;">
+            <span style="display: inline-block; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; background-color: ${statusColor}20; color: ${statusColor}; border: 1px solid ${statusColor}40;">
+              ${status}
+            </span>
+          </div>
+          
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            Hello,
+          </p>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            ${statusMessage}
+          </p>
+
+          ${adminNotes ? `
+          <div style="background: #0f0f14; border: 1px solid #27272a; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+            <p style="color: #71717a; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px 0;">Message from Admin</p>
+            <p style="color: #fafafa; font-size: 13px; line-height: 1.5; margin: 0;">${adminNotes}</p>
+          </div>
+          ` : ''}
+
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0;">
+            Best regards,<br/>The Teron Team
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: `Your BNB Assistance Request is ${status}`,
     html,
   });
 }

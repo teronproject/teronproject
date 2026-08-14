@@ -49,7 +49,7 @@ All colors defined as CSS custom properties in `globals.css` via Tailwind v4 `@t
 | `--color-text-primary` | `#fafafa` | Primary text (zinc-50) |
 | `--color-text-secondary` | `#a1a1aa` | Secondary text (zinc-400) |
 | `--color-text-tertiary` | `#71717a` | Muted text (zinc-500) |
-| `--color-text-disabled` | `#52525b` | Disabled text (zinc-600) |
+| `--color-text-disabled` | `#52525b` | Disabled text (zinc-600) | 
 
 ### Yellow Accent (Single Accent Color)
 | Token | Value | Usage |

@@ -337,6 +337,7 @@ model AssistanceRequest {
   walletAddress String
   description   String           @db.Text
   contactEmail  String?
+  tokenData     Json?
   status        AssistanceStatus @default(PENDING)
   adminNotes    String?          @db.Text
   resolvedBy    String?

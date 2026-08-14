@@ -10,7 +10,7 @@ import { useWallet } from "@/hooks/useWallet";
 /**
  * Step 2: Premium Add-ons
  */
-export default function StepAddons({ register, errors, watch, setValue }) {
+export default function StepAddons({ register, errors, watch, setValue, isAssistanceMode }) {
   const addVerification = watch("addVerification");
   const addMetadata = watch("addMetadata");
   const logoUrl = watch("logoUrl");
@@ -146,11 +146,13 @@ export default function StepAddons({ register, errors, watch, setValue }) {
       {/* Email Input — Always visible */}
       <div>
         <Input
-          label="Your Email Address"
-          placeholder="you@example.com"
-          {...register("contactEmail")}
+          label="Contact Email"
+          type="email"
+          placeholder="admin@yourproject.com"
           error={errors.contactEmail?.message}
-          helperText="We'll send you deployment confirmations and important updates about your token."
+          {...register("contactEmail")}
+          helperText="Required for important notifications (e.g., successful deployment, errors)."
+          disabled={isAssistanceMode}
         />
       </div>
 
@@ -199,9 +201,9 @@ export default function StepAddons({ register, errors, watch, setValue }) {
                     <Select
                       label="Project Category"
                       options={categoryOptions}
-                      value={watch("projectCategory")}
-                      onChange={(e) => setValue("projectCategory", e.target.value, { shouldValidate: true })}
                       error={errors.projectCategory?.message}
+                      {...register("projectCategory")}
+                      disabled={isAssistanceMode}
                     />
                     {/* Contact email is moved to top-level, but we keep a reference */}
                   </div>
@@ -260,7 +262,7 @@ export default function StepAddons({ register, errors, watch, setValue }) {
                       onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                       onDragLeave={() => setDragOver(false)}
                       onDrop={handleDrop}
-                      onClick={() => fileInputRef.current?.click()}
+                      onClick={() => !isAssistanceMode && fileInputRef.current?.click()}
                       className={`relative cursor-pointer border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200 ${
                         dragOver
                           ? "border-accent bg-accent/10"
@@ -275,6 +277,7 @@ export default function StepAddons({ register, errors, watch, setValue }) {
                         accept="image/png,image/jpeg,image/webp,image/svg+xml"
                         className="hidden"
                         onChange={handleFileSelect}
+                        disabled={isAssistanceMode || isUploading}
                       />
 
                       {isUploading ? (
@@ -292,7 +295,8 @@ export default function StepAddons({ register, errors, watch, setValue }) {
                             <p className="text-[10px] text-text-tertiary truncate mt-0.5">{logoUrl}</p>
                             <button
                               type="button"
-                              onClick={(e) => { e.stopPropagation(); setValue("logoUrl", "", { shouldValidate: true }); }}
+                              onClick={(e) => { e.stopPropagation(); setValue("logoUrl", ""); }}
+                              disabled={isAssistanceMode}
                               className="text-[10px] text-error hover:underline mt-1"
                             >
                               Remove & re-upload
@@ -323,6 +327,7 @@ export default function StepAddons({ register, errors, watch, setValue }) {
                         onChange={(e) => setValue("logoUrl", e.target.value, { shouldValidate: true })}
                         error={errors.logoUrl?.message}
                         helperText="Direct link to a 256×256 PNG image"
+                        disabled={isAssistanceMode}
                       />
                     </div>
                   </div>
@@ -330,27 +335,31 @@ export default function StepAddons({ register, errors, watch, setValue }) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                       label="Website URL"
-                      placeholder="https://..."
-                      {...register("website")}
+                      placeholder="https://yourproject.com"
                       error={errors.website?.message}
+                      {...register("website")}
+                      disabled={isAssistanceMode}
                     />
                     <Input
                       label="Twitter / X Profile"
                       placeholder="https://x.com/..."
                       {...register("twitter")}
                       error={errors.twitter?.message}
+                      disabled={isAssistanceMode}
                     />
                     <Input
                       label="Telegram Group"
                       placeholder="https://t.me/..."
                       {...register("telegram")}
                       error={errors.telegram?.message}
+                      disabled={isAssistanceMode}
                     />
                     <Input
                       label="Discord Server"
                       placeholder="https://discord.gg/..."
                       {...register("discord")}
                       error={errors.discord?.message}
+                      disabled={isAssistanceMode}
                     />
                   </div>
                 </div>

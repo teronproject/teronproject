@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { tokenCreateSchema } from "@/lib/zod-schemas/token";
@@ -8,6 +8,7 @@ import WizardLayout from "@/components/create/WizardLayout";
 import StepBasicInfo from "@/components/create/StepBasicInfo";
 import StepAddons from "@/components/create/StepAddons";
 import StepReview from "@/components/create/StepReview";
+import Skeleton from "@/components/ui/Skeleton";
 import { useToastContext } from "@/components/ToastProvider";
 import { useWallet } from "@/hooks/useWallet";
 import { useRouter } from "next/navigation";
@@ -16,14 +17,17 @@ import { useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { parseEther } from "viem";
 
 const COLD_WALLET = process.env.NEXT_PUBLIC_COLD_WALLET_ADDRESS;
+import { useSearchParams } from "next/navigation";
 
-export default function CreateTokenPage() {
+export function CreateTokenContent() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isDeploying, setIsDeploying] = useState(false);
   const [deployStatus, setDeployStatus] = useState(""); // "paying" | "submitting" | "done"
   const { addToast } = useToastContext();
   const { address, isConnected, isBnbChain } = useWallet();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const assistanceId = searchParams.get("assistanceId");
   const { open } = useWeb3Modal();
 
   // Wagmi send transaction
@@ -32,18 +36,7 @@ export default function CreateTokenPage() {
   // Pricing state (fetched once for BNB cost calc)
   const [pricing, setPricing] = useState([]);
   const [bnbPriceUsd, setBnbPriceUsd] = useState(600);
-
-  useEffect(() => {
-    fetch("/api/pricing")
-      .then(res => res.json())
-      .then(data => { if (data.success) setPricing(data.services); })
-      .catch(console.error);
-
-    fetch("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT")
-      .then(res => res.json())
-      .then(data => { if (data?.price) setBnbPriceUsd(parseFloat(data.price)); })
-      .catch(console.error);
-  }, []);
+  const [isAssistanceMode, setIsAssistanceMode] = useState(false);
 
   const {
     register,
@@ -52,6 +45,7 @@ export default function CreateTokenPage() {
     watch,
     setValue,
     getValues,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(tokenCreateSchema),
@@ -74,6 +68,36 @@ export default function CreateTokenPage() {
       chain: "BSC",
     },
   });
+
+  useEffect(() => {
+    fetch("/api/pricing")
+      .then(res => res.json())
+      .then(data => { if (data.success) setPricing(data.services); })
+      .catch(console.error);
+
+    fetch("https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT")
+      .then(res => res.json())
+      .then(data => { if (data?.price) setBnbPriceUsd(parseFloat(data.price)); })
+      .catch(console.error);
+      
+    if (assistanceId && address) {
+      fetch(`/api/assistance/request/${assistanceId}`, {
+        headers: { "x-wallet-address": address }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.request && data.request.status === "APPROVED") {
+          setIsAssistanceMode(true);
+          const td = data.request.tokenData;
+          if (td) {
+            reset({ ...getValues(), ...td });
+          }
+          addToast({ variant: "success", message: "Loaded approved assistance token data." });
+        }
+      })
+      .catch(console.error);
+    }
+  }, [assistanceId, address, setValue, addToast]);
 
   // Check BNB balance
   const { useBalance } = require("wagmi");
@@ -244,12 +268,20 @@ export default function CreateTokenPage() {
           isNextLoading={isDeploying}
         >
           <form onSubmit={(e) => e.preventDefault()}>
-            {currentStep === 1 && <StepBasicInfo register={register} errors={errors} setValue={setValue} />}
-            {currentStep === 2 && <StepAddons register={register} errors={errors} watch={watch} setValue={setValue} />}
-            {currentStep === 3 && <StepReview getValues={getValues} setValue={setValue} watch={watch} />}
+            {currentStep === 1 && <StepBasicInfo register={register} errors={errors} setValue={setValue} isAssistanceMode={isAssistanceMode} />}
+            {currentStep === 2 && <StepAddons register={register} errors={errors} watch={watch} setValue={setValue} isAssistanceMode={isAssistanceMode} />}
+            {currentStep === 3 && <StepReview getValues={getValues} setValue={setValue} watch={watch} isAssistanceMode={isAssistanceMode} />}
           </form>
         </WizardLayout>
       )}
     </div>
+  );
+}
+
+export default function CreateTokenPage() {
+  return (
+    <Suspense fallback={<div className="py-20 text-center"><Skeleton className="h-12 w-64 mx-auto" /></div>}>
+      <CreateTokenContent />
+    </Suspense>
   );
 }

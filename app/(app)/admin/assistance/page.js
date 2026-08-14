@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
+import { TelegramIcon } from "hugeicons-react";
 
 const STATUS_VARIANTS = {
   PENDING: "warning",
@@ -28,6 +29,7 @@ export default function AssistancePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
+  const [approvingId, setApprovingId] = useState(null);
   const [notesMap, setNotesMap] = useState({});
 
   const loadRequests = async () => {
@@ -71,6 +73,7 @@ export default function AssistancePage() {
       addToast({ variant: "error", message: "Failed to update request." });
     } finally {
       setUpdatingId(null);
+      setApprovingId(null);
     }
   };
 
@@ -153,6 +156,11 @@ export default function AssistancePage() {
                       Email: <span className="text-text-primary">{req.contactEmail}</span>
                     </p>
                   )}
+                  {req.tokenData?.assistanceTelegram && (
+                    <a href={`https://t.me/${req.tokenData.assistanceTelegram.replace('@', '')}`} target="_blank" className="inline-flex items-center gap-1 text-accent hover:underline text-xs mb-2 bg-accent/10 px-2 py-1 rounded-full">
+                      <TelegramIcon size={14} /> Message User
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -188,22 +196,45 @@ export default function AssistancePage() {
                   )}
                   {(req.status === "PENDING" || req.status === "REVIEWING") && (
                     <>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleUpdateStatus(req.id, "APPROVED")}
-                        isLoading={updatingId === req.id}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => handleUpdateStatus(req.id, "REJECTED")}
-                        isLoading={updatingId === req.id}
-                      >
-                        Reject
-                      </Button>
+                      {approvingId === req.id ? (
+                         <div className="w-full bg-surface-secondary border border-accent rounded-lg p-4 mt-2">
+                           <p className="text-sm font-semibold text-text-primary mb-2">Approve Request</p>
+                           <p className="text-xs text-text-secondary mb-4">Scan the QR code or copy the address to send exactly <span className="font-bold text-accent">0.0010 BNB</span> for gas fees.</p>
+                           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center mb-4">
+                             <div className="p-2 bg-white rounded-lg inline-block">
+                               <img src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${req.walletAddress}`} alt="QR Code" width={120} height={120} />
+                             </div>
+                             <div className="flex flex-col gap-2">
+                               <div className="text-xs font-mono bg-surface-tertiary border border-border-secondary p-2 rounded break-all">{req.walletAddress}</div>
+                               <div className="text-sm font-semibold text-accent">Amount: 0.0010 BNB</div>
+                             </div>
+                           </div>
+                           <div className="flex gap-2">
+                             <Button variant="primary" size="sm" onClick={() => handleUpdateStatus(req.id, "APPROVED")} isLoading={updatingId === req.id}>
+                               Payment Confirmed, Send Email
+                             </Button>
+                             <Button variant="secondary" size="sm" onClick={() => setApprovingId(null)} disabled={updatingId === req.id}>Cancel</Button>
+                           </div>
+                         </div>
+                      ) : (
+                        <>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => setApprovingId(req.id)}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleUpdateStatus(req.id, "REJECTED")}
+                            isLoading={updatingId === req.id}
+                          >
+                            Reject
+                          </Button>
+                        </>
+                      )}
                     </>
                   )}
                   {req.status === "APPROVED" && (

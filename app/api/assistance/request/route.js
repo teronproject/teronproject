@@ -6,10 +6,11 @@ import { sendAssistanceAdminEmail, sendAssistanceUserEmail } from "@/services/em
 import { logEvent } from "@/services/monitoring";
 
 const requestSchema = z.object({
-  telegram: z.string().optional(),
-  contactEmail: z.string().email("Valid email required"),
-  description: z.string().optional(),
+  telegram: z.string().min(3, "Telegram username must be at least 3 characters").max(32),
+  contactEmail: z.string().email("Valid email required").max(100),
+  description: z.string().min(10, "Description must be at least 10 characters").max(1000),
   totalBnbCost: z.number().min(0),
+  tokenData: z.any().optional(),
 });
 
 export async function POST(request) {
@@ -22,6 +23,13 @@ export async function POST(request) {
     const body = await request.json();
     const data = requestSchema.parse(body);
 
+    if (data.totalBnbCost > 0) {
+      return NextResponse.json(
+        { message: "Assistance is only available for base gas fees. Please deselect premium add-ons." },
+        { status: 400 }
+      );
+    }
+
     const user = await createOrResumeSession(walletAddress);
 
     const assistanceReq = await prisma.assistanceRequest.create({
@@ -29,7 +37,8 @@ export async function POST(request) {
         userId: user.id,
         walletAddress: user.walletAddress,
         contactEmail: data.contactEmail,
-        description: data.description || `User requested BNB assistance for ${data.totalBnbCost} BNB to deploy token. Telegram: ${data.telegram || "N/A"}`,
+        description: data.description,
+        tokenData: { ...(data.tokenData || {}), assistanceTelegram: data.telegram },
         status: "PENDING",
       },
     });

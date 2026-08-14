@@ -65,7 +65,20 @@ export async function PATCH(request) {
         ...(adminNotes !== undefined && { adminNotes }),
         resolvedBy: ["APPROVED", "REJECTED", "COMPLETED"].includes(status) ? walletAddress : undefined,
       },
+      include: {
+        user: { select: { email: true } },
+      }
     });
+
+    if (updated.contactEmail) {
+      import("@/services/email").then(({ sendAssistanceStatusUpdateEmail }) => {
+        sendAssistanceStatusUpdateEmail({
+          email: updated.contactEmail,
+          status: updated.status,
+          adminNotes: updated.adminNotes,
+        }).catch(console.error);
+      }).catch(console.error);
+    }
 
     return NextResponse.json({ success: true, request: updated });
   } catch (error) {
