@@ -80,6 +80,7 @@ export const metadata = {
 };
 
 import { Providers } from "@/components/Providers";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export default function RootLayout({ children }) {
   return (
@@ -90,6 +91,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-dvh flex flex-col max-w-[1500px] border border-l border-r border-border-primary w-full mx-auto ">
         <Providers>{children}</Providers>
       </body>
+      <GoogleAnalytics gaId="G-YRK3LMJPTN" />
     </html>
   );
 }
