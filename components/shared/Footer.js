@@ -12,9 +12,9 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-block group">
-              <Logo className="h-7 w-auto opacity-90 group-hover:opacity-100 transition-opacity" />
+              <Logo className="h-9 w-auto opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
-            <p className="mt-3 text-xs text-balance text-text-tertiary max-w-xs">
+            <p className="mt-1 text-xs text-balance max-w-50 text-text-tertiary">
               Premium Web3 token launch platform for BNB Chain.
             </p>
           </div>
