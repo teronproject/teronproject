@@ -74,6 +74,9 @@ export const metadata = {
     index: true,
     follow: true,
   },
+  verification: {
+    google: "NZ86v8UOdj9FbVb_EqRdxamtjde92UdF077LwHDOOOY",
+  },
 };
 
 import { Providers } from "@/components/Providers";
