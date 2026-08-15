@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 import { Search01Icon, CrownIcon, ArrowRight01Icon, Coins01Icon, Calendar01Icon, Shield01Icon } from "hugeicons-react";
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
+import MaintenanceGuard from "@/components/shared/MaintenanceGuard";
 
 export default function LeaderboardPage() {
   const [tokens, setTokens] = useState([]);
@@ -51,7 +52,8 @@ export default function LeaderboardPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header/>
-    <div className="py-16 px-4 min-h-[70vh] sm:px-6 lg:px-8 space-y-12 relative z-10 w-full">
+      <MaintenanceGuard featureKey="leaderboard">
+        <div className="py-16 px-4 min-h-[70vh] sm:px-6 lg:px-8 space-y-12 relative z-10 w-full">
       {/* Header Section */}
       <div className="flex flex-col items-left text-left space-y-3">
         <h1 className="text-3xl text-text-primary title">
@@ -209,6 +211,7 @@ export default function LeaderboardPage() {
             })}
           </div>
         )}
+        </div>
       </div>
 
       {/* Pagination Controls */}
@@ -247,7 +250,7 @@ export default function LeaderboardPage() {
           The Teron Leaderboard displays BEP-20 tokens deployed via the Teron platform. Rankings are dynamic and may change based on verification status and platform metrics. Teron is a decentralized token deployment protocol; we do not manage, endorse, or guarantee the value, utility, or security of any listed token. Interacting with smart contracts involves inherent risks. Please Do Your Own Research (DYOR) and verify contract addresses directly on BscScan.
         </p>
       </div>
-    </div>
+      </MaintenanceGuard>
     <Footer/>
     </div>
   );

@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import { useWallet } from "@/hooks/useWallet";
+import { useFeatureFlags } from "@/components/FeatureFlagProvider";
 
 /**
  * Step 2: Premium Add-ons
@@ -15,6 +16,11 @@ export default function StepAddons({ register, errors, watch, setValue, isAssist
   const addMetadata = watch("addMetadata");
   const logoUrl = watch("logoUrl");
   const { address } = useWallet();
+  const { flags } = useFeatureFlags();
+  const isGlobalMaintenance = flags.maintenance_mode === true;
+  const premiumEnabled = !isGlobalMaintenance && flags.premium_addons !== false;
+  const verificationEnabled = premiumEnabled && flags.contract_verification !== false;
+  const metadataEnabled = premiumEnabled && flags.metadata_submission !== false;
 
   const [bnbPriceUsd, setBnbPriceUsd] = useState(600);
   const [pricing, setPricing] = useState([]);
@@ -158,17 +164,23 @@ export default function StepAddons({ register, errors, watch, setValue, isAssist
 
       <div className="space-y-5">
         {/* ══════════════ Verification Toggle ══════════════ */}
-        <div className={`rounded-xl border-2 transition-all duration-300 ${addVerification ? "border-accent " : "border-border-secondary  hover:border-border-primary"}`}>
+        <div className={`rounded-xl border-2 transition-all duration-300 ${addVerification ? "border-accent " : "border-border-secondary  hover:border-border-primary"} ${!verificationEnabled ? "opacity-60" : ""}`}>
           <button
             type="button"
+            disabled={!verificationEnabled || isAssistanceMode}
             onClick={() => setValue("addVerification", !addVerification, { shouldValidate: true })}
-            className="w-full cursor-pointer flex items-start p-5 select-none relative text-left"
+            className="w-full cursor-pointer flex items-start p-5 select-none relative text-left disabled:cursor-not-allowed"
           >
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <CheckmarkBadge01Icon variant={addVerification ? "solid" : "stroke-rounded"} size={20} className={addVerification ? "text-accent" : "text-text-secondary"} />
-                <h4 className="font-semibold text-text-primary text-sm">
-                  Contract Verification <span className="text-[10px] uppercase font-bold bg-accent text-accent-text px-1.5 py-0.5 rounded ml-2">Recommended</span>
+                <h4 className="font-semibold text-text-primary text-sm flex items-center gap-2">
+                  Contract Verification 
+                  {verificationEnabled ? (
+                    <span className="text-[10px] uppercase font-bold bg-accent text-accent-text px-1.5 py-0.5 rounded">Recommended</span>
+                  ) : (
+                    <span className="text-[10px] uppercase font-bold bg-surface-tertiary text-text-tertiary px-1.5 py-0.5 rounded border border-border-secondary">Unavailable</span>
+                  )}
                 </h4>
               </div>
               <p className="text-xs text-text-secondary mt-1.5 ml-7 leading-relaxed">
@@ -180,7 +192,7 @@ export default function StepAddons({ register, errors, watch, setValue, isAssist
               </div>
             </div>
             <div className="ml-4 flex items-center h-full pt-2 shrink-0">
-              <div className={`w-12 h-7 rounded-full transition-all duration-300 relative ${addVerification ? 'bg-accent shadow-[0_0_10px_rgba(var(--color-accent-rgb,234,179,8),0.3)]' : 'bg-surface-tertiary'}`}>
+              <div className={`w-12 h-7 rounded-full transition-all duration-300 relative ${!verificationEnabled ? 'bg-surface-tertiary opacity-50' : addVerification ? 'bg-accent shadow-[0_0_10px_rgba(var(--color-accent-rgb,234,179,8),0.3)]' : 'bg-surface-tertiary'}`}>
                 <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300 ${addVerification ? 'translate-x-5' : 'translate-x-0'}`} />
               </div>
             </div>
@@ -214,19 +226,24 @@ export default function StepAddons({ register, errors, watch, setValue, isAssist
         </div>
 
         {/* ══════════════ Metadata Toggle ══════════════ */}
-        <div className={`rounded-xl border-2 transition-all duration-300 ${addMetadata ? "border-accent" : "border-border-secondary hover:border-border-primary"}`}>
+        <div className={`rounded-xl border-2 transition-all duration-300 ${addMetadata ? "border-accent" : "border-border-secondary hover:border-border-primary"} ${!metadataEnabled ? "opacity-60" : ""}`}>
           <button
             type="button"
+            disabled={!metadataEnabled || isAssistanceMode}
             onClick={() => setValue("addMetadata", !addMetadata, { shouldValidate: true })}
-            className="w-full cursor-pointer flex items-start p-5 select-none relative text-left"
+            className="w-full cursor-pointer flex items-start p-5 select-none relative text-left disabled:cursor-not-allowed"
           >
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <SecurityCheckIcon variant={addMetadata ? "solid" : "stroke-rounded"} size={20} className={addMetadata ? "text-accent" : "text-text-secondary"} />
                 <h4 className="font-semibold text-text-primary text-sm flex items-center gap-2">
                   On-Chain Logo & Info
-                  <span className="text-[10px] uppercase font-bold bg-accent/20 text-accent px-1.5 py-0.5 rounded">Premium</span>
-                </h4>
+                  {metadataEnabled ? (
+                    <span className="text-[10px] uppercase font-bold bg-accent/20 text-accent px-1.5 py-0.5 rounded">Premium</span>
+                  ) : (
+                    <span className="text-[10px] uppercase font-bold bg-surface-tertiary text-text-tertiary px-1.5 py-0.5 rounded border border-border-secondary">Unavailable</span>
+                  )}
+                </h4> 
               </div>
               <p className="text-xs text-text-secondary mt-1.5 ml-7 leading-relaxed">
                 Submit your logo, website, and social links to on-chain metadata registries. Makes your token visible in Trust Wallet, PancakeSwap, and other explorers.
@@ -237,7 +254,7 @@ export default function StepAddons({ register, errors, watch, setValue, isAssist
               </div>
             </div>
             <div className="ml-4 flex items-center h-full pt-2 shrink-0">
-              <div className={`w-12 h-7 rounded-full transition-all duration-300 relative ${addMetadata ? 'bg-accent shadow-[0_0_10px_rgba(var(--color-accent-rgb,234,179,8),0.3)]' : 'bg-surface-tertiary'}`}>
+              <div className={`w-12 h-7 rounded-full transition-all duration-300 relative ${!metadataEnabled ? 'bg-surface-tertiary opacity-50' : addMetadata ? 'bg-accent shadow-[0_0_10px_rgba(var(--color-accent-rgb,234,179,8),0.3)]' : 'bg-surface-tertiary'}`}>
                 <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300 ${addMetadata ? 'translate-x-5' : 'translate-x-0'}`} />
               </div>
             </div>

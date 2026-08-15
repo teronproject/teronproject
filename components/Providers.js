@@ -12,13 +12,17 @@ createWeb3Modal({
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
 });
 
+import { FeatureFlagProvider } from "@/components/FeatureFlagProvider";
+
 export function Providers({ children }) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <ToastProvider>{children}</ToastProvider>
+        <FeatureFlagProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </FeatureFlagProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

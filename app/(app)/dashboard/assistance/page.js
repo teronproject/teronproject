@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
+import MaintenanceGuard from "@/components/shared/MaintenanceGuard";
 import { useToastContext } from "@/components/ToastProvider";
 
 const STATUS_VARIANTS = {
@@ -16,7 +17,7 @@ const STATUS_VARIANTS = {
   COMPLETED: "success",
 };
 
-export default function UserAssistancePage() {
+function UserAssistanceContent() {
   const { address } = useWallet();
   const { addToast } = useToastContext();
   const router = useRouter();
@@ -134,5 +135,13 @@ export default function UserAssistancePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function UserAssistancePage() {
+  return (
+    <MaintenanceGuard featureKey="bnb_assistance">
+      <UserAssistanceContent />
+    </MaintenanceGuard>
   );
 }

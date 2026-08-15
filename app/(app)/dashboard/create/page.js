@@ -9,6 +9,7 @@ import StepBasicInfo from "@/components/create/StepBasicInfo";
 import StepAddons from "@/components/create/StepAddons";
 import StepReview from "@/components/create/StepReview";
 import Skeleton from "@/components/ui/Skeleton";
+import MaintenanceGuard from "@/components/shared/MaintenanceGuard";
 import { useToastContext } from "@/components/ToastProvider";
 import { useWallet } from "@/hooks/useWallet";
 import { useRouter } from "next/navigation";
@@ -280,8 +281,10 @@ export function CreateTokenContent() {
 
 export default function CreateTokenPage() {
   return (
-    <Suspense fallback={<div className="py-20 text-center"><Skeleton className="h-12 w-64 mx-auto" /></div>}>
-      <CreateTokenContent />
-    </Suspense>
+    <MaintenanceGuard featureKey="token_creation">
+      <Suspense fallback={<div className="py-20 text-center"><Skeleton className="h-12 w-64 mx-auto" /></div>}>
+        <CreateTokenContent />
+      </Suspense>
+    </MaintenanceGuard>
   );
 }
