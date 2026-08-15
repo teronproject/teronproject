@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Logo from "./Logo";
+import Logo from "@/components/ui/Logo";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu01Icon, Cancel01Icon } from "hugeicons-react";
 import { usePathname } from "next/navigation";
@@ -30,7 +30,9 @@ export default function Header() {
       <header className="fixed top-0 -ml-[1px] z-50 w-full max-w-[1500px] mx-auto border-b border-border-primary bg-bg-primary/80 backdrop-blur-xl border-x overflow-hidden">
         <div className="px-4 md:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Logo size="md" />
+            <Link href="/" className="flex items-center group shrink-0">
+              <Logo className="h-4 sm:h-5 w-auto" />
+            </Link>
             
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8">

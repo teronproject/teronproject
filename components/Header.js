@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import WalletButton from "@/components/WalletButton";
 import { useWallet } from "@/hooks/useWallet";
 import { ChampionIcon, Layout01Icon, Settings01Icon, Shield01Icon } from "hugeicons-react";
+import Logo from "@/components/ui/Logo";
 
 const navLinks = [
   { href: "/leaderboard", label: "Leaderboard", icon: ChampionIcon },
@@ -23,13 +24,8 @@ export default function Header() {
     <header className="sticky top-0 z-40 w-full bg-bg-primary/60 backdrop-blur-2xl">
       <div className="border-b border-border-primary flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group shrink-0">
-          <div className="w-8 h-8 rounded-[10px] bg-gradient-to-b from-[#F4D86A] to-[#E5AC2B] flex items-center justify-center shadow-[0_2px_10px_rgba(244,216,106,0.3),inset_0_1px_1px_rgba(255,255,255,0.6)] transition-transform group-hover:scale-105">
-            <span className="text-[#4E3500] font-extrabold text-sm" style={{ textShadow: "0 1px 0 rgba(255,255,255,0.4)" }}>T</span>
-          </div>
-          <span className="text-lg font-extrabold text-text-primary tracking-tight group-hover:text-accent transition-colors">
-            Teron
-          </span>
+        <Link href="/" className="flex items-center group shrink-0">
+          <Logo className="h-4 sm:h-5 w-auto text-white group-hover:text-accent transition-colors" />
         </Link>
 
         {/* Center Nav */}
