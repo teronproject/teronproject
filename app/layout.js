@@ -49,6 +49,7 @@ export const metadata = {
         url: generateOGImageUrl({
           title: "Premium Web3 Token Launch Platform",
           desc: "Create, deploy, and manage BEP-20 tokens on BNB Chain with a premium launch experience.",
+          route: "/",
         }),
         width: 1200,
         height: 630,
@@ -65,6 +66,7 @@ export const metadata = {
       generateOGImageUrl({
         title: "Premium Web3 Token Launch Platform",
         desc: "Create, deploy, and manage BEP-20 tokens on BNB Chain with a premium launch experience.",
+        route: "/",
       }),
     ],
   },

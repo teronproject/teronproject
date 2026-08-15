@@ -45,6 +45,7 @@ export default function OGGalleryPage() {
           const params = new URLSearchParams({
             title: route.title,
             desc: route.desc,
+            route: route.path,
           });
           const ogUrl = `/api/og?${params.toString()}`;
 

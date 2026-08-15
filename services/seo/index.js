@@ -4,12 +4,12 @@
  * Owns: Dynamic metadata generation, Open Graph/Twitter card data, sitemap/robots generation.
  */
 
-export function generateOGImageUrl({ title, desc, label }) {
+export function generateOGImageUrl({ title, desc, route }) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://teron.io";
   const params = new URLSearchParams();
   if (title) params.set("title", title);
   if (desc) params.set("desc", desc);
-  if (label) params.set("label", label);
+  if (route) params.set("route", route);
 
   return `${baseUrl}/api/og?${params.toString()}`;
 }
@@ -29,7 +29,7 @@ export function generateTokenMetadata(token) {
           url: generateOGImageUrl({
             title: `${token.name} (${token.symbol})`,
             desc: description,
-            label: "Teron Token",
+            route: `/token/${token.address}`,
           }),
           width: 1200,
           height: 630,
@@ -45,7 +45,7 @@ export function generateTokenMetadata(token) {
         generateOGImageUrl({
           title: `${token.name} (${token.symbol})`,
           desc: description,
-          label: "Teron Token",
+          route: `/token/${token.address}`,
         }),
       ],
     },

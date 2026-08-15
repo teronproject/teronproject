@@ -7,17 +7,13 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
 
     // Dynamic params
-    const title = searchParams.get("title") || "Premium Web3 Token Launch Platform";
+    const title = searchParams.get("title") || "Web3 Token Launch Platform";
     const description =
       searchParams.get("desc") ||
-      "Create, deploy, and manage BEP-20 tokens on BNB Chain with a premium launch experience.";
+      "Create, deploy, and manage BEP-20 tokens on BNB Chain with a launch experience.";
     const route = searchParams.get("route") || "/";
-    const domain = "teron.io";
-
-    // Build the crypto ticker string for the departure board
-    const cryptoWords = "   BTC   ETH   BNB   SOL   TERON   XRP   ADA   DOGE   AVAX   DOT   LINK   MATIC   SHIB   UNI   LTC   ATOM   ETC   FIL   XMR   ALGO   DEFI   WEB3   TOKEN   LAUNCHPAD   SMART   CONTRACT   YIELD   STAKING   DEX   LIQUIDITY   POOL   ";
-    // Convert to an array of characters, repeat enough times to fill the grid
-    const chars = Array.from(cryptoWords.repeat(20));
+    const origin = new URL(request.url).origin;
+    const bgUrl = `${origin}/og.png`;
 
     return new ImageResponse(
       (
@@ -26,112 +22,48 @@ export async function GET(request) {
             height: "100%",
             width: "100%",
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#050403", // Core project background
-            fontFamily: "sans-serif",
             position: "relative",
             overflow: "hidden",
+            fontFamily: "sans-serif",
           }}
         >
-          {/* Departure Board Style Crypto Grid Background */}
+          {/* Main Background Image */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={bgUrl}
+            alt="OG Background"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "1200px",
+              height: "630px",
+              objectFit: "cover",
+            }}
+          />
+
+          {/* Top Center Logo & Domain */}
           <div
             style={{
               position: "absolute",
-              top: "-10px",
-              left: "-10px",
-              width: "1220px",
-              height: "650px",
+              top: "35px",
+              left: 0,
+              right: 0,
               display: "flex",
-              flexWrap: "wrap",
-              gap: "4px",
-              zIndex: 1,
-            }}
-          >
-            {chars.slice(0, 520).map((char, i) => (
-              <div
-                key={i}
-                style={{
-                  width: "36px",
-                  height: "46px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#0C0A06", // Very subtle theme-tinted dark grey box
-                  border: "1px solid #141009", // Subtle border for the "box" feel
-                  borderRadius: "4px",
-                  color: "rgba(240, 177, 0, 0.2)", // Teron yellow, faint text
-                  fontSize: "18px",
-                  fontWeight: 600,
-                }}
-              >
-                {char}
-              </div>
-            ))}
-          </div>
-
-          {/* Center Main Copy */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
               justifyContent: "center",
-              gap: "16px", // Reduced gap for a tighter, premium feel
-              maxWidth: "800px",
-              textAlign: "center",
-              zIndex: 10,
-            }}
-          >
-            <h1
-              style={{
-                fontSize: "64px", // Scaled down for a cleaner, premium look
-                fontWeight: 700,
-                color: "#FFFFFF",
-                lineHeight: 1.1,
-                margin: 0,
-                letterSpacing: "-0.02em",
-                textAlign: "center",
-              }}
-            >
-              {title}
-            </h1>
-            <p
-              style={{
-                fontSize: "28px", // Scaled down to match title
-                color: "rgba(255, 255, 255, 0.6)", // Sleek, faded white instead of generic grey
-                lineHeight: 1.5,
-                margin: 0,
-                fontWeight: 400,
-                letterSpacing: "-0.01em",
-                textAlign: "center",
-              }}
-            >
-              {description}
-            </p>
-          </div>
-
-          {/* Bottom Left Logo & Domain */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: "48px",
-              left: "48px",
-              display: "flex",
               alignItems: "center",
-              gap: "16px",
+              gap: "10px",
               zIndex: 10,
             }}
           >
             {/* Embedded Logo */}
-            <svg width="32" height="32" viewBox="0 0 916 915" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* <svg width="25" height="25" viewBox="0 0 916 915" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M439.038 0.392915C445.216 -0.37506 455.832 0.21881 462.326 0.222613C573.455 0.941525 680.471 42.3486 763.139 116.616C854.895 198.979 909.658 314.792 915.096 437.971C920.737 558.343 878.296 676.015 797.128 765.082C714.433 855.671 599.02 909.536 476.471 914.745C469.767 915.239 461.45 914.862 454.629 914.871C343.277 914.062 236.027 872.758 152.899 798.671C63.0241 719.008 8.34773 607.003 0.825802 487.14C-4.1339 404.078 13.3412 321.208 51.4199 247.22C69.7968 212.391 92.3532 179.934 118.589 150.567C185.138 76.5224 274.166 26.3875 371.985 7.87166C395.909 3.3453 415.266 1.89473 439.038 0.392915Z" fill="#F0B100"/>
               <path d="M446.621 76.8116C656.969 70.6774 832.475 236.201 838.659 446.548C844.838 656.895 679.359 832.437 469.009 838.67C258.598 844.903 82.9841 679.352 76.8005 468.94C70.6165 258.523 236.204 82.9471 446.621 76.8116Z" fill="#FEDD27"/>
               <path d="M319.899 267.06C312.265 268.948 284.424 274.954 278.95 278.395C278.51 282.939 292.301 334.973 294.074 342.152L307.076 394.767C309.409 404.243 311.508 413.867 314.179 423.251C314.51 424.425 315.087 426.897 316.336 427.335C321.28 429.073 376.091 412.119 386.906 411.06C388.684 410.886 391.257 410.79 392.811 411.858C393.826 412.556 394.257 414.073 394.612 415.2C397.001 422.77 398.567 430.827 400.469 438.542L411.856 484.472C409.351 485.08 406.743 485.508 404.261 486.171C400.209 487.253 396.294 487.882 397.459 492.991C399.994 504.063 402.802 515.04 405.529 526.056L421.07 588.777L469.244 783.268L477.637 817.308C478.876 822.33 481.138 835.742 485.021 838.533C488.962 838.846 520.184 830.375 526.621 828.858C542.058 825.008 557.572 821.384 572.983 817.432C575.998 816.659 579.986 815.64 579.181 811.682C578.191 806.819 576.943 802.037 575.748 797.225L569.421 771.767L549.501 691.45L512.439 541.698C506.489 517.657 500.557 493.579 494.626 469.535C494.226 467.959 493.908 466.699 492.429 465.803C490.4 464.573 487.677 465.688 485.548 466.178C482.889 466.79 480.24 467.494 477.604 468.16L466.897 424.585C465.488 419.019 459.617 399.55 460.798 394.787C463.701 390.748 477.019 388.514 482.178 387.244L515.229 379.117C520.104 377.921 525.107 376.897 529.817 375.299C532.924 374.244 532.168 372.168 531.506 369.512C526.126 347.943 520.625 325.775 515.278 304.25L500.163 243.385C498.813 237.91 497.868 230.719 495.437 225.536C494.999 224.604 493.909 224.508 493 224.308C480.914 226.857 467.278 230.574 455.2 233.572L387.025 250.463L319.899 267.06ZM255.794 282.909C248.472 284.72 189.378 298.504 187.849 300.66C187.148 301.653 186.985 302.38 187.173 303.558C188.399 311.295 190.973 319.286 192.862 326.913L204.513 373.911L216.769 423.494C218.773 431.605 220.77 439.943 222.938 448.027C223.275 449.278 224.409 449.944 225.464 450.728C233.553 449.216 289.32 435.812 293.903 433.2C293.839 427.714 290.602 416.882 289.222 411.31L280.208 374.889L265.716 316.332C263.223 306.263 260.736 296.07 258.131 286.025C257.607 284.015 257.291 284.109 255.794 282.909ZM537.831 213.087C533.258 214.222 520.158 217.174 516.282 218.832C515.595 221.518 519.674 236.475 520.545 239.995L528.971 273.915L544.283 335.713C546.788 345.838 549.273 356.015 551.815 366.131C552.201 367.665 552.5 368.564 553.68 369.547L596.216 359.069C601.493 357.769 619.6 354.021 623.03 351.062C622.859 346.709 617.405 326.088 616.036 320.563L599.355 253.167L590.688 218.131C589.56 213.577 588.372 208.501 587.072 203.963C586.744 202.822 585.036 202.158 583.913 201.625L537.831 213.087Z" fill="white"/>
-            </svg>
-            <span style={{ color: "#EAB308", fontSize: "20px", fontWeight: 600, letterSpacing: "0.02em" }}>
-              {domain}{route === "/" ? "" : route}
+            </svg> */}
+            <span style={{ color: "white", fontSize: "20px", fontWeight: 600, letterSpacing: "0.02em" }}>
+              teron.io{route === "/" ? "" : route}
             </span>
           </div>
         </div>
