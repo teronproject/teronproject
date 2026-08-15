@@ -1,4 +1,5 @@
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { generateOGImageUrl } from "@/services/seo";
 import "./globals.css";
 
 const inter = Inter({
@@ -43,12 +44,29 @@ export const metadata = {
     title: "Teron — Premium Web3 Token Launch Platform",
     description:
       "Create, deploy, and manage BEP-20 tokens on BNB Chain with a premium launch experience.",
+    images: [
+      {
+        url: generateOGImageUrl({
+          title: "Premium Web3 Token Launch Platform",
+          desc: "Create, deploy, and manage BEP-20 tokens on BNB Chain with a premium launch experience.",
+        }),
+        width: 1200,
+        height: 630,
+        alt: "Teron Platform",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Teron — Premium Web3 Token Launch Platform",
     description:
       "Create, deploy, and manage BEP-20 tokens on BNB Chain with a premium launch experience.",
+    images: [
+      generateOGImageUrl({
+        title: "Premium Web3 Token Launch Platform",
+        desc: "Create, deploy, and manage BEP-20 tokens on BNB Chain with a premium launch experience.",
+      }),
+    ],
   },
   robots: {
     index: true,
