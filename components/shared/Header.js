@@ -31,7 +31,7 @@ export default function Header() {
         <div className="px-4 md:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center group shrink-0">
-              <Logo className="h-4 sm:h-5 w-auto" />
+              <Logo className="h-7 w-auto" />
             </Link>
             
             {/* Desktop Navigation */}

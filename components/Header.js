@@ -25,7 +25,7 @@ export default function Header() {
       <div className="border-b border-border-primary flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center group shrink-0">
-          <Logo className="h-4 sm:h-5 w-auto text-white group-hover:text-accent transition-colors" />
+          <Logo className="h-7 w-auto text-white group-hover:text-accent transition-colors" />
         </Link>
 
         {/* Center Nav */}
