@@ -49,7 +49,7 @@ export async function GET(request) {
               zIndex: 1,
             }}
           >
-            {chars.slice(0, 420).map((char, i) => (
+            {chars.slice(0, 520).map((char, i) => (
               <div
                 key={i}
                 style={{
