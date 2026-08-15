@@ -408,6 +408,47 @@ export async function sendInvestmentAdminEmail({ name, email, telegram, role, co
 }
 
 /**
+ * Send investment auto-reply to user
+ */
+export async function sendInvestmentUserEmail({ name, email }) {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body style="margin: 0; padding: 0; background: #0a0a0f; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h1 style="color: #fafafa; font-size: 24px; margin: 0;">Teron</h1>
+        </div>
+
+        <div style="background: #18181b; border: 1px solid #27272a; border-radius: 16px; padding: 32px; margin-bottom: 24px;">
+          <h2 style="color: #fafafa; font-size: 20px; margin: 0 0 16px 0;">Inquiry Received</h2>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            Hello ${name},
+          </p>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+            Thank you for your interest in investing in Teron. We have received your inquiry and our team will review it shortly. We typically respond within 24-48 hours.
+          </p>
+          <p style="color: #a1a1aa; font-size: 14px; line-height: 1.6; margin: 0;">
+            Best regards,<br/>The Teron Team
+          </p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: "We received your investment inquiry - Teron",
+    html,
+  });
+}
+
+/**
  * Send assistance request auto-reply to user
  */
 export async function sendAssistanceUserEmail({ email, telegram }) {
