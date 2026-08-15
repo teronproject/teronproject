@@ -23,6 +23,8 @@
     "motion": "^12.43.0",
     "next": "16.2.12",
     "nodemailer": "^9.0.5",
+    "posthog-js": "^1.417.1",
+    "posthog-node": "^5.49.1",
     "prisma": "^6.19.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",

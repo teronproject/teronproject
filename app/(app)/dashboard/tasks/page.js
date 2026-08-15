@@ -7,6 +7,7 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
+import posthog from "posthog-js";
 import {
   CheckmarkCircle03Icon,
   Time02Icon,
@@ -43,7 +44,7 @@ export default function TasksPage() {
     }
   }
 
-  async function handleComplete(taskId, externalUrl) {
+  async function handleComplete(taskId, externalUrl, task) {
     if (!isConnected || !address) {
       addToast({ variant: "warning", message: "Connect your wallet first" });
       return;
@@ -67,6 +68,11 @@ export default function TasksPage() {
       const data = await res.json();
       if (data.success) {
         const status = data.completion?.status;
+        posthog.capture("task_completion_submitted", {
+          completion_status: status,
+          reward_amount: task.rewardAmount,
+          verification_method: task.verificationMethod,
+        });
         if (status === "VERIFIED") {
           addToast({ variant: "success", message: "Task completed! TERR reward earned 🎉" });
         } else {
@@ -256,7 +262,7 @@ export default function TasksPage() {
                       {canComplete && (
                         <Button
                           size="sm"
-                          onClick={() => handleComplete(task.id, task.externalUrl)}
+                          onClick={() => handleComplete(task.id, task.externalUrl, task)}
                           isLoading={completingId === task.id}
                           disabled={!isConnected}
                           className="cta"
@@ -268,7 +274,7 @@ export default function TasksPage() {
                         <Button
                           size="sm"
                           variant="secondary"
-                          onClick={() => handleComplete(task.id, task.externalUrl)}
+                          onClick={() => handleComplete(task.id, task.externalUrl, task)}
                           isLoading={completingId === task.id}
                           className="card text-white"
                         >

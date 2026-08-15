@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { useSearchParams } from "next/navigation";
+import posthog from "posthog-js";
 import { BNB_CHAIN_ID, BNB_TESTNET_CHAIN_ID } from "@/lib/constants";
 
 /**
@@ -30,6 +31,24 @@ export function useWallet() {
   const isWrongChain = isConnected && !isBnbChain;
   const isAdmin = userProfile?.role === "ADMIN";
 
+  const identifyUser = useCallback((user) => {
+    if (!process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) return;
+
+    const identifiedUserId = posthog.get_property("$user_id");
+
+    if (identifiedUserId && identifiedUserId !== user.id) {
+      posthog.reset();
+    }
+
+    if (identifiedUserId !== user.id) {
+      posthog.identify(user.id, {
+        email: user.email || undefined,
+        name: user.displayName || undefined,
+        role: user.role,
+      });
+    }
+  }, []);
+
   /**
    * Sync wallet with the Teron backend.
    * Creates or resumes a DB session and returns the user profile.
@@ -49,6 +68,9 @@ export function useWallet() {
       const data = await res.json();
       if (res.ok && data.user) {
         setUserProfile(data.user);
+
+        identifyUser(data.user);
+
         return data.user;
       }
       return null;
@@ -58,7 +80,14 @@ export function useWallet() {
     } finally {
       setIsProfileLoading(false);
     }
-  }, [referralCodeFromUrl]);
+  }, [identifyUser, referralCodeFromUrl]);
+
+  const disconnectWallet = useCallback(() => {
+    if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
+      posthog.reset();
+    }
+    disconnect();
+  }, [disconnect]);
 
   /**
    * Refresh user profile from the backend (e.g. after profile update).
@@ -90,7 +119,7 @@ export function useWallet() {
     isWrongChain,
     // Actions
     connect,
-    disconnect,
+    disconnect: disconnectWallet,
     switchChain,
     isConnecting,
     // Teron user profile

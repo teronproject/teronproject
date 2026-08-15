@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import { parseEther } from "viem";
+import posthog from "posthog-js";
 
 const COLD_WALLET = process.env.NEXT_PUBLIC_COLD_WALLET_ADDRESS;
 import { useSearchParams } from "next/navigation";
@@ -213,6 +214,12 @@ export function CreateTokenContent() {
       }
 
       setDeployStatus("done");
+      posthog.capture("token_deployment_initiated", {
+        chain: data.chain,
+        includes_metadata: data.addMetadata,
+        includes_verification: data.addVerification,
+        is_assistance_mode: isAssistanceMode,
+      });
       addToast({ variant: "success", message: "Token deployment initiated! 🚀" });
       
       // Redirect to the deployment status page

@@ -7,6 +7,7 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
+import posthog from "posthog-js";
 import {
   Coins01Icon,
   Copy01Icon,
@@ -54,10 +55,11 @@ export default function RewardsPage() {
     }
   }
 
-  function copyReferralLink() {
+  async function copyReferralLink() {
     if (!referralData?.referralCode) return;
     const link = `${window.location.origin}?ref=${referralData.referralCode}`;
-    navigator.clipboard.writeText(link);
+    await navigator.clipboard.writeText(link);
+    posthog.capture("referral_link_copied");
     setIsCopied(true);
     addToast({ variant: "success", message: "Referral link copied!" });
     setTimeout(() => setIsCopied(false), 2500);

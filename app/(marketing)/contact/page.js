@@ -8,6 +8,7 @@ import CanvasBackground from "@/components/landing/CanvasBackground";
 import { MailSend01Icon, CheckmarkBadge01Icon, LifebuoyIcon, Message01Icon, News01Icon } from "hugeicons-react";
 import Input from "@/components/ui/Input";
 import ErrorState from "@/components/ui/ErrorState";
+import posthog from "posthog-js";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -48,6 +49,9 @@ export default function ContactPage() {
         throw new Error(result.error || "Failed to send message");
       }
       
+      posthog.capture("contact_message_submitted", {
+        has_telegram: Boolean(data.telegram),
+      });
       setIsSuccess(true);
       reset();
     } catch (error) {
