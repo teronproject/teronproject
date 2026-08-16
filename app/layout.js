@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata = {
   title: {
-    default: "Teron — Create & Deploy BEP-20 Tokens on BNB Chain",
+    default: "Teron - Create & Deploy BEP-20 Tokens on BNB Chain",
     template: "%s | Teron",
   },
   description:
@@ -59,7 +59,7 @@ export const metadata = {
     locale: "en_US",
     url: "/",
     siteName: "Teron",
-    title: "Teron — Create & Deploy BEP-20 Tokens on BNB Chain",
+    title: "Teron - Create & Deploy BEP-20 Tokens on BNB Chain",
     description:
       "The premium Web3 token launchpad. Create, deploy, and manage BEP-20 tokens on BNB Smart Chain with free deployment, BscScan verification, and on-chain metadata.",
     images: [
@@ -71,7 +71,7 @@ export const metadata = {
         }),
         width: 1200,
         height: 630,
-        alt: "Teron — Web3 Token Launch Platform on BNB Chain",
+        alt: "Teron - Web3 Token Launch Platform on BNB Chain",
       },
     ],
   },
@@ -79,7 +79,7 @@ export const metadata = {
     card: "summary_large_image",
     site: "@teronapp",
     creator: "@teronapp",
-    title: "Teron — Create & Deploy BEP-20 Tokens on BNB Chain",
+    title: "Teron - Create & Deploy BEP-20 Tokens on BNB Chain",
     description:
       "The premium Web3 token launchpad. Free deployment on BNB Smart Chain with BscScan verification and on-chain metadata.",
     images: [
