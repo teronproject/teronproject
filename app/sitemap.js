@@ -31,7 +31,7 @@ export default async function sitemap() {
   let tokenEntries = [];
   try {
     const tokens = await prisma.token.findMany({
-      where: { status: "CONFIRMED" },
+      where: { deploymentStatus: "CONFIRMED" },
       select: { symbol: true, updatedAt: true },
       orderBy: { createdAt: "desc" },
       take: 5000,
