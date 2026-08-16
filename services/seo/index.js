@@ -52,6 +52,6 @@ export function generateTokenMetadata(token) {
   };
 }
 
-export async function generateSitemap() {
-  throw new Error("Not implemented");
-}
+// Sitemap generation is handled by app/sitemap.js (Next.js built-in)
+// Robots.txt is handled by app/robots.js (Next.js built-in)
+// Manifest is handled by app/manifest.js (Next.js built-in)
