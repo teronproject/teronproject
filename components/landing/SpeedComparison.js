@@ -43,45 +43,65 @@ export default function SpeedComparison() {
            
            {/* Y-axis Label */}
            <div className="hidden sm:block absolute left-4 top-[60%] -translate-y-1/2 -rotate-90 origin-left text-[11px] font-semibold text-text-tertiary ">
-             Quality & Security Higher is better
+             Quality & Security
            </div>
 
            {/* X-axis Label */}
            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[11px] font-semibold text-text-tertiary ">
-             Time to generate Lower is better
+             Fast to Launch
            </div>
 
            {/* SVG Graph */}
            <div className="w-full h-full max-w-[1000px] mx-auto px-2 sm:px-10 pb-6">
               <svg viewBox="0 0 1000 400" className="w-full h-full overflow-visible">
-                 
-                 {/* Grid Lines */}
-                 <path d="M 250 60 L 250 380" stroke="var(--color-accent)" strokeWidth="1" strokeDasharray="4 4" opacity="0.4" />
-                 <path d="M 850 160 L 850 380" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" strokeDasharray="4 4" />
-                 
-                 <path d="M 100 60 L 1000 60" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" strokeDasharray="4 4" />
-                 <path d="M 100 160 L 1000 160" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" strokeDasharray="4 4" />
+                 {/* Horizontal Axis Lines */}
+                 <path d="M 80 60 L 1000 60" stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1" strokeDasharray="4 4" />
+                 <path d="M 80 160 L 1000 160" stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1" strokeDasharray="4 4" />
+                 <path d="M 80 350 L 1000 350" stroke="rgba(255, 255, 255, 0.15)" strokeWidth="1" />
 
-                 {/* Manual Process Curve Glow */}
-                 <path d="M 100 350 C 400 300, 600 160, 850 160" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="12" strokeLinecap="round" opacity="0.1" />
-                 {/* Manual Process Curve */}
-                 <path d="M 100 350 C 400 300, 600 160, 850 160" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="5" strokeLinecap="round" />
+                 {/* Vertical Markers */}
+                 <path d="M 250 60 L 250 380" stroke="var(--color-accent)" strokeWidth="1" opacity="0.3" />
+                 <path d="M 850 160 L 850 380" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="1" />
                  
-                 {/* Teron Curve Glow */}
-                 <path d="M 100 350 C 160 150, 200 60, 250 60" fill="none" stroke="var(--color-accent)" strokeWidth="16" strokeLinecap="round" opacity="0.15" />
-                 {/* Teron Curve */}
-                 <path d="M 100 350 C 160 150, 200 60, 250 60" fill="none" stroke="var(--color-accent)" strokeWidth="6" strokeLinecap="round" />
+                 {/* Manual Process Line Glow & Path */}
+                 <path d="M 80 350 L 500 350 L 850 160 L 1000 160" fill="none" stroke="rgba(255, 255, 255, 0.2)" strokeWidth="10" strokeLinejoin="miter" opacity="0.1" />
+                 <path d="M 80 350 L 500 350 L 850 160 L 1000 160" fill="none" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="2" strokeLinejoin="miter" />
+                 
+                 {/* Teron Line Glow & Path */}
+                 <path d="M 80 350 L 150 350 L 250 60 L 1000 60" fill="none" stroke="var(--color-accent)" strokeWidth="12" strokeLinejoin="miter" opacity="0.15" />
+                 <path d="M 80 350 L 150 350 L 250 60 L 1000 60" fill="none" stroke="var(--color-accent)" strokeWidth="3" strokeLinejoin="miter" />
 
-                 {/* Labels */}
-                 <text x="265" y="380" fill="var(--color-accent)" fontSize="20" fontWeight="600" className="tracking-tight">5 mins</text>
-                 <text x="865" y="380" fill="rgba(255, 255, 255, 0.7)" fontSize="20" fontWeight="600" className="tracking-tight">2+ Weeks</text>
-
-                 {/* Series Labels */}
-                 <g transform="translate(265, 65)">
-                    <text x="5" y="0" fill="white" fontSize="22" fontWeight="500" className="tracking-tight">Teron</text>
+                 {/* Data Points / Crosshairs */}
+                 {/* Teron Data Point */}
+                 <g transform="translate(250, 60)">
+                   <path d="M -12 0 L 12 0 M 0 -12 L 0 12" stroke="var(--color-accent)" strokeWidth="1" opacity="0.5" />
+                   <rect x="-4" y="-4" width="8" height="8" fill="#050403" stroke="var(--color-accent)" strokeWidth="2" />
+                 </g>
+                 
+                 {/* Manual Data Point */}
+                 <g transform="translate(850, 160)">
+                   <path d="M -12 0 L 12 0 M 0 -12 L 0 12" stroke="rgba(255, 255, 255, 0.5)" strokeWidth="1" />
+                   <rect x="-4" y="-4" width="8" height="8" fill="#050403" stroke="rgba(255, 255, 255, 0.5)" strokeWidth="2" />
                  </g>
 
-                 <text x="865" y="154" fill="rgba(255, 255, 255, 0.9)" fontSize="20" fontWeight="500" className="tracking-tight">Manual process</text>
+                 {/* Origin Data Point */}
+                 <g transform="translate(80, 350)">
+                   <rect x="-3" y="-3" width="6" height="6" fill="#050403" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="2" />
+                 </g>
+
+                 {/* Value Labels */}
+                 <text x="260" y="375" fill="var(--color-accent)" fontSize="14" fontWeight="600" className="tracking-widest uppercase font-mono">05 MINS</text>
+                 <text x="860" y="375" fill="rgba(255, 255, 255, 0.5)" fontSize="14" fontWeight="600" className="tracking-widest uppercase font-mono">14+ DAYS</text>
+
+                 {/* Series Labels */}
+                 <g transform="translate(265, 80)">
+                    <rect x="-6" y="-20" width="68" height="26" fill="var(--color-accent)" opacity="0.1" rx="2" />
+                    <text x="0" y="0" fill="var(--color-accent)" fontSize="14" fontWeight="600" className="tracking-widest uppercase">Teron</text>
+                 </g>
+
+                 <g transform="translate(865, 154)">
+                    <text x="0" y="0" fill="rgba(255, 255, 255, 0.7)" fontSize="15" fontWeight="500" className="tracking-tight">Manual Process</text>
+                 </g>
 
               </svg>
            </div>
