@@ -15,7 +15,7 @@ export default function Footer() {
               <Logo className="h-9 w-auto opacity-90 group-hover:opacity-100 transition-opacity" />
             </Link>
             <p className="mt-1 text-xs text-balance max-w-50 text-text-tertiary">
-              Premium Web3 token launch platform for BNB Chain.
+              Built for simple and secure token launches on BNB Chain.
             </p>
           </div>
 
