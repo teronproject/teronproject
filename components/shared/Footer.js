@@ -45,6 +45,11 @@ export default function Footer() {
                   Tasks
                 </Link>
               </li>
+              <li>
+                <a href="https://docs.teron.io/" target="_blank" rel="noopener noreferrer" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
+                  Documentation
+                </a>
+              </li>
             </ul>
           </div>
 

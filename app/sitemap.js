@@ -27,6 +27,14 @@ export default async function sitemap() {
     priority: route.priority,
   }));
 
+  // Add the external docs site to the sitemap explicitly
+  staticEntries.push({
+    url: "https://docs.teron.io/",
+    lastModified: new Date(),
+    changeFrequency: "weekly",
+    priority: 0.9,
+  });
+
   // ── Dynamic token pages ──
   let tokenEntries = [];
   try {

@@ -23,6 +23,7 @@ export function OrganizationJsonLd() {
     },
     sameAs: [
       "https://x.com/teronapp",
+      "https://docs.teron.io/",
     ],
     foundingDate: "2025",
     knowsAbout: [
