@@ -21,6 +21,7 @@ export default function Header() {
     { name: "Home", href: "/" },
     { name: "Leaderboard", href: "/leaderboard" },
     { name: "Pricing", href: "/pricing" },
+    { name: "Docs", href: "https://docs.teron.io/", external: true },
     { name: "Contact", href: "/contact" },
     { name: "About", href: "/about" },
   ];
@@ -40,6 +41,8 @@ export default function Header() {
                 <Link
                   key={link.name}
                   href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
                   className={`text-sm transition-colors relative group py-2 ${
                     pathname === link.href 
                       ? "text-text-primary font-medium" 
@@ -98,7 +101,9 @@ export default function Header() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  onClick={closeMobileMenu}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
+                  onClick={link.external ? undefined : closeMobileMenu}
                   className={`px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                     pathname === link.href 
                       ? "bg-surface-secondary text-text-primary" 
