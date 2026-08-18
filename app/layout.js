@@ -109,11 +109,6 @@ export const metadata = {
     "msapplication-TileColor": "#050403",
     "apple-mobile-web-app-title": "Teron",
   },
-  icons: {
-    icon: "/token.png",
-    shortcut: "/token.png",
-    apple: "/token.png",
-  },
 };
 
 import { Providers } from "@/components/Providers";
