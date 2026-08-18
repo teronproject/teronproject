@@ -29,7 +29,7 @@ async function sendEmail({ to, subject, html }) {
   try {
     const transporter = createTransporter();
     const info = await transporter.sendMail({
-      from: `"Teron Protocol" <${process.env.EMAIL_USER}>`,
+      from: `"Teron" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
@@ -55,9 +55,8 @@ const getEmailHeader = (subtitle = "") => `
   <body style="margin: 0; padding: 0; background: #050403; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased;">
     <div style="max-width: 560px; margin: 0 auto; padding: 40px 20px;">
       <div style="text-align: center; margin-bottom: 32px;">
-        <img src="https://teron.io/token.png" alt="Teron Logo" width="48" height="48" style="margin-bottom: 16px; border-radius: 12px; display: inline-block; border: 1px solid rgba(234, 179, 8, 0.2); box-shadow: 0 4px 20px rgba(234, 179, 8, 0.15);" />
-        <h1 style="color: #fafafa; font-size: 24px; margin: 0; font-weight: 600; letter-spacing: -0.5px;">Teron</h1>
-        ${subtitle ? `<p style="color: #eab308; font-size: 11px; margin: 8px 0 0; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">${subtitle}</p>` : ''}
+        <img src="https://teron.io/maillogo.png" alt="Teron" height="28" style="margin-bottom: 16px; display: inline-block;" />
+        ${subtitle ? `<p style="color: #eab308; font-size: 11px; margin: 4px 0 0; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;">${subtitle}</p>` : ''}
       </div>
       <div style="background: #0a0a0a; border: 1px solid #1f1f22; border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
 `;
@@ -71,7 +70,7 @@ const getEmailFooter = () => `
           <a href="https://t.me/teron_io" style="color: #a1a1aa; text-decoration: none; margin: 0 12px;">Telegram</a>
         </p>
         <p style="color: #52525b; font-size: 11px; margin: 0;">
-          © ${new Date().getFullYear()} Teron Protocol. All rights reserved.
+          © ${new Date().getFullYear()} Teron. All rights reserved.
         </p>
       </div>
     </div>
