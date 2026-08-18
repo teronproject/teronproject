@@ -154,9 +154,10 @@ export default function StepAddons({ register, errors, watch, setValue, isAssist
         <Input
           label="Contact Email"
           type="email"
+          required
           placeholder="admin@yourproject.com"
           error={errors.contactEmail?.message}
-          {...register("contactEmail")}
+          {...register("contactEmail", { required: "Contact email is required" })}
           helperText="Required for important notifications (e.g., successful deployment, errors)."
           disabled={isAssistanceMode}
         />

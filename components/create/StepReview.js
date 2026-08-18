@@ -291,7 +291,7 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
               <div className="space-y-4 pt-2 border-t border-error/10">
                 <div className="grid grid-cols-1 gap-4">
                   <Input
-                    label="Telegram Username *"
+                    label="Telegram Username"
                     placeholder="@yourusername"
                     value={assistanceForm.telegram}
                     onChange={(e) => setAssistanceForm({ ...assistanceForm, telegram: e.target.value })}
@@ -303,8 +303,7 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
                       value={assistanceForm.description}
                       onChange={(e) => setAssistanceForm({ ...assistanceForm, description: e.target.value })}
                       placeholder="Tell us about your project, team, and goals..."
-                      className="input text-sm"
-                      rows={3}
+                      className="input text-sm min-h-20 py-2"
                       required
                     />
                   </div>
