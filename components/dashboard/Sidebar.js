@@ -66,30 +66,38 @@ export default function Sidebar() {
       </aside>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-border-primary bg-surface-primary/80 backdrop-blur-xl z-50 pb-safe">
-        <div className="flex items-center justify-around p-2">
-          {navItems.map((item) => {
-            const isActive = item.href === '/dashboard' 
-              ? pathname === item.href 
-              : pathname.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex flex-col items-center justify-center p-2 min-w-[50px] transition-colors ${
-                  isActive ? "text-accent" : "text-text-secondary"
-                }`}
-              >
-                <Icon
-                  variant={isActive ? "solid" : "stroke-rounded"}
-                  size={20}
-                  className="mb-1"
-                />
-                <span className="text-[10px] font-medium">{item.name}</span>
-              </Link>
-            );
-          })}
+      <nav className="md:hidden fixed bottom-6 left-4 right-4 z-50 pb-safe">
+        <div className="bg-[#111111]/95 backdrop-blur-2xl border border-white/10 rounded-xl overflow-x-auto shadow-2xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex items-center px-1.5 py-1.5 gap-1 min-w-max mx-auto justify-start sm:justify-center">
+            {navItems.map((item, index) => {
+              const isActive = item.href === '/dashboard' 
+                ? pathname === item.href 
+                : pathname.startsWith(item.href);
+              const Icon = item.icon;
+              
+              return (
+                <div key={item.name} className="flex items-center">
+                  <Link
+                    href={item.href}
+                    className={`relative flex items-center justify-center p-3 transition-all duration-300${
+                      isActive 
+                        ? "bg-[#1a1a1a] text-white shadow-[0_0_20px_rgba(234,179,8,0.25)] border border-accent/40 cta rounded-full" 
+                        : "text-text-secondary hover:text-white"
+                    }`}
+                  >
+                    <Icon
+                      variant={isActive ? "solid" : "stroke-rounded"}
+                      size={22}
+                    />
+                  </Link>
+                  {/* Subtle divider */}
+                  {index < navItems.length - 1 && (
+                    <div className="w-[1px] h-6 bg-white/5 mx-1" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </nav>
     </>
