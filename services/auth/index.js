@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { ROLES } from "@/lib/constants";
 import { processReferral } from "@/services/referrals";
+import crypto from "crypto";
 
 /**
  * Auth Service
@@ -35,7 +36,7 @@ export async function createOrResumeSession(walletAddress, referralCode = null) 
   let isNewUser = false;
 
   // Generate a unique referral code (8 chars)
-  const generateRefCode = () => crypto.randomUUID().replace(/-/g, "").slice(0, 8);
+  const generateRefCode = () => crypto.randomBytes(4).toString("hex");
 
   if (!user) {
     // New user — create with referralCode
