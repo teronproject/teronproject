@@ -59,7 +59,7 @@ export async function getReferralStats(userId) {
 
   // Auto-generate for legacy users who don't have one
   if (user && !refCode) {
-    refCode = crypto.randomUUID().replace(/-/g, "").slice(0, 8);
+    refCode = Math.random().toString(36).substring(2, 10);
     await prisma.user.update({
       where: { id: userId },
       data: { referralCode: refCode },
