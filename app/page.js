@@ -41,14 +41,14 @@ const faqData = [
 ];
 
 export const metadata = {
-  title: "Teron — Create & Deploy BEP-20 Tokens on BNB Chain | Free Token Launchpad",
+  title: "Teron | Create & Deploy BEP-20 Tokens on BNB Chain | Free Token Launchpad",
   description:
     "Create, deploy, and manage BEP-20 tokens on BNB Smart Chain for free. BscScan contract verification, on-chain metadata publishing, public token profiles, community leaderboard, and BNB gas assistance. The #1 no-code token launchpad.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Teron — Create & Deploy BEP-20 Tokens on BNB Chain",
+    title: "Teron | Create & Deploy BEP-20 Tokens on BNB Chain",
     description:
       "The premium Web3 token launchpad. Free BEP-20 deployment on BNB Chain with BscScan verification and on-chain metadata.",
     url: "/",
@@ -61,13 +61,13 @@ export const metadata = {
         }),
         width: 1200,
         height: 630,
-        alt: "Teron — Web3 Token Launch Platform",
+        alt: "Teron | Web3 Token Launch Platform",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Teron — Create & Deploy BEP-20 Tokens on BNB Chain",
+    title: "Teron | Create & Deploy BEP-20 Tokens on BNB Chain",
     description:
       "Free BEP-20 deployment on BNB Chain with BscScan verification and on-chain metadata. The #1 no-code token launchpad.",
   },

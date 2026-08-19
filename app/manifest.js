@@ -1,6 +1,6 @@
 export default function manifest() {
   return {
-    name: "Teron — Web3 Token Launch Platform",
+    name: "Teron | Web3 Token Launch Platform",
     short_name: "Teron",
     description:
       "Create, deploy, and manage BEP-20 tokens on BNB Chain with contract verification, on-chain metadata, and a public token profile.",
