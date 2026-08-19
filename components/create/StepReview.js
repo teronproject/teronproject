@@ -100,7 +100,7 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
       if (data.success) {
         setSubmitSuccess(true);
       } else {
-        addToast({ variant: "error", message: data.message || "Failed to submit request" });
+        addToast({ variant: "error", message: data.debug_error ? `Error: ${data.debug_error}` : (data.message || "Failed to submit request") });
       }
     } catch (err) {
       addToast({ variant: "error", message: "Network error submitting request" });

@@ -71,6 +71,6 @@ export async function POST(request) {
     });
     
     console.error("Assistance request error:", error);
-    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ message: "Internal server error", debug_error: error?.message, debug_stack: error?.stack }, { status: 500 });
   }
 }
