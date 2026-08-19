@@ -43,19 +43,20 @@ export async function POST(request) {
       },
     });
 
-    // Send emails (fire and forget)
-    sendAssistanceAdminEmail({
-      email: data.contactEmail,
-      telegram: data.telegram,
-      walletAddress: user.walletAddress,
-      description: data.description,
-      totalBnbCost: data.totalBnbCost,
-    }).catch(console.error);
-
-    sendAssistanceUserEmail({
-      email: data.contactEmail,
-      telegram: data.telegram,
-    }).catch(console.error);
+    // Send emails concurrently and wait for them to finish before Vercel kills the function
+    await Promise.allSettled([
+      sendAssistanceAdminEmail({
+        email: data.contactEmail,
+        telegram: data.telegram,
+        walletAddress: user.walletAddress,
+        description: data.description,
+        totalBnbCost: data.totalBnbCost,
+      }),
+      sendAssistanceUserEmail({
+        email: data.contactEmail,
+        telegram: data.telegram,
+      })
+    ]);
 
     return NextResponse.json({ success: true, message: "Assistance request submitted", requestId: assistanceReq.id });
   } catch (error) {
