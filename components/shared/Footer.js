@@ -25,8 +25,8 @@ function LiveLinks() {
             className="object-contain"
           />
           <div className="flex flex-col text-left justify-center">
-            <span className="text-[11px] leading-none font-bold text-[#F3BA2F] tracking-wide mb-[3px]">BNB CHAIN</span>
-            <span className="text-[16px] leading-none font-extrabold text-white tracking-tight">DappBay</span>
+            <span className="text-[11px] leading-none font-bold text-[#F3BA2F] tracking-wide mb-0.5">BNB CHAIN</span>
+            <span className="text-[16px] leading-none font-bold text-white tracking-tight">DappBay</span>
           </div>
         </div>
       ),
@@ -38,7 +38,7 @@ function LiveLinks() {
 
   return (
     <div className="w-full border-b border-border-primary">
-      <div className="max-w-[1500px] mx-auto">
+      <div className="mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {links.map((link, idx) => {
             const borderClasses = "border-border-primary " +
@@ -48,7 +48,7 @@ function LiveLinks() {
 
             const content = (
               <div 
-                className={`flex flex-col xl:flex-row items-center justify-center gap-3 py-10 px-4 group ${link.url ? 'hover:bg-white/[0.02] cursor-pointer' : 'cursor-default opacity-50'} transition-colors ${borderClasses}`}
+                className={`h-full flex flex-col xl:flex-row items-center justify-center gap-3 py-7 px-4 group ${link.url ? 'hover:bg-white/[0.02] cursor-pointer' : 'cursor-default opacity-50'} transition-colors ${borderClasses}`}
               >
                 {link.isCustom ? (
                   link.icon
