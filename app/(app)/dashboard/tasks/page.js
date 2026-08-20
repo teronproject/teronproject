@@ -161,7 +161,7 @@ export default function TasksPage() {
         <h1 className="text-2xl title text-text-primary flex items-center gap-3">
           Task Center
         </h1>
-        <p className="text-sm stitle text-text-tertiary mt-2 max-w-2xl">
+        <p className="text-sm text-balance text-text-tertiary mt-2 max-w-2xl">
           Complete tasks to earn TERR reward tokens. Follow social channels, visit links, and refer friends to grow your balance.
         </p>
       </div>

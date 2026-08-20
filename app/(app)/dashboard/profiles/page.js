@@ -54,7 +54,7 @@ export default function TokenProfilesPage() {
         <h1 className="text-2xl title text-text-primary flex items-center gap-4">
           Token Profiles
         </h1>
-        <p className="text-sm stitle text-text-tertiary mt-3 max-w-2xl">
+        <p className="text-sm text-balance text-text-tertiary mt-3 max-w-2xl">
           Manage the public Link-in-Bio pages for your deployed tokens. Update logos, banners, and social links to build trust with your community.
         </p>
       </div>
