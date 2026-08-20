@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import { motion, AnimatePresence } from "motion/react";
-import { Menu01Icon, Cancel01Icon } from "hugeicons-react";
+import { Menu01Icon, Cancel01Icon, ArrowRight01Icon } from "hugeicons-react";
 import { usePathname } from "next/navigation";
 
 /**
@@ -28,7 +28,33 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 -ml-[1px] z-50 w-full max-w-[1500px] mx-auto border-b border-border-primary bg-bg-primary/80 backdrop-blur-xl border-x overflow-hidden">
+      {/* Announcement Bar */}
+      <div className="relative w-full max-w-[1500px] mx-auto bg-[#0a0a0a] border-b  flex items-center justify-center group overflow-hidden">
+        
+        {/* Full-width decorative pattern masked to only show on left & right edges */}
+        <div 
+          className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(243,186,47,0.1)_4px,rgba(243,186,47,0.1)_6px)] opacity-50 mix-blend-screen pointer-events-none transition-opacity duration-500 group-hover:opacity-100"
+          style={{ WebkitMaskImage: 'linear-gradient(to right, black 0%, transparent 20%, transparent 80%, black 100%)', maskImage: 'linear-gradient(to right, black 0%, transparent 20%, transparent 80%, black 100%)' }}
+        />
+        
+        {/* Glowing edge accents */}
+        <div className="absolute left-0 top-0 bottom-0 w-[25%] bg-gradient-to-r from-accent/10 to-transparent blur-xl pointer-events-none mix-blend-screen" />
+        <div className="absolute right-0 top-0 bottom-0 w-[25%] bg-gradient-to-l from-accent/10 to-transparent blur-xl pointer-events-none mix-blend-screen" />
+        
+        <a 
+          href="https://dappbay.bnbchain.org/detail/teron" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="relative z-10 w-full flex items-center justify-center px-4 py-2.5 text-xs font-medium text-text-secondary hover:text-white transition-colors"
+        >
+          <span className="flex items-center gap-1.5 tracking-wide">
+            We are now live on the DappBay by BNB Chain!
+            <ArrowRight01Icon size={14} className="group-hover:translate-x-1 transition-transform" />
+          </span>
+        </a>
+      </div>
+
+      <header className="sticky top-0  z-50 w-full max-w-[1500px] mx-auto border-b border-border-primary bg-bg-primary/80 backdrop-blur-xl overflow-hidden">
         <div className="px-4 md:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center group shrink-0">
