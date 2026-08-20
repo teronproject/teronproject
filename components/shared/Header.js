@@ -164,9 +164,6 @@ export default function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Spacer to push content down below fixed header */}
-      <div className="h-16 w-full" aria-hidden="true" />
     </>
   );
 }
