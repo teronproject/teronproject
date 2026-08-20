@@ -62,29 +62,41 @@ export default function Header() {
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  target={link.external ? "_blank" : undefined}
-                  rel={link.external ? "noopener noreferrer" : undefined}
-                  className={`text-sm transition-colors relative group py-2 ${
-                    pathname === link.href 
-                      ? "text-text-primary font-medium" 
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  {link.name}
-                  {pathname === link.href && (
-                    <motion.div 
-                      layoutId="activeNavIndicator"
-                      className="absolute bottom-2 left-0 right-0 h-px bg-accent" 
-                    />
-                  )}
-                  <div className="absolute bottom-2 left-0 right-0 h-px bg-accent/0 group-hover:bg-accent/50 rounded-full transition-colors" />
-                </Link>
-              ))}
+            <nav className="hidden md:flex items-center gap-2">
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                    className={`relative px-2 py-0.5 text-sm font-medium transition-colors rounded-xs overflow-hidden group ${
+                      isActive ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    <span className="relative z-10">{link.name}</span>
+                    
+                    {/* Active State Pill */}
+                    {isActive && (
+                      <motion.div 
+                        layoutId="activeNavPill"
+                        className="absolute inset-0 bg-accent/5 z-0 border-b"
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      >
+                        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(243,186,47,0.1)_2px,rgba(243,186,47,0.1)_3px)] opacity-50 mask-[linear-gradient(to_bottom,white,transparent)]" />
+                      </motion.div>
+                    )}
+                    
+                    {/* Hover State Pill */}
+                    {!isActive && (
+                      <div className="absolute inset-0 rounded-full  group-hover:border-white/5 bg-white/0 z-0 transition-all duration-300">
+                        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,rgba(243,186,47,0.1)_2px,rgba(243,186,47,0.1)_3px)] opacity-0 group-hover:opacity-100 mask-[linear-gradient(to_bottom,white,transparent)] transition-opacity duration-300" />
+                      </div>
+                    )}
+                  </Link>
+                );
+              })}
             </nav>
           </div>
 

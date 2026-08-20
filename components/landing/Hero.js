@@ -8,7 +8,7 @@ export default function Hero() {
     <section className="relative w-full overflow-hidden flex flex-col items-center pt-24 sm:pt-32 pb-0">
       {/* Background Dots with Linear Gradient Mask */}
       <div 
-        className="absolute inset-0 z-0 pointer-events-none opacity-30"
+        className="absolute inset-0 z-0 pointer-events-none opacity-30 -mt-20"
         style={{
           backgroundImage: "radial-gradient(circle at center, rgba(255,255,255,0.4) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
