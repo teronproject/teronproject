@@ -110,7 +110,7 @@ export default function RewardsPage() {
         <h1 className="text-2xl title text-text-primary">
           TERR Rewards
         </h1>
-        <p className="text-sm stitle text-text-tertiary mt-2 max-w-2xl">
+        <p className="text-sm text-balance text-text-tertiary mt-2 max-w-2xl">
           Earn TERR tokens by deploying tokens, completing tasks, and referring friends. Track your balance and reward history here.
         </p>
       </div>
@@ -167,7 +167,7 @@ export default function RewardsPage() {
               className="cta shrink-0"
               size="md"
             >
-              <Copy01Icon size={16} className="mr-1.5" />
+              <Copy01Icon size={16} className="mr-1.5 inline" />
               {isCopied ? "Copied!" : "Copy"}
             </Button>
           </div>
