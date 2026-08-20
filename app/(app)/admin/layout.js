@@ -94,22 +94,36 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Mobile Admin Nav */}
-      <nav className="md:hidden border-b border-border-primary bg-surface-primary/80 backdrop-blur-xl sticky top-16 z-30">
-        <div className="flex items-center overflow-x-auto px-4 gap-1">
-          {adminNavItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`flex items-center gap-2 px-3 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-                  isActive ? "border-accent text-accent" : "border-transparent text-text-secondary hover:text-text-primary"
-                }`}
-              >
-                {item.name}
-              </Link>
-            );
-          })}
+      <nav className="md:hidden fixed bottom-6 left-4 right-4 z-50 pb-safe">
+        <div className="bg-[#111111]/95 backdrop-blur-2xl border border-white/10 rounded-xl overflow-x-auto shadow-2xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex items-center px-1.5 py-1.5 gap-1 min-w-max mx-auto justify-start sm:justify-center">
+            {adminNavItems.map((item, index) => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
+              
+              return (
+                <div key={item.name} className="flex items-center">
+                  <Link
+                    href={item.href}
+                    className={`relative flex items-center justify-center p-3 transition-all duration-300 ${
+                      isActive 
+                        ? "bg-[#1a1a1a] text-white shadow-[0_0_20px_rgba(234,179,8,0.25)] border border-accent/40 cta rounded-full" 
+                        : "text-text-secondary hover:text-white"
+                    }`}
+                  >
+                    <Icon
+                      variant={isActive ? "solid" : "stroke-rounded"}
+                      size={22}
+                    />
+                  </Link>
+                  {/* Subtle divider */}
+                  {index < adminNavItems.length - 1 && (
+                    <div className="w-[1px] h-6 bg-white/5 mx-1" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </nav>
 

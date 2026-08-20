@@ -11,6 +11,7 @@ import {
   Coins01Icon,
   Layers01Icon,
   CustomerSupportIcon,
+  Exchange01Icon,
 } from "hugeicons-react";
 import { motion } from "motion/react";
 
@@ -21,6 +22,7 @@ const navItems = [
   { name: "Assistance", href: "/dashboard/assistance", icon: CustomerSupportIcon },
   { name: "Tasks", href: "/dashboard/tasks", icon: Task01Icon },
   { name: "Rewards", href: "/dashboard/rewards", icon: Coins01Icon },
+  { name: "Swap", href: "/dashboard/swap", icon: Exchange01Icon },
   { name: "Token Profiles", href: "/dashboard/profiles", icon: Layout01Icon },
   { name: "Settings", href: "/dashboard/settings", icon: Settings01Icon },
 ];
