@@ -123,6 +123,7 @@ export default function Hero() {
                     width={1920}
                     height={1080}
                     priority
+                    fetchPriority="high"
                     quality={100}
                     className="w-full h-auto max-w-none object-bottom absolute left-1/2 -translate-x-1/2 z-0 contrast-[1.15] brightness-[1.1] saturate-[1.05] drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
                   />
@@ -137,6 +138,7 @@ export default function Hero() {
                       loop
                       muted
                       playsInline
+                      preload="auto"
                       className="w-full h-full object-cover opacity-90"
                     >
                       <source src="/vid/tokenlaunch.webm" type="video/webm" />
@@ -153,6 +155,7 @@ export default function Hero() {
                       loop
                       muted
                       playsInline
+                      preload="auto"
                       className="w-full h-full object-cover opacity-90"
                     >
                       <source src="/vid/tasks.webm" type="video/webm" />
@@ -165,6 +168,12 @@ export default function Hero() {
         </div>
       </div>
       <div className="h-12 w-full bg-bg-primary border-t border-white/5 bg-[repeating-linear-gradient(to_right,transparent,transparent_3px,rgba(255,255,255,0.02)_3px,rgba(255,255,255,0.02)_4px)] opacity-100 z-10" />
+      
+      {/* Hidden Preloader for Videos to cache them in browser memory silently */}
+      <div aria-hidden="true" className="hidden">
+        <video preload="auto"><source src="/vid/tokenlaunch.webm" type="video/webm" /></video>
+        <video preload="auto"><source src="/vid/tasks.webm" type="video/webm" /></video>
+      </div>
     </section>
   );
 }
