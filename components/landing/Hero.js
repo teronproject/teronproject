@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import CanvasBackground from "@/components/landing/CanvasBackground";
 
@@ -115,11 +116,15 @@ export default function Hero() {
               className="w-full max-w-5xl h-full flex justify-center items-center relative"
             >
               {activeTab === "about" && (
-                <div className=" w-[95%] sm:w-full rounded-t-2xl sm:rounded-t-3xl overflow-hidden border-t border-x border-white/10 shadow-[0_-30px_100px_rgba(0,0,0,0.8)] pointer-events-auto bg-[#0a0a0a]">
-                  <img
+                <div className="relative w-[95%] sm:w-full h-[300px] sm:h-full sm:aspect-[16/10] rounded-t-2xl sm:rounded-t-3xl overflow-hidden border-t border-x border-white/10 shadow-[0_-30px_100px_rgba(0,0,0,0.8)] pointer-events-auto bg-[#0a0a0a] mt-8 sm:mt-16">
+                  <Image
                     src="/vid/dashboard.svg"
                     alt="Smart Dashboard Preview"
-                    className="w-full h-auto object-bottom absolute -bottom-10 sm:-bottom-40 z-0"
+                    width={1920}
+                    height={1080}
+                    priority
+                    quality={100}
+                    className="w-[100%] h-auto max-w-none object-bottom absolute left-1/2 -translate-x-1/2 -bottom-5 sm:-bottom-40 z-0 contrast-[1.15] brightness-[1.1] saturate-[1.05] drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] transition-transform duration-700 hover:scale-[1.02]"
                   />
                 </div>
               )}
