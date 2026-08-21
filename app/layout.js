@@ -108,6 +108,7 @@ export const metadata = {
   other: {
     "msapplication-TileColor": "#050403",
     "apple-mobile-web-app-title": "Teron",
+    "ory-verify": "orynth-bcc86cbfab954d6283b05cda0143de39",
   },
 };
 
