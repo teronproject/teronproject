@@ -90,10 +90,10 @@ export default function Hero() {
       </div>
 
       {/* The Canvas and Custom Animation Section (Full Width) */}
-      <div className="relative w-full h-[400px] sm:h-[480px]">
+      <div className="relative w-full h-[250px] sm:h-[480px]">
         {/* Canvas Background Container - Full Width */}
         <div className="absolute inset-0 overflow-hidden bg-[#050403]">
-          <CanvasBackground className="w-full h-full opacity-100" />
+          <CanvasBackground className="w-full h-full opacity-50" />
 
           {/* Premium Tactile Noise/Grain Overlay */}
           <div
@@ -116,7 +116,7 @@ export default function Hero() {
               className="w-full max-w-5xl h-full flex justify-center items-center relative"
             >
               {activeTab === "about" && (
-                <div className="relative w-[95%] sm:w-full h-[300px] sm:h-full sm:aspect-[16/10] rounded-t-2xl sm:rounded-t-3xl overflow-hidden border-t border-x border-white/10 shadow-[0_-30px_100px_rgba(0,0,0,0.8)] pointer-events-auto bg-[#0a0a0a] mt-8 sm:mt-16">
+                <div className="relative w-[95%] sm:w-full h-[200px] sm:h-full sm:aspect-[16/10] rounded-t-2xl sm:rounded-t-3xl overflow-hidden border-t border-x border-white/10 shadow-[0_-30px_100px_rgba(0,0,0,0.8)] pointer-events-auto bg-[#0a0a0a] mt-26 sm:mt-16 scale-110 sm:scale-100">
                   <Image
                     src="/vid/dashboard.svg"
                     alt="Smart Dashboard Preview"
@@ -124,7 +124,7 @@ export default function Hero() {
                     height={1080}
                     priority
                     quality={100}
-                    className="w-[100%] h-auto max-w-none object-bottom absolute left-1/2 -translate-x-1/2 -bottom-5 sm:-bottom-40 z-0 contrast-[1.15] brightness-[1.1] saturate-[1.05] drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] transition-transform duration-700 hover:scale-[1.02]"
+                    className="w-full h-auto max-w-none object-bottom absolute left-1/2 -translate-x-1/2 z-0 contrast-[1.15] brightness-[1.1] saturate-[1.05] drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
                   />
                 </div>
               )}
