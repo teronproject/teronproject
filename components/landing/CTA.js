@@ -8,7 +8,7 @@ export default function CTA() {
   return (
     <>
     <section className="relative w-full py-20 overflow-hidden border-t border-white/5 bg-[#0a0a0a]">
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none opacity-50">
          <CanvasBackground />
       </div>
 

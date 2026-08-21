@@ -10,7 +10,7 @@ export default function Earn() {
     <section className="relative w-full overflow-hidden border-t border-white/5 py-20 bg-[#050403]">
       {/* Canvas Background Container - Full Width */}
       <div className="absolute inset-0 overflow-hidden">
-         <CanvasBackground className="w-full h-full opacity-100" />
+         <CanvasBackground className="w-full h-full opacity-50" />
          
          {/* Premium Tactile Noise/Grain Overlay */}
          {/* <div 
