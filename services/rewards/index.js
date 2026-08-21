@@ -159,6 +159,22 @@ export async function grantReferralRewards(referrerId, newUserId) {
 }
 
 /**
+ * Helper to ensure a Prisma client with the latest models (terrWithdrawal) is used.
+ */
+function getPrisma() {
+  if (prisma?.terrWithdrawal) {
+    return prisma;
+  }
+  try {
+    // Dynamically require to bypass stale dev cache
+    const { PrismaClient } = require("@prisma/client");
+    return new PrismaClient();
+  } catch (_) {
+    return prisma;
+  }
+}
+
+/**
  * Withdraw TERR tokens to a user's wallet on-chain.
  * Deducts from DB balance and sends BEP-20 transfer via hot wallet.
  *
@@ -168,6 +184,7 @@ export async function grantReferralRewards(referrerId, newUserId) {
  * @returns {Promise<object>} The withdrawal record with txHash
  */
 export async function withdrawTerr(userId, amount, toAddress) {
+  const db = getPrisma();
   const { createWalletClient, createPublicClient, http, parseUnits, encodeFunctionData } = await import("viem");
   const { privateKeyToAccount } = await import("viem/accounts");
   const { bsc } = await import("viem/chains");
@@ -181,7 +198,7 @@ export async function withdrawTerr(userId, amount, toAddress) {
   }
 
   // Check cooldown — prevent rapid withdrawals
-  const recentWithdrawal = await prisma.terrWithdrawal.findFirst({
+  const recentWithdrawal = await db.terrWithdrawal.findFirst({
     where: {
       userId,
       status: { in: ["PENDING", "CONFIRMED"] },
@@ -203,7 +220,7 @@ export async function withdrawTerr(userId, amount, toAddress) {
   const contractAddress = process.env.NEXT_PUBLIC_TERR_CONTRACT_ADDRESS || "0xc5457424698643d8A643FeFE787488C9aA8FBBF0";
 
   // Atomic: deduct balance + create withdrawal record
-  const withdrawal = await prisma.$transaction(async (tx) => {
+  const withdrawal = await db.$transaction(async (tx) => {
     // Fetch current balance inside transaction
     const user = await tx.user.findUnique({
       where: { id: userId },
@@ -283,7 +300,7 @@ export async function withdrawTerr(userId, amount, toAddress) {
 
     if (receipt.status === "success") {
       // Mark as confirmed
-      await prisma.terrWithdrawal.update({
+      await db.terrWithdrawal.update({
         where: { id: withdrawal.id },
         data: { status: "CONFIRMED", txHash },
       });
@@ -291,12 +308,12 @@ export async function withdrawTerr(userId, amount, toAddress) {
       return { ...withdrawal, status: "CONFIRMED", txHash };
     } else {
       // Transaction reverted — refund balance
-      await prisma.$transaction([
-        prisma.terrWithdrawal.update({
+      await db.$transaction([
+        db.terrWithdrawal.update({
           where: { id: withdrawal.id },
           data: { status: "FAILED", txHash, failReason: "Transaction reverted" },
         }),
-        prisma.user.update({
+        db.user.update({
           where: { id: userId },
           data: { terrBalance: { increment: amount } },
         }),
@@ -306,17 +323,17 @@ export async function withdrawTerr(userId, amount, toAddress) {
     }
   } catch (error) {
     // If we haven't already handled the error, refund and mark failed
-    const existing = await prisma.terrWithdrawal.findUnique({
+    const existing = await db.terrWithdrawal.findUnique({
       where: { id: withdrawal.id },
     });
 
     if (existing && existing.status === "PENDING") {
-      await prisma.$transaction([
-        prisma.terrWithdrawal.update({
+      await db.$transaction([
+        db.terrWithdrawal.update({
           where: { id: withdrawal.id },
           data: { status: "FAILED", failReason: error.message?.slice(0, 500) },
         }),
-        prisma.user.update({
+        db.user.update({
           where: { id: userId },
           data: { terrBalance: { increment: amount } },
         }),
@@ -334,16 +351,17 @@ export async function withdrawTerr(userId, amount, toAddress) {
  * @returns {Promise<{withdrawals: object[], total: number}>}
  */
 export async function getWithdrawalHistory(userId, { page = 1, limit = 10 } = {}) {
+  const db = getPrisma();
   const skip = (page - 1) * limit;
 
   const [withdrawals, total] = await Promise.all([
-    prisma.terrWithdrawal.findMany({
+    db.terrWithdrawal.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
       skip,
       take: limit,
     }),
-    prisma.terrWithdrawal.count({ where: { userId } }),
+    db.terrWithdrawal.count({ where: { userId } }),
   ]);
 
   return { withdrawals, total };
