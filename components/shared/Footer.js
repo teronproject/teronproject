@@ -32,7 +32,20 @@ function LiveLinks() {
       ),
       isCustom: true
     },
-    { name: "Soon...", url: null, isSoon: true, icon: "soon" },
+    { 
+      name: "Featured on Orynth", 
+      url: "https://orynth.dev/projects/teron", 
+      icon: (
+        <img 
+          src="https://orynth.dev/api/badge/teron?theme=dark&style=default" 
+          alt="Featured on Orynth" 
+          width={260} 
+          height={80} 
+          className="h-[40px] scale-125 sm:scale-150 w-auto object-contain"
+        />
+      ),
+      isCustom: true
+    },
     { name: "Soon...", url: null, isSoon: true, icon: "soon" },
   ];
 
