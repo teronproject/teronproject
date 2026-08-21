@@ -33,7 +33,7 @@ const TERR_CONTRACT = process.env.NEXT_PUBLIC_TERR_CONTRACT_ADDRESS || "0xc54574
 const TERR_DECIMALS = 18;
 const TERR_SYMBOL = "TERR";
 const TERR_NAME = "Teron";
-const TERR_LOGO = "https://www.teron.io/token.png";
+const TERR_LOGO = "https://www.teron.io/ticker.png";
 const MIN_WITHDRAWAL = 10;
 
 export default function RewardsPage() {
