@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Logo from "@/components/ui/Logo";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu01Icon, Cancel01Icon, ArrowRight01Icon } from "hugeicons-react";
@@ -33,9 +34,11 @@ export default function Header() {
         
         {/* Left Side Bro Image */}
         <div className="absolute left-0 top-0 h-full w-auto z-20 pointer-events-none flex items-end">
-          <img 
+          <Image 
             src="/Announcementbro.png" 
             alt="Announcement" 
+            width={199}
+            height={166}
             className="h-[120%] w-auto object-contain origin-bottom" 
           />
         </div>
