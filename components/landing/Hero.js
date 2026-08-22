@@ -125,7 +125,7 @@ export default function Hero() {
                     priority
                     fetchPriority="high"
                     quality={100}
-                    className="w-full h-auto max-w-none object-bottom absolute left-1/2 -translate-x-1/2 z-0 contrast-[1.15] brightness-[1.1] saturate-[1.05] drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+                    className="w-full h-auto max-w-none object-bottom absolute left-1/2 -translate-x-1/2 z-0 contrast-[1.07] brightness-[1.1] saturate-[1.05] drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
                   />
                 </div>
               )}
