@@ -77,7 +77,7 @@ export default function LeaderboardPage() {
               setSearchTerm(e.target.value);
               setPage(1);
             }}
-            className="w-full h-12 pl-12 pr-4 bg-transparent border-none text-sm text-text-primary placeholder:text-text-disabled focus:outline-none focus:ring-0"
+            className="w-full h-12 pl-12 pr-4 bg-transparent border-transparent text-sm text-text-primary placeholder:text-text-disabled !outline-none !ring-0 focus:!outline-none focus:!ring-0 focus:!border-transparent focus:!shadow-none"
           />
         </div>
 
@@ -115,7 +115,16 @@ export default function LeaderboardPage() {
           </div>
         ) : tokens.length === 0 ? (
           <div className="border border-dashed border-border-primary/50 bg-surface-secondary/20 backdrop-blur-sm rounded-3xl p-16 text-center space-y-6 max-w-2xl mx-auto">
-            <div className="text-6xl opacity-30 drop-shadow-lg">🪙</div>
+            {/* Token not found */}
+            <div className="flex justify-center">
+              <Image 
+                src="/leaderboard/notfound.png" 
+                alt="No tokens found" 
+                width={100} 
+                height={100} 
+                className="opacity-70 drop-shadow-lg object-contain"
+              />
+            </div>
             <div className="space-y-2">
               <h2 className="text-xl font-bold text-text-primary">No Tokens Found</h2>
               <p className="text-text-secondary text-sm">
