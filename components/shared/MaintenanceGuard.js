@@ -10,7 +10,7 @@ export default function MaintenanceGuard({ featureKey, children, fallback }) {
   if (!isLoaded) {
     return (
       <div className="py-12 px-4 sm:px-6 space-y-4 max-w-6xl mx-auto">
-        <Skeleton className="h-10 w-64 mb-8" />
+        <Skeleton className="h-10 w-full mb-8" />
         {[...Array(3)].map((_, i) => (
           <Skeleton key={i} className="h-32" />
         ))}
