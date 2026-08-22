@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import Button from "@/components/ui/Button";
@@ -142,18 +143,25 @@ export default function LeaderboardPage() {
                 <Link
                   key={t.id}
                   href={`/t/${t.symbol ? t.symbol.toLowerCase() : t.id}`}
-                  className="group relative flex items-center gap-4 sm:gap-6 bg-surface-secondary/40 backdrop-blur-sm border border-border-primary/30 p-4 rounded-2xl hover:bg-surface-secondary/80 hover:border-accent/40 transition-all duration-300 overflow-hidden"
+                  className="group relative flex items-center gap-4 sm:gap-6 bg-surface-secondary/40 backdrop-blur-sm border border-border-primary/30 p-4 rounded-2xl hover:bg-surface-secondary/80 hover:border-accent/40 transition-all duration-300 overflow-hidden card"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/0 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                  {/* <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/0 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div> */}
                   
                   {/* Rank Indicator */}
                   <div className="flex flex-col items-center justify-center w-8 shrink-0">
                     {rank <= 3 ? (
-                      <CrownIcon size={24} className={
-                        rank === 1 ? "text-yellow-400" :
-                        rank === 2 ? "text-gray-400" :
-                        "text-amber-600"
-                      } variant="solid" />
+                      <div className="relative w-8 h-8 sm:w-10 sm:h-10">
+                        <Image
+                          src={
+                            rank === 1 ? "/leaderboard/Gold.png" :
+                            rank === 2 ? "/leaderboard/Silver.png" :
+                            "/leaderboard/Bronze.png"
+                          }
+                          alt={`Rank ${rank}`}
+                          fill
+                          className="object-contain drop-shadow-lg"
+                        />
+                      </div>
                     ) : (
                       <span className="text-sm font-bold text-text-tertiary">#{rank}</span>
                     )}
