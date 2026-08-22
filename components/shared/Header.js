@@ -29,8 +29,17 @@ export default function Header() {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="relative w-full max-w-[1500px] mx-auto bg-[#0a0a0a] border-b  flex items-center justify-center group overflow-hidden">
+      <div className="relative w-full max-w-[1500px] mx-auto bg-[#0a0a0a] border-b border-border-primary/50 flex items-center justify-center group overflow-hidden">
         
+        {/* Left Side Bro Image */}
+        <div className="absolute left-0 top-0 h-full w-auto z-20 pointer-events-none flex items-end">
+          <img 
+            src="/Announcementbro.png" 
+            alt="Announcement" 
+            className="h-[120%] w-auto object-contain origin-bottom" 
+          />
+        </div>
+
         {/* Full-width decorative pattern masked to only show on left & right edges */}
         <div 
           className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(243,186,47,0.1)_4px,rgba(243,186,47,0.1)_6px)] opacity-50 mix-blend-screen pointer-events-none transition-opacity duration-500 group-hover:opacity-100"
