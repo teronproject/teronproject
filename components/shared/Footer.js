@@ -46,7 +46,18 @@ function LiveLinks() {
       ),
       isCustom: true
     },
-    { name: "Soon...", url: null, isSoon: true, icon: "soon" },
+    { 
+      name: "Alchemy Dapps", 
+      url: "https://dapps.alchemy.com/dapps/teron", 
+      icon: (
+        <img 
+          src="https://media.alchemy.com/1701819587-logo.svg" 
+          alt="Featured on Alchemy Dapps" 
+          className="h-[32px] sm:h-[36px] w-auto object-contain filter brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity"
+        />
+      ),
+      isCustom: true
+    },
   ];
 
   return (
