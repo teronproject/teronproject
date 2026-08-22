@@ -105,6 +105,16 @@ export const metadata = {
   verification: {
     google: "NZ86v8UOdj9FbVb_EqRdxamtjde92UdF077LwHDOOOY",
   },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", type: "image/png", sizes: "192x192" },
+    ],
+    shortcut: ["/icon.png"],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
   other: {
     "msapplication-TileColor": "#050403",
     "apple-mobile-web-app-title": "Teron",
