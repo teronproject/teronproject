@@ -242,7 +242,7 @@ export default function LeaderboardPage() {
       )}
 
       {/* Premium Disclaimer Footer */}
-      <div className="pt-24 pb-8 text-left max-w-3xl space-y-2">
+      <div className="pt-24 pb-8 text-left max-w- space-y-2 px-4 sm:px-6 lg:px-8">
         <p className="text-xs text-text-tertiary leading-relaxed stitle">
           Leaderboard Data & Ranking Disclaimer
         </p>
