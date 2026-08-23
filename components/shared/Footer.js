@@ -39,7 +39,7 @@ function LiveLinks() {
         <img 
           src="https://www.orynth.dev/logo-text-white.svg" 
           alt="Featured on Orynth" 
-          className="h-[24px] sm:h-[28px] w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
+          className="h-[24px] sm:h-[28px] w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity scale-110"
         />
       ),
       isCustom: true
@@ -51,7 +51,7 @@ function LiveLinks() {
         <img 
           src="https://media.alchemy.com/1701819587-logo.svg" 
           alt="Featured on Alchemy Dapps" 
-          className="h-[32px] sm:h-[36px] w-auto object-contain filter brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity"
+          className="h-[24px] sm:h-[28px] w-auto object-contain filter brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity"
         />
       ),
       isCustom: true
@@ -68,14 +68,26 @@ function LiveLinks() {
       ),
       isCustom: true
     },
-    { name: "Soon...", url: null, isSoon: true, icon: "soon" },
+    { 
+      name: "Peerlist", 
+      url: "https://peerlist.io/souravhere/project/teron", 
+      icon: (
+        <img 
+          src="https://dqy38fnwh4fqs.cloudfront.net/website/peerlist-logo-full-dark.svg" 
+          alt="Peerlist" 
+          className="h-[20px] sm:h-[24px] w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
+        />
+      ),
+      isCustom: true
+    },
     { name: "Soon...", url: null, isSoon: true, icon: "soon" },
     { name: "Soon...", url: null, isSoon: true, icon: "soon" },
   ];
 
   return (
-    <div className="w-full border-b border-border-primary">
-      <div className="mx-auto">
+    <div className="w-full border-b border-border-primary pt-8">
+      <h3 className="text-center text-2xl sm:text-3xl font-medium text-text-primary tracking-tight leading-[1.15] mb-6">Find us on...</h3>
+      <div className="mx-auto border-t border-border-primary">
         <div className="grid grid-cols-2 md:grid-cols-4">
           {links.map((link, idx) => {
             const borderClasses = "border-border-primary " +
