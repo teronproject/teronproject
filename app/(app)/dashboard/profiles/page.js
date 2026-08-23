@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useWallet } from "@/hooks/useWallet";
 import { useToastContext } from "@/components/ToastProvider";
 import Skeleton from "@/components/ui/Skeleton";
@@ -60,10 +61,19 @@ export default function TokenProfilesPage() {
       </div>
 
       {tokens.length === 0 ? (
+        // no token deployed yet
         <div className="card p-16 text-center">
-          <div className="text-5xl opacity-30 mb-6">🎨</div>
+          <div className="flex justify-center mb-6">
+            <Image 
+              src="/notoken.png" 
+              alt="No tokens deployed" 
+              width={100} 
+              height={100} 
+              className="opacity-70 drop-shadow-lg object-contain"
+            />
+          </div>
           <h3 className="text-xl title text-text-primary mb-2">No tokens deployed yet</h3>
-          <p className="text-sm text-text-secondary mb-8 max-w-sm mx-auto">
+          <p className="text-sm text-text-secondary mb-8 max-w-sm mx-auto text-balance">
             You need to launch a token before you can set up its public profile.
           </p>
           <Link

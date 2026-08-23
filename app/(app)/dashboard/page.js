@@ -22,6 +22,7 @@ import {
   Task01Icon,
   ArrowRight02Icon,
 } from "hugeicons-react";
+import Image from "next/image";
 
 export default function DashboardPage() {
   const { address, isConnected, userProfile } = useWallet();
@@ -222,7 +223,7 @@ export default function DashboardPage() {
             </Link>
           </Card.Header>
           <Card.Body>
-            <p className="text-xs text-text-secondary mb-4">
+            <p className="text-xs text-text-secondary mb-4 text-balance">
               Complete community tasks to earn TERR rewards. Follow channels, visit links, and more.
             </p>
             <Link href="/dashboard/tasks">
@@ -287,7 +288,13 @@ export default function DashboardPage() {
         <Card.Body>
           {tokens.length === 0 ? (
             <div className="text-center py-16 space-y-4">
-              <Coins01Icon size={48} className="mx-auto text-text-tertiary opacity-30" variant="stroke-rounded" />
+              <Image 
+                src="/notoken.png" 
+                alt="No tokens deployed" 
+                width={100} 
+                height={100} 
+                className="opacity-70 drop-shadow-lg object-contain mx-auto"
+              />
               <div>
                 <p className="text-text-primary font-semibold text-sm">
                   You haven't deployed any tokens yet.
@@ -295,14 +302,6 @@ export default function DashboardPage() {
                 <p className="text-text-secondary text-xs mt-1.5 max-w-sm mx-auto">
                   Start your journey by creating a premium BEP-20 token on BNB Chain in just a few minutes.
                 </p>
-              </div>
-              <div className="pt-2">
-                <Link
-                  href="/dashboard/create"
-                  className="inline-flex items-center gap-1.5 text-accent text-sm font-semibold hover:underline"
-                >
-                  Launch your first token <span aria-hidden="true">→</span>
-                </Link>
               </div>
             </div>
           ) : (

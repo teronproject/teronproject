@@ -11,6 +11,7 @@ import {
   Coins01Icon,
   PlusSignIcon
 } from "hugeicons-react";
+import Image from "next/image";
 
 export default function DeploymentsPage() {
   const { address } = useWallet();
@@ -77,8 +78,14 @@ export default function DeploymentsPage() {
         <Card.Body>
           {tokens.length === 0 ? (
             <div className="text-center py-16 space-y-4">
-              <div className="size-20 mx-auto bg-surface-secondary border border-border-secondary rounded-full flex items-center justify-center mb-4">
-                <Coins01Icon size={36} className="text-text-tertiary opacity-50" variant="stroke-rounded" />
+              <div className="size-20 mx-auto flex items-center justify-center mb-4">
+                <Image 
+                  src="/notoken.png" 
+                  alt="No tokens deployed" 
+                  width={100} 
+                  height={100} 
+                  className="opacity-70 drop-shadow-lg object-contain"
+                />
               </div>
               <div>
                 <p className="text-text-primary font-bold text-base">
@@ -87,14 +94,6 @@ export default function DeploymentsPage() {
                 <p className="text-text-secondary text-sm mt-2 max-w-sm mx-auto leading-relaxed">
                   Start your journey by creating a premium BEP-20 token on BNB Chain in just a few minutes.
                 </p>
-              </div>
-              <div className="pt-4">
-                <Link
-                  href="/dashboard/create"
-                  className="inline-flex items-center gap-1.5 text-accent text-sm font-bold hover:underline"
-                >
-                  Launch your first token <span aria-hidden="true">→</span>
-                </Link>
               </div>
             </div>
           ) : (
