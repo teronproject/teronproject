@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { ROLES } from "@/lib/constants";
-import { processReferral } from "@/services/referrals";
+import { processReferral, generateUniqueReferralCode } from "@/services/referrals";
 
 /**
  * Auth Service
@@ -13,13 +13,14 @@ import { processReferral } from "@/services/referrals";
  * Create or resume a session from a wallet address.
  * If the user doesn't exist, creates a new user with role USER (or ADMIN if in env).
  * @param {string} walletAddress - The connected wallet address
+ * @param {string|null} referralCode - Optional referral code used during onboarding
  * @returns {Promise<object>} The user object
  */
 export async function createOrResumeSession(walletAddress, referralCode = null) {
   const normalizedAddress = walletAddress.toLowerCase();
   
   // Check if admin
-  const adminAddresses = (process.env.ADMIN_WALLET_ADDRESSES || "  ")
+  const adminAddresses = (process.env.ADMIN_WALLET_ADDRESSES || "")
     .toLowerCase()
     .split(",")
     .map(a => a.trim())
@@ -34,21 +35,19 @@ export async function createOrResumeSession(walletAddress, referralCode = null) 
 
   let isNewUser = false;
 
-  // Generate a unique referral code (8 chars)
-  const generateRefCode = () => Math.random().toString(36).substring(2, 10);
-
   if (!user) {
-    // New user — create with referralCode
+    // New user — create with collision-safe unique referralCode
+    const refCode = await generateUniqueReferralCode();
     try {
       user = await prisma.user.create({
         data: {
           walletAddress: normalizedAddress,
           role: role,
-          referralCode: generateRefCode(),
+          referralCode: refCode,
         },
       });
     } catch (createErr) {
-      // Fallback: create without referralCode if column doesn't exist yet
+      // Fallback: create without referralCode if column issue occurs
       user = await prisma.user.create({
         data: {
           walletAddress: normalizedAddress,
@@ -66,23 +65,30 @@ export async function createOrResumeSession(walletAddress, referralCode = null) 
       });
     }
 
-    // Backfill referralCode (separate try-catch so it doesn't break login)
+    // Backfill referralCode if missing
     if (!user.referralCode) {
       try {
+        const refCode = await generateUniqueReferralCode();
         user = await prisma.user.update({
           where: { id: user.id },
-          data: { referralCode: generateRefCode() },
+          data: { referralCode: refCode },
         });
       } catch (backfillErr) {
-        console.warn("Could not backfill referralCode (column may not exist yet):", backfillErr.message);
+        console.warn("Could not backfill referralCode:", backfillErr.message);
       }
     }
   }
 
-  // Process referral code for new users
-  if (isNewUser && referralCode) {
+  // Process referral code if provided and user is not yet referred
+  if (referralCode && (!user.referredById || isNewUser)) {
     try {
-      await processReferral(user.id, referralCode);
+      const processed = await processReferral(user.id, referralCode);
+      if (processed) {
+        // Re-fetch user so terrBalance and referredById reflect the new rewards
+        user = await prisma.user.findUnique({
+          where: { id: user.id },
+        });
+      }
     } catch (err) {
       console.error("Failed to process referral on connect:", err);
     }
@@ -97,6 +103,7 @@ export async function createOrResumeSession(walletAddress, referralCode = null) 
  * @returns {Promise<object|null>}
  */
 export async function getUserByWallet(walletAddress) {
+  if (!walletAddress) return null;
   const normalizedAddress = walletAddress.toLowerCase();
   return prisma.user.findUnique({
     where: { walletAddress: normalizedAddress },

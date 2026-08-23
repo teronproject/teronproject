@@ -53,6 +53,10 @@ export default function RewardsPage() {
   const [showWithdrawForm, setShowWithdrawForm] = useState(false);
   const [isAddingToken, setIsAddingToken] = useState(false);
 
+  // Manual Referral Code Apply state
+  const [manualReferralCode, setManualReferralCode] = useState("");
+  const [isApplyingReferral, setIsApplyingReferral] = useState(false);
+
   useEffect(() => {
     let isMounted = true;
     if (!address) return;
@@ -127,7 +131,8 @@ export default function RewardsPage() {
 
   async function copyReferralLink() {
     if (!referralData?.referralCode) return;
-    const link = `${window.location.origin}?ref=${referralData.referralCode}`;
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://teron.io";
+    const link = `${origin}?ref=${referralData.referralCode}`;
     await navigator.clipboard.writeText(link);
     posthog.capture("referral_link_copied");
     setIsCopied(true);
@@ -141,6 +146,53 @@ export default function RewardsPage() {
     addToast({ variant: "success", message: "TERR Contract address copied!" });
     setTimeout(() => setIsContractCopied(false), 2500);
   }
+
+  // Apply manual referral code
+  const handleApplyReferral = async (e) => {
+    e?.preventDefault();
+    if (!manualReferralCode.trim()) {
+      addToast({ variant: "error", message: "Please enter a referral code." });
+      return;
+    }
+    if (!isConnected || !address) {
+      addToast({ variant: "error", message: "Please connect your wallet first." });
+      return;
+    }
+
+    setIsApplyingReferral(true);
+    try {
+      const res = await fetch("/api/referrals/apply", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-wallet-address": address,
+        },
+        body: JSON.stringify({ referralCode: manualReferralCode.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        addToast({ variant: "success", message: data.message });
+        setManualReferralCode("");
+        // Reload rewards and referrals data
+        const [rewardsRes, referralsRes] = await Promise.all([
+          fetch("/api/rewards/balance", { headers: { "x-wallet-address": address } }),
+          fetch("/api/referrals", { headers: { "x-wallet-address": address } }),
+        ]);
+        const rewards = await rewardsRes.json();
+        const referrals = await referralsRes.json();
+        if (rewards.success) setRewardData(rewards);
+        if (referrals.success) setReferralData(referrals);
+        refreshProfile?.();
+      } else {
+        addToast({ variant: "error", message: data.message || "Failed to apply referral code." });
+      }
+    } catch (err) {
+      console.error("Failed to apply referral code:", err);
+      addToast({ variant: "error", message: "Failed to apply referral code. Please check connection." });
+    } finally {
+      setIsApplyingReferral(false);
+    }
+  };
 
   // Withdraw TERR tokens with full validations
   const handleWithdraw = useCallback(async () => {
@@ -709,9 +761,41 @@ export default function RewardsPage() {
             </div>
           )}
 
+          {/* Apply Referral Code (if not already referred) */}
+          {!referralData?.isReferred && (
+            <div className="pt-4 border-t border-border-primary/50 space-y-2.5">
+              <div>
+                <h3 className="text-xs font-semibold text-text-primary">
+                  Were you invited by a friend?
+                </h3>
+                <p className="text-[11px] text-text-tertiary mt-0.5">
+                  Enter their referral code to instantly claim your <strong className="text-accent">+10 TERR</strong> welcome bonus.
+                </p>
+              </div>
+              <form onSubmit={handleApplyReferral} className="flex items-center gap-2.5 max-w-md">
+                <input
+                  type="text"
+                  value={manualReferralCode}
+                  onChange={(e) => setManualReferralCode(e.target.value)}
+                  placeholder="Enter 8-character referral code"
+                  className="flex-1 h-10 bg-surface-secondary border border-border-primary rounded-[10px] px-3.5 text-xs text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent/60 font-mono"
+                />
+                <Button
+                  type="submit"
+                  isLoading={isApplyingReferral}
+                  disabled={isApplyingReferral || !manualReferralCode.trim()}
+                  size="sm"
+                  className="cta shrink-0"
+                >
+                  Claim 10 TERR
+                </Button>
+              </form>
+            </div>
+          )}
+
           {/* Referred Users */}
           {referralData?.referredUsers?.length > 0 && (
-            <div className="pt-3 border-t border-border-primary/50">
+            <div className="pt-4 border-t border-border-primary/50">
               <h3 className="text-xs stitle text-text-tertiary uppercase tracking-wider mb-3">Recent Referrals</h3>
               <div className="space-y-2">
                 {referralData.referredUsers.slice(0, 5).map((user) => (
@@ -726,7 +810,7 @@ export default function RewardsPage() {
                         {user.displayName || `${user.walletAddress?.slice(0, 8)}...${user.walletAddress?.slice(-4)}`}
                       </span>
                     </div>
-                    <span className="text-[10px] text-text-tertiary">
+                    <span className="text-[10px] text-text-tertiary font-mono">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </span>
                   </div>

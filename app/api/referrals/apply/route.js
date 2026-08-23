@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { processReferral } from "@/services/referrals";
-import { getUserByWallet } from "@/services/auth";
+import { getUserByWallet, createOrResumeSession } from "@/services/auth";
 import { z } from "zod";
 
 const applySchema = z.object({
@@ -17,12 +17,9 @@ export async function POST(request) {
       );
     }
 
-    const user = await getUserByWallet(walletAddress);
+    let user = await getUserByWallet(walletAddress);
     if (!user) {
-      return NextResponse.json(
-        { success: false, message: "User not found. Connect wallet first." },
-        { status: 404 }
-      );
+      user = await createOrResumeSession(walletAddress);
     }
 
     const body = await request.json();
@@ -32,14 +29,14 @@ export async function POST(request) {
 
     if (!success) {
       return NextResponse.json(
-        { success: false, message: "Invalid or already used referral code" },
+        { success: false, message: "Invalid, expired, or already used referral code" },
         { status: 400 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: "Referral code applied successfully! TERR rewards granted.",
+      message: "Referral code applied successfully! +10 TERR reward granted to your wallet.",
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

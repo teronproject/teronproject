@@ -8,7 +8,7 @@ import { BNB_CHAIN_ID, BNB_TESTNET_CHAIN_ID } from "@/lib/constants";
 
 /**
  * Custom hook for wallet connection state and actions.
- * Wraps wagmi hooks with Teron-specific logic and DB session syncing.
+ * Wraps wagmi hooks with Teron-specific logic, persistent referral tracking, and DB session syncing.
  */
 export function useWallet() {
   const { address, isConnected, chain, connector } = useAccount();
@@ -18,14 +18,25 @@ export function useWallet() {
   const [userProfile, setUserProfile] = useState(null);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
 
-  // Get referral code from URL params (e.g., ?ref=abc123)
+  // Get referral code from URL params (e.g., ?ref=abc123) and persist in storage
   let referralCodeFromUrl = null;
   try {
     const searchParams = useSearchParams();
     referralCodeFromUrl = searchParams?.get("ref") || null;
   } catch (_) {
-    // useSearchParams may fail in some contexts
+    // useSearchParams may fail in non-suspense SSR contexts
   }
+
+  // Persist referral code into localStorage and cookie so it isn't lost during page navigation
+  useEffect(() => {
+    if (referralCodeFromUrl && typeof window !== "undefined") {
+      try {
+        const clean = referralCodeFromUrl.trim().toLowerCase();
+        localStorage.setItem("teron_referral_code", clean);
+        document.cookie = `teron_ref=${clean}; path=/; max-age=2592000; SameSite=Lax`;
+      } catch (_) {}
+    }
+  }, [referralCodeFromUrl]);
 
   const isBnbChain = chain?.id === BNB_CHAIN_ID;
   const isWrongChain = isConnected && !isBnbChain;
@@ -55,34 +66,35 @@ export function useWallet() {
    */
   const syncSession = useCallback(async (walletAddress) => {
     if (!walletAddress) return null;
-    setIsProfileLoading(true);
     try {
+      // Check active referral code from URL or persistent storage
+      let activeRefCode = referralCodeFromUrl;
+      if (!activeRefCode && typeof window !== "undefined") {
+        activeRefCode = localStorage.getItem("teron_referral_code") || null;
+      }
+
       const res = await fetch("/api/auth/wallet-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           address: walletAddress,
-          referralCode: referralCodeFromUrl,
+          referralCode: activeRefCode || null,
         }),
       });
       const data = await res.json();
       if (res.ok && data.user) {
-        setUserProfile(data.user);
-
         identifyUser(data.user);
-
         return data.user;
       }
       return null;
     } catch (err) {
       console.error("Session sync failed:", err);
       return null;
-    } finally {
-      setIsProfileLoading(false);
     }
   }, [identifyUser, referralCodeFromUrl]);
 
   const disconnectWallet = useCallback(() => {
+    setUserProfile(null);
     if (process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN) {
       posthog.reset();
     }
@@ -90,22 +102,39 @@ export function useWallet() {
   }, [disconnect]);
 
   /**
-   * Refresh user profile from the backend (e.g. after profile update).
+   * Refresh user profile from the backend (e.g. after profile update or referral apply).
    */
   const refreshProfile = useCallback(async () => {
     if (address) {
-      return syncSession(address);
+      setIsProfileLoading(true);
+      try {
+        const profile = await syncSession(address);
+        if (profile) setUserProfile(profile);
+        return profile;
+      } finally {
+        setIsProfileLoading(false);
+      }
     }
   }, [address, syncSession]);
 
   // Sync wallet with Teron database session on connect
   useEffect(() => {
+    let isCancelled = false;
+
     if (isConnected && address) {
-      syncSession(address);
-    } else {
-      setUserProfile(null);
+      syncSession(address).then((profile) => {
+        if (!isCancelled && profile) {
+          setUserProfile(profile);
+        }
+      });
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isConnected, address, syncSession]);
+
+  const activeUserProfile = isConnected && address ? userProfile : null;
 
   return {
     // Wagmi state
@@ -123,7 +152,7 @@ export function useWallet() {
     switchChain,
     isConnecting,
     // Teron user profile
-    userProfile,
+    userProfile: activeUserProfile,
     isProfileLoading,
     isAdmin,
     refreshProfile,

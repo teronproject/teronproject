@@ -297,7 +297,7 @@ export default function DashboardPage() {
               />
               <div>
                 <p className="text-text-primary font-semibold text-sm">
-                  You haven't deployed any tokens yet.
+                  You haven&apos;t deployed any tokens yet.
                 </p>
                 <p className="text-text-secondary text-xs mt-1.5 max-w-sm mx-auto">
                   Start your journey by creating a premium BEP-20 token on BNB Chain in just a few minutes.
@@ -419,7 +419,7 @@ export default function DashboardPage() {
               Once your token is live, the next major milestone is typically establishing a liquidity pool on a decentralized exchange (DEX) like PancakeSwap. Providing initial liquidity allows users to buy and sell your token freely, creating a healthy market ecosystem.
             </p>
             <p className="text-xs text-gray-400">
-              Keep your token profile up to date on Teron. An active profile with accurate metadata (logo, website, active social links) dramatically improves your token's visibility on the Leaderboard and makes it significantly easier for tracking platforms to index your project.
+              Keep your token profile up to date on Teron. An active profile with accurate metadata (logo, website, active social links) dramatically improves your token&apos;s visibility on the Leaderboard and makes it significantly easier for tracking platforms to index your project.
             </p>
           </div>
         </div>

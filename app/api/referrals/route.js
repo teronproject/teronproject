@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getUserReferralCode, getReferralStats } from "@/services/referrals";
-import { getUserByWallet } from "@/services/auth";
+import { getReferralStats } from "@/services/referrals";
+import { getUserByWallet, createOrResumeSession } from "@/services/auth";
 
 export async function GET(request) {
   try {
@@ -12,12 +12,9 @@ export async function GET(request) {
       );
     }
 
-    const user = await getUserByWallet(walletAddress);
+    let user = await getUserByWallet(walletAddress);
     if (!user) {
-      return NextResponse.json(
-        { success: false, message: "User not found" },
-        { status: 404 }
-      );
+      user = await createOrResumeSession(walletAddress);
     }
 
     const stats = await getReferralStats(user.id);

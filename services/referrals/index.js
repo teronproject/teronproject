@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { grantReferralRewards } from "@/services/rewards";
+import crypto from "crypto";
 
 /**
  * Referrals Service
@@ -7,18 +7,47 @@ import { grantReferralRewards } from "@/services/rewards";
  * Owns: Referral code management, referral link processing, referral reward distribution.
  */
 
+/** Default reward amounts */
+const REFERRAL_REWARDS = {
+  REFERRER: 25,
+  NEW_USER: 10,
+};
+
 /**
- * Get a user's referral code.
+ * Generate a unique 8-character alphanumeric referral code.
+ */
+export async function generateUniqueReferralCode() {
+  for (let i = 0; i < 5; i++) {
+    const code = crypto.randomBytes(4).toString("hex").toLowerCase();
+    const existing = await prisma.user.findUnique({
+      where: { referralCode: code },
+      select: { id: true },
+    });
+    if (!existing) return code;
+  }
+  return `${Date.now().toString(36).slice(-4)}${crypto.randomBytes(2).toString("hex")}`.toLowerCase();
+}
+
+/**
+ * Get a user's referral code, generating one if missing.
  * @param {string} userId
  * @returns {Promise<string>}
  */
 export async function getUserReferralCode(userId) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { referralCode: true },
+    select: { id: true, referralCode: true },
   });
   if (!user) throw new Error("User not found");
-  return user.referralCode;
+
+  if (user.referralCode) return user.referralCode;
+
+  const newCode = await generateUniqueReferralCode();
+  await prisma.user.update({
+    where: { id: userId },
+    data: { referralCode: newCode },
+  });
+  return newCode;
 }
 
 /**
@@ -30,7 +59,7 @@ export async function getReferralStats(userId) {
   const [user, referralCount, referralGrants] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
-      select: { referralCode: true, terrBalance: true },
+      select: { referralCode: true, terrBalance: true, referredById: true },
     }),
     prisma.user.count({
       where: { referredById: userId },
@@ -57,66 +86,110 @@ export async function getReferralStats(userId) {
 
   let refCode = user?.referralCode;
 
-  // Auto-generate for legacy users who don't have one
+  // Auto-generate for users who don't have one
   if (user && !refCode) {
-    refCode = Math.random().toString(36).substring(2, 10);
+    refCode = await generateUniqueReferralCode();
     await prisma.user.update({
       where: { id: userId },
       data: { referralCode: refCode },
     });
   }
 
+  // Calculate earnings strictly from referred friends (25 TERR per friend)
+  const earningsFromReferrals = referralCount * REFERRAL_REWARDS.REFERRER;
+
   return {
     referralCode: refCode || "",
     totalReferrals: referralCount,
-    totalEarnings: referralGrants._sum?.amount || 0,
+    totalEarnings: earningsFromReferrals || referralGrants._sum?.amount || 0,
     referralGrantCount: referralGrants._count || 0,
+    isReferred: Boolean(user?.referredById),
     referredUsers,
   };
 }
 
 /**
- * Process a referral when a new user signs up.
- * Links the new user to the referrer and grants TERR to both.
+ * Process a referral when a user enters a referral link or applies a code.
+ * Links the user to the referrer and atomically grants TERR rewards to both.
  *
- * @param {string} newUserId - The newly created user's ID
- * @param {string} referralCode - The referral code from the URL
+ * @param {string} targetUserId - The user being referred
+ * @param {string} referralCode - The referral code
  * @returns {Promise<boolean>} True if referral was successfully processed
  */
-export async function processReferral(newUserId, referralCode) {
-  if (!referralCode || !newUserId) return false;
+export async function processReferral(targetUserId, referralCode) {
+  if (!referralCode || !targetUserId) return false;
 
-  // Find the referrer by referral code
-  const referrer = await prisma.user.findUnique({
-    where: { referralCode },
-    select: { id: true },
+  const cleanCode = referralCode.trim().toLowerCase();
+  if (!cleanCode) return false;
+
+  // Find the referrer by referral code (case-insensitive)
+  const referrer = await prisma.user.findFirst({
+    where: {
+      referralCode: {
+        equals: cleanCode,
+        mode: "insensitive",
+      },
+    },
+    select: { id: true, referredById: true },
   });
 
   if (!referrer) return false;
 
   // Prevent self-referral
-  if (referrer.id === newUserId) return false;
+  if (referrer.id === targetUserId) return false;
 
-  // Check if user is already referred
-  const newUser = await prisma.user.findUnique({
-    where: { id: newUserId },
-    select: { referredById: true },
+  // Prevent circular referral
+  if (referrer.referredById === targetUserId) return false;
+
+  // Check if target user is already referred
+  const targetUser = await prisma.user.findUnique({
+    where: { id: targetUserId },
+    select: { id: true, referredById: true },
   });
 
-  if (newUser?.referredById) return false; // Already referred
-
-  // Link the new user to the referrer
-  await prisma.user.update({
-    where: { id: newUserId },
-    data: { referredById: referrer.id },
-  });
-
-  // Grant TERR rewards to both
-  try {
-    await grantReferralRewards(referrer.id, newUserId);
-  } catch (err) {
-    console.error("Failed to grant referral rewards:", err);
+  if (!targetUser || targetUser.referredById) {
+    return false; // Already referred or user not found
   }
 
-  return true;
+  // Atomically link user and grant rewards in a single transaction
+  try {
+    await prisma.$transaction(async (tx) => {
+      // 1. Link the target user to the referrer
+      await tx.user.update({
+        where: { id: targetUserId },
+        data: { referredById: referrer.id },
+      });
+
+      // 2. Grant TERR to the Referrer (25 TERR)
+      await tx.rewardGrant.create({
+        data: {
+          userId: referrer.id,
+          amount: REFERRAL_REWARDS.REFERRER,
+          reason: "REFERRAL",
+        },
+      });
+      await tx.user.update({
+        where: { id: referrer.id },
+        data: { terrBalance: { increment: REFERRAL_REWARDS.REFERRER } },
+      });
+
+      // 3. Grant TERR to the New User (10 TERR)
+      await tx.rewardGrant.create({
+        data: {
+          userId: targetUserId,
+          amount: REFERRAL_REWARDS.NEW_USER,
+          reason: "REFERRAL",
+        },
+      });
+      await tx.user.update({
+        where: { id: targetUserId },
+        data: { terrBalance: { increment: REFERRAL_REWARDS.NEW_USER } },
+      });
+    });
+
+    return true;
+  } catch (err) {
+    console.error("Failed to process referral transaction:", err);
+    return false;
+  }
 }
