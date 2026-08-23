@@ -356,10 +356,11 @@ export default function DashboardPage() {
                       {token.deploymentStatus}
                     </Badge>
                     <Link
-                      href={`/t/${token.symbol?.toLowerCase()}`}
+                      // href={`/t/${token.symbol?.toLowerCase()}`}
+                      href='/dashboard/profiles'
                       className="text-xs text-accent hover:underline font-medium"
                     >
-                      View Profile →
+                      Edit Profile
                     </Link>
                   </div>
                 </div>
