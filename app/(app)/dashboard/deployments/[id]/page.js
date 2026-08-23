@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import { useDeployContract, useWaitForTransactionReceipt, useSendTransaction } from "wagmi";
 import { parseUnits } from "viem";
 import { useWallet } from "@/hooks/useWallet";
@@ -10,6 +10,7 @@ import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
 import Skeleton from "@/components/ui/Skeleton";
 import Link from "next/link";
+import { fireDeploymentConfetti } from "@/lib/confetti";
 import { WalletAdd02Icon } from "hugeicons-react";
 
 export default function DeploymentStatusPage({ params }) {
@@ -61,6 +62,20 @@ export default function DeploymentStatusPage({ params }) {
     hash: paymentTxHash || undefined,
   });
 
+  const hasFiredConfetti = useRef(false);
+
+  // Trigger confetti when deployment is confirmed
+  useEffect(() => {
+    if (dbStatus === "CONFIRMED" && !hasFiredConfetti.current) {
+      hasFiredConfetti.current = true;
+      // Slight delay so DOM has rendered the success banner
+      const timer = setTimeout(() => {
+        fireDeploymentConfetti();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [dbStatus]);
+
   // Fetch deployment metadata on initial load
   useEffect(() => {
     async function fetchDeployment() {
@@ -93,40 +108,91 @@ export default function DeploymentStatusPage({ params }) {
 
   // Handle wallet deployment error
   useEffect(() => {
+    let isCancelled = false;
     if (deployError) {
       addToast({ variant: "error", message: deployError.shortMessage || deployError.message });
-      updateStatus("FAILED", { errorMessage: deployError.message });
+      Promise.resolve().then(() => {
+        if (!isCancelled) {
+          setDbStatus("FAILED");
+          fetch(`/api/deployments/${deploymentId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "FAILED", errorMessage: deployError.message }),
+          }).catch(console.error);
+        }
+      });
     }
-  }, [deployError]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [deployError, deploymentId, addToast]);
 
   // When tx Hash is available (broadcasted to network)
   useEffect(() => {
+    let isCancelled = false;
     if (txHash && dbStatus !== "CONFIRMED") {
-      updateStatus("DEPLOYING", { txHash });
-      addToast({ variant: "info", message: "Transaction broadcasted! Waiting for blockchain confirmation..." });
+      Promise.resolve().then(() => {
+        if (!isCancelled) {
+          setDbStatus("DEPLOYING");
+          fetch(`/api/deployments/${deploymentId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "DEPLOYING", txHash }),
+          }).catch(console.error);
+          addToast({ variant: "info", message: "Transaction broadcasted! Waiting for blockchain confirmation..." });
+        }
+      });
     }
-  }, [txHash]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [txHash, dbStatus, deploymentId, addToast]);
 
   // When transaction receipt is confirmed on chain
   useEffect(() => {
+    let isCancelled = false;
     if (isConfirmedChain && receipt) {
       const newContractAddress = receipt.contractAddress;
-      setContractAddr(newContractAddress);
-      // The PATCH handler now auto-triggers BscScan verification + email in the background
-      updateStatus("CONFIRMED", { txHash, contractAddress: newContractAddress });
-      addToast({ variant: "success", message: "Token deployed! Verification starting in background..." });
+      Promise.resolve().then(() => {
+        if (!isCancelled) {
+          setContractAddr(newContractAddress);
+          setDbStatus("CONFIRMED");
+          fetch(`/api/deployments/${deploymentId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "CONFIRMED", txHash, contractAddress: newContractAddress }),
+          }).catch(console.error);
+          addToast({ variant: "success", message: "Token deployed! Verification starting in background..." });
+          if (!hasFiredConfetti.current) {
+            hasFiredConfetti.current = true;
+            fireDeploymentConfetti();
+          }
+        }
+      });
     } else if (receiptError) {
-      updateStatus("FAILED", { errorMessage: receiptError.message });
-      addToast({ variant: "error", message: "Transaction failed on blockchain." });
+      Promise.resolve().then(() => {
+        if (!isCancelled) {
+          setDbStatus("FAILED");
+          fetch(`/api/deployments/${deploymentId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "FAILED", errorMessage: receiptError.message }),
+          }).catch(console.error);
+          addToast({ variant: "error", message: "Transaction failed on blockchain." });
+        }
+      });
     }
-  }, [isConfirmedChain, receipt, receiptError]);
+    return () => {
+      isCancelled = true;
+    };
+  }, [isConfirmedChain, receipt, receiptError, txHash, deploymentId, addToast]);
 
   // Handle wallet payment error
   useEffect(() => {
     if (paymentError) {
       addToast({ variant: "error", message: paymentError.shortMessage || paymentError.message });
     }
-  }, [paymentError]);
+  }, [paymentError, addToast]);
 
   // When payment is confirmed on chain
   useEffect(() => {
@@ -139,16 +205,21 @@ export default function DeploymentStatusPage({ params }) {
         body: JSON.stringify({ tokenId: deploymentData?.token?.id, txHash: paymentTxHash })
       }).then(() => {
         // Refresh local data to remove the pending payment UI
-        setDeploymentData(prev => ({
-          ...prev,
-          token: {
-            ...prev.token,
-            payments: prev.token.payments.map(p => ({ ...p, status: "CONFIRMED" }))
-          }
-        }));
+        setDeploymentData(prev => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            token: prev.token
+              ? {
+                  ...prev.token,
+                  payments: (prev.token.payments || []).map(p => ({ ...p, status: "CONFIRMED" })),
+                }
+              : prev.token,
+          };
+        });
       });
     }
-  }, [isConfirmedPayment, paymentTxHash, deploymentData, address]);
+  }, [isConfirmedPayment, paymentTxHash, deploymentData?.token?.id, address, addToast]);
 
   const updateStatus = async (status, extra = {}) => {
     setDbStatus(status);
@@ -267,7 +338,7 @@ export default function DeploymentStatusPage({ params }) {
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto py-12 px-4 space-y-6">
+      <div className="max-w-6xl mx-auto py-12 px-4 space-y-6">
         <Skeleton className="h-12 w-1/3" />
         <Skeleton className="h-64 w-full" />
       </div>
@@ -313,11 +384,16 @@ export default function DeploymentStatusPage({ params }) {
 
       {/* Main Action Banner */}
       {isComplete ? (
-        <div className="bg-success-subtle border border-success/30 rounded-xl p-6 text-center space-y-4">
-          <div className="w-16 h-16 bg-success text-white text-3xl font-bold rounded-full flex items-center justify-center mx-auto shadow-lg">
+        <div className="bg-success-subtle border border-success/30 rounded-xl p-6 text-center space-y-4 relative overflow-hidden">
+          <button
+            type="button"
+            onClick={() => fireDeploymentConfetti()}
+            title="Click to celebrate 🎉"
+            className="w-16 h-16 bg-success text-white text-3xl font-bold rounded-full flex items-center justify-center mx-auto shadow-lg hover:scale-110 active:scale-95 transition-transform duration-200 cursor-pointer select-none"
+          >
             ✓
-          </div>
-          <h2 className="text-xl font-bold text-text-primary">Token Successfully Deployed!</h2>
+          </button>
+          <h2 className="text-xl font-bold text-text-primary">Token Successfully Deployed! 🎉</h2>
           <p className="text-text-secondary text-sm max-w-lg text-balance mx-auto">
             Your token <strong className="text-text-primary">{token.name} ({token.symbol})</strong> has been permanently written to the BNB Smart Chain.
           </p>
@@ -348,7 +424,7 @@ export default function DeploymentStatusPage({ params }) {
                 View on BscScan
               </a>
             )}
-            {contractAddr && (
+            {/* {contractAddr && (
               <button
                 onClick={handleAddTokenToWallet}
                 className="h-10 px-6 cta bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded inline-flex items-center gap-2 text-sm hover:bg-surface-secondary transition-colors"
@@ -356,7 +432,7 @@ export default function DeploymentStatusPage({ params }) {
                 <WalletAdd02Icon size={18} className="text-black" />
                 Add {token.symbol} to Wallet
               </button>
-            )}
+            )} */}
           </div>
 
           {/* Premium Add-ons Payment UI */}

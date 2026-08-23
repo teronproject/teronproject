@@ -20,6 +20,7 @@
     "@wagmi/core": "^3.6.4",
     "@walletconnect/ethereum-provider": "^2.23.10",
     "@web3modal/wagmi": "^5.1.11",
+    "canvas-confetti": "^1.9.4",
     "cloudinary": "^2.10.0",
     "hugeicons-react": "^0.4.0",
     "motion": "^12.43.0",
