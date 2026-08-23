@@ -16,10 +16,10 @@ const DEFAULT_SEO = {
   robotsFollow: true,
   canonicalUrl: "https://teron.io",
   pages: {
-    home: { title: "Teron — Launch Your Token on BNB Chain", description: "Create and deploy your BEP-20 token on BNB Smart Chain. No coding required." },
-    about: { title: "About Teron — BNB Chain Token Launch Platform", description: "Learn about Teron, the simplest way to create and deploy tokens on BNB Smart Chain." },
-    pricing: { title: "Pricing — Teron Token Launch Platform", description: "Transparent pricing for token deployment, contract verification, and on-chain metadata on BNB Chain." },
-    leaderboard: { title: "Token Leaderboard — Teron", description: "Discover the latest tokens launched on BNB Chain through the Teron platform." },
+    home: { title: "Teron | Launch Your Token on BNB Chain", description: "Create and deploy your BEP-20 token on BNB Smart Chain. No coding required." },
+    about: { title: "About Teron | BNB Chain Token Launch Platform", description: "Learn about Teron, the simplest way to create and deploy tokens on BNB Smart Chain." },
+    pricing: { title: "Pricing | Teron Token Launch Platform", description: "Transparent pricing for token deployment, contract verification, and on-chain metadata on BNB Chain." },
+    leaderboard: { title: "Token Leaderboard | Teron", description: "Discover the latest tokens launched on BNB Chain through the Teron platform." },
   },
 };
 

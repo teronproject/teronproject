@@ -1,13 +1,13 @@
 import { generateOGImageUrl } from "@/services/seo";
 
 export const metadata = {
-  title: "Contact Teron — Support & Inquiries",
+  title: "Contact Teron | Support & Inquiries",
   description: "Get in touch with the Teron team for technical support, partnership inquiries, or media requests. We typically respond within 24–48 hours.",
   alternates: {
     canonical: "/contact",
   },
   openGraph: {
-    title: "Contact Teron — Support & Inquiries",
+    title: "Contact Teron | Support & Inquiries",
     description: "Get in touch with the Teron team for technical support, partnership inquiries, or media requests.",
     url: "/contact",
     images: [
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Contact Teron — Support & Inquiries",
+    title: "Contact Teron | Support & Inquiries",
     description: "Get in touch with the Teron team for technical support, partnership inquiries, or media requests.",
   },
 };

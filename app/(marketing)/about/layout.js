@@ -1,13 +1,13 @@
 import { generateOGImageUrl } from "@/services/seo";
 
 export const metadata = {
-  title: "About Teron — The #1 BNB Chain Token Launchpad",
+  title: "About Teron | The #1 BNB Chain Token Launchpad",
   description: "Teron is the premier no-code platform for deploying production-grade BEP-20 smart contracts on BNB Smart Chain. BscScan verification, on-chain metadata, community leaderboard, and BNB gas assistance — all built in.",
   alternates: {
     canonical: "/about",
   },
   openGraph: {
-    title: "About Teron — The #1 BNB Chain Token Launchpad",
+    title: "About Teron | The #1 BNB Chain Token Launchpad",
     description: "The premier no-code platform for deploying production-grade BEP-20 smart contracts on BNB Smart Chain.",
     url: "/about",
     images: [
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Teron — The #1 BNB Chain Token Launchpad",
+    title: "About Teron | The #1 BNB Chain Token Launchpad",
     description: "The premier no-code platform for deploying production-grade BEP-20 smart contracts on BNB Smart Chain.",
   },
 };

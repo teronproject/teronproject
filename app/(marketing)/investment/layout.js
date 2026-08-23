@@ -1,13 +1,13 @@
 import { generateOGImageUrl } from "@/services/seo";
 
 export const metadata = {
-  title: "Invest in Teron — Strategic Partnership & Funding Opportunities",
+  title: "Invest in Teron | Strategic Partnership & Funding Opportunities",
   description: "Partner with the premier token launch infrastructure on BNB Smart Chain. Submit a strategic investment inquiry to the Teron team.",
   alternates: {
     canonical: "/investment",
   },
   openGraph: {
-    title: "Invest in Teron — Strategic Partnership Opportunities",
+    title: "Invest in Teron | Strategic Partnership Opportunities",
     description: "Partner with the premier token launch infrastructure on BNB Smart Chain.",
     url: "/investment",
     images: [
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Invest in Teron — Strategic Partnership Opportunities",
+    title: "Invest in Teron | Strategic Partnership Opportunities",
     description: "Partner with the premier token launch infrastructure on BNB Smart Chain.",
   },
 };

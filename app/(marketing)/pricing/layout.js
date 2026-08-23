@@ -1,13 +1,13 @@
 import { generateOGImageUrl } from "@/services/seo";
 
 export const metadata = {
-  title: "Teron Pricing — Free Token Deployment on BNB Chain",
+  title: "Teron Pricing | Free Token Deployment on BNB Chain",
   description: "Deploy your BEP-20 token for free on BNB Smart Chain. Only pay for optional premium features like BscScan verification and on-chain metadata. No hidden fees, no subscriptions.",
   alternates: {
     canonical: "/pricing",
   },
   openGraph: {
-    title: "Teron Pricing — Free Token Deployment on BNB Chain",
+    title: "Teron Pricing | Free Token Deployment on BNB Chain",
     description: "Deploy your BEP-20 token for free. Only pay for optional premium features like BscScan verification.",
     url: "/pricing",
     images: [
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Teron Pricing — Free Token Deployment on BNB Chain",
+    title: "Teron Pricing | Free Token Deployment on BNB Chain",
     description: "Deploy your BEP-20 token for free. Only pay for optional premium features like BscScan verification.",
   },
 };
