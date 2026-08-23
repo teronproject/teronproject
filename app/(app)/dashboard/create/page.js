@@ -148,7 +148,7 @@ export function CreateTokenContent() {
     return total;
   }
 
-  const isInsufficientBnb = currentStep === 3 && (getTotalBnbCost(getValues()) + 0.001 > bnbBalance);
+  const isInsufficientBnb = currentStep === 3 && (getTotalBnbCost(getValues()) + (getTotalBnbCost(getValues()) > 0 ? 0.0001 : 0.00005) > bnbBalance);
 
   const onSubmit = async (data) => {
     if (!isConnected) {

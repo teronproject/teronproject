@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useWallet } from "@/hooks/useWallet";
-import { CheckmarkBadge01Icon, SecurityCheckIcon, Rocket01Icon, Mail01Icon } from "hugeicons-react";
+import { CheckmarkBadge01Icon, SecurityCheckIcon, Mail01Icon } from "hugeicons-react";
 import { useBalance } from "wagmi";
 import { formatEther } from "viem";
 import Input from "@/components/ui/Input";
@@ -21,7 +21,7 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
 
   const [bnbPriceUsd, setBnbPriceUsd] = useState(600);
   const [pricing, setPricing] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
 
   // Assistance state
   const [assistanceForm, setAssistanceForm] = useState({ telegram: "", description: "" });
@@ -56,7 +56,10 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
   if (addVerification) totalBnbCost += Number(verificationPrice);
   if (addMetadata) totalBnbCost += Number(metadataPrice);
 
-  const totalRequired = totalBnbCost + 0.001; // Adding a small buffer for gas
+  // Estimated network gas for BSC token deployment (~$0.02 - $0.12 on BSC)
+  const ESTIMATED_GAS_BNB = 0.0002;
+  const MIN_GAS_THRESHOLD = 0.00005; // ~3 cents minimum network gas
+  const totalRequired = totalBnbCost + (totalBnbCost > 0 ? 0.0001 : MIN_GAS_THRESHOLD);
   const isInsufficientBnb = bnbBalance < totalRequired;
 
   const formatUsd = (bnb) => {
@@ -117,7 +120,7 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
           Final Review
         </h3>
         <p className="text-xs text-text-tertiary leading-relaxed">
-          Please review your token details carefully. Once you click "Deploy", a transaction
+          Please review your token details carefully. Once you click &quot;Deploy&quot;, a transaction
           will be sent to the BNB Chain. <strong className="font-bold">Smart contracts are immutable</strong> — you will not
           be able to change the Name, Symbol, Decimals, or Initial Supply after deployment.
         </p>
@@ -183,7 +186,7 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
       </div>
 
       {/* Add-ons Summary */}
-      {(addVerification || addMetadata) && (
+      {(addVerification || addMetadata) ? (
         <div>
           <h3 className="text-sm title text-text-primary mb-3">Selected Premium Services</h3>
           <div className="space-y-2">
@@ -209,9 +212,9 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
             )}
           </div>
         </div>
-      )}
+      ) : null}
 
-      {/* Cost Summary */}
+      {/* Cost Summary — Always visible */}
       <div className="bg-surface-secondary border border-border-secondary rounded-xl p-6 card">
         <h3 className="text-sm title text-text-primary mb-4">
           Deployment Cost Summary
@@ -219,8 +222,8 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
 
         <div className="space-y-3 mb-6">
           <div className="flex justify-between items-center text-sm">
-            <span className="text-text-secondary">Smart Contract Deployment</span>
-            <span className="font-semibold text-text-primary">Free (+ Gas)</span>
+            <span className="text-text-secondary">Smart Contract Creation</span>
+            <span className="font-semibold text-accent">Free (0.0000 BNB)</span>
           </div>
 
           {addVerification && (
@@ -242,13 +245,37 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
               <span className="font-semibold text-text-primary">{Number(metadataPrice).toFixed(4)} BNB</span>
             </div>
           )}
+
+          {!addVerification && !addMetadata && (
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-text-secondary">Selected Premium Services</span>
+              <span className="text-xs text-text-tertiary font-mono">None (Standard Free Launch)</span>
+            </div>
+          )}
+
+          {/* Network Gas Estimation */}
+          <div className="flex justify-between items-center text-sm pt-2 border-t border-border-secondary/60">
+            <div>
+              <span className="text-text-secondary flex items-center gap-1.5">
+                Estimated Network Gas
+                <span className="text-[10px] bg-surface-tertiary px-1.5 py-0.5 rounded text-text-tertiary border border-border-secondary">BSC Network</span>
+              </span>
+              <p className="text-[10px] text-text-tertiary mt-0.5">Paid directly to blockchain validators during transaction</p>
+            </div>
+            <div className="text-right">
+              <span className="font-mono text-xs font-semibold text-text-primary">~{ESTIMATED_GAS_BNB.toFixed(4)} BNB</span>
+              <span className="text-[11px] text-text-tertiary block">≈ {formatUsd(ESTIMATED_GAS_BNB)}</span>
+            </div>
+          </div>
         </div>
 
         <div className="pt-4 border-t border-border-primary flex justify-between items-end">
           <div>
-            <span className="text-sm font-semibold text-text-primary">Total Payable</span>
-            {totalBnbCost > 0 && (
-              <p className="text-[10px] text-text-tertiary mt-0.5">Sent to Teron service wallet + network gas</p>
+            <span className="text-sm font-semibold text-text-primary">Total Payable to Teron</span>
+            {totalBnbCost > 0 ? (
+              <p className="text-[10px] text-text-tertiary mt-0.5">Service fee for selected add-ons</p>
+            ) : (
+              <p className="text-[10px] text-text-tertiary mt-0.5">100% Free · No platform fees</p>
             )}
           </div>
           <div className="text-right">
@@ -258,7 +285,7 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
         </div>
       </div>
 
-      {/* BNB Assistance Card */}
+      {/* BNB Assistance Card — Only shown when wallet balance cannot cover deployment fees & gas */}
       {isInsufficientBnb && (
         <div className="bg-error/5 border border-error/20 rounded-xl p-6 card shadow-sm mt-6">
           <div className="flex items-start gap-3 mb-4">
@@ -268,13 +295,15 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
             <div>
               <h3 className="text-sm title text-text-primary mb-1">Insufficient BNB Balance</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                Your wallet balance ({bnbBalance.toFixed(4)} BNB) is below the required {totalRequired.toFixed(4)} BNB (including gas buffer).
+                Your wallet balance (<strong className="font-mono text-text-primary">{bnbBalance.toFixed(4)} BNB</strong> ≈ {formatUsd(bnbBalance)}) is below the required <strong className="font-mono text-text-primary">{totalRequired.toFixed(4)} BNB</strong> {totalBnbCost === 0 ? "(estimated network gas for contract creation)" : "(service fee + network gas)"}.
                 {totalBnbCost > 0 ? (
                   <span className="block mt-2 font-medium text-error">
-                    Note: Teron BNB Assistance only covers base gas fees. To request assistance, please return to Step 2 and deselect all Premium Add-ons.
+                    Note: Teron BNB Assistance only covers base network gas fees. To request assistance, please return to Step 2 and deselect all Premium Add-ons, or add BNB to your wallet.
                   </span>
                 ) : (
-                  <span className="block mt-1">If you are a promising project, you can request BNB assistance from the Teron team to cover your deployment costs.</span>
+                  <span className="block mt-1.5 text-text-secondary">
+                    If you are building a promising project and lack the gas fees to deploy, you can request BNB gas sponsorship from the Teron team below.
+                  </span>
                 )}
               </p>
             </div>
@@ -298,12 +327,12 @@ export default function StepReview({ getValues, setValue, watch, isAssistanceMod
                     required
                   />
                   <div className="space-y-2">
-                    <label className="input-label">Why should we sponsor your deployment? *</label>
+                    <label className="input-label text-xs font-semibold text-text-primary">Why should we sponsor your deployment? *</label>
                     <textarea
                       value={assistanceForm.description}
                       onChange={(e) => setAssistanceForm({ ...assistanceForm, description: e.target.value })}
                       placeholder="Tell us about your project, team, and goals..."
-                      className="input text-sm min-h-20 py-2"
+                      className="input text-sm min-h-20 py-2 w-full bg-surface-primary border border-border-primary rounded-lg p-3 text-text-primary focus:outline-none focus:border-accent"
                       required
                     />
                   </div>

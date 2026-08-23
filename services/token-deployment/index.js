@@ -302,9 +302,15 @@ export async function processPostDeployment(deploymentId, contractAddress, deplo
   if (contactEmail) {
     try {
       await sendDeploymentSuccessEmail({
-        to: contactEmail, tokenName: token.name, symbol: token.symbol,
-        contractAddress, txHash: deployTxHash, totalSupply: token.totalSupply,
+        to: contactEmail,
+        tokenName: token.name,
+        symbol: token.symbol,
+        contractAddress,
+        txHash: deployTxHash,
+        totalSupply: token.totalSupply,
+        hasVerification,
         verified: verificationResult.verified || false,
+        hasMetadata,
         metadataSubmitted: metadataResult.success || false,
       });
       console.log(`[PostDeploy] Email sent to ${contactEmail}`);

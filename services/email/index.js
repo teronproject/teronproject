@@ -88,7 +88,9 @@ export async function sendDeploymentSuccessEmail({
   contractAddress,
   txHash,
   totalSupply,
+  hasVerification = false,
   verified = false,
+  hasMetadata = false,
   metadataSubmitted = false,
 }) {
   if (!to) return { success: false, message: "No recipient email" };
@@ -122,13 +124,25 @@ export async function sendDeploymentSuccessEmail({
               </td>
             </tr>
             <tr>
-              <td style="color: #71717a; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 10px 0; border-top: 1px solid #1f1f22;">Verified</td>
-              <td style="color: ${verified ? '#22c55e' : '#f59e0b'}; font-size: 13px; font-weight: 500; text-align: right; padding: 10px 0; border-top: 1px solid #1f1f22;">${verified ? '✓ Verified' : '⏳ Pending'}</td>
+              <td style="color: #71717a; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 10px 0; border-top: 1px solid #1f1f22;">Launch Tier</td>
+              <td style="color: #fafafa; font-size: 13px; font-weight: 500; text-align: right; padding: 10px 0; border-top: 1px solid #1f1f22;">
+                ${hasVerification || hasMetadata ? '<span style="color: #eab308;">★ Premium Launch</span>' : 'Standard Launch (Free)'}
+              </td>
             </tr>
-            ${metadataSubmitted ? `
+            ${hasVerification ? `
             <tr>
-              <td style="color: #71717a; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 10px 0; border-top: 1px solid #1f1f22;">Metadata</td>
-              <td style="color: #22c55e; font-size: 13px; font-weight: 500; text-align: right; padding: 10px 0; border-top: 1px solid #1f1f22;">✓ Submitted</td>
+              <td style="color: #71717a; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 10px 0; border-top: 1px solid #1f1f22;">BscScan Verification</td>
+              <td style="color: ${verified ? '#22c55e' : '#f59e0b'}; font-size: 13px; font-weight: 500; text-align: right; padding: 10px 0; border-top: 1px solid #1f1f22;">
+                ${verified ? '✓ Verified on BscScan' : '⏳ Verification In Progress'}
+              </td>
+            </tr>
+            ` : ''}
+            ${hasMetadata ? `
+            <tr>
+              <td style="color: #71717a; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 10px 0; border-top: 1px solid #1f1f22;">On-Chain Metadata</td>
+              <td style="color: ${metadataSubmitted ? '#22c55e' : '#f59e0b'}; font-size: 13px; font-weight: 500; text-align: right; padding: 10px 0; border-top: 1px solid #1f1f22;">
+                ${metadataSubmitted ? '✓ Metadata Submitted' : '⏳ Submitting to Registry'}
+              </td>
             </tr>
             ` : ''}
           </table>
@@ -142,7 +156,7 @@ export async function sendDeploymentSuccessEmail({
         
         <div style="text-align: center;">
           <a href="${txUrl}" style="color: #71717a; font-size: 11px; text-decoration: none; border-bottom: 1px solid #27272a; padding-bottom: 2px;">
-            Transaction: ${txHash.slice(0, 10)}...${txHash.slice(-8)}
+            Transaction: ${txHash ? `${txHash.slice(0, 10)}...${txHash.slice(-8)}` : 'On-Chain'}
           </a>
         </div>
     ${getEmailFooter()}
