@@ -7,11 +7,13 @@ import Logo from "@/components/ui/Logo";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu01Icon, Cancel01Icon, ArrowRight01Icon } from "hugeicons-react";
 import { usePathname } from "next/navigation";
+import { useWallet } from "@/hooks/useWallet";
 
 /**
  * Shared header/navigation for public-facing pages.
  */
 export default function Header() {
+  const { isConnected } = useWallet();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -114,10 +116,10 @@ export default function Header() {
 
           <div className="flex items-center gap-4">
             <Link
-              href="/dashboard"
+              href={isConnected ? "/dashboard" : "/dashboard/create"}
               className="hidden md:inline-flex cta items-center justify-center h-10 px-6 bg-accent text-accent-text font-bold rounded-lg text-sm hover:bg-accent-hover active:bg-accent-active transition-all shadow-sm hover:shadow-[0_0_15px_rgba(var(--color-accent-rgb,234,179,8),0.3)]"
             >
-              Launch Token
+              {isConnected ? "Dashboard" : "Launch Token"}
             </Link>
 
             {/* Mobile Menu Toggle */}
@@ -165,11 +167,11 @@ export default function Header() {
               ))}
               <div className="pt-4 pb-2 px-2 border-t border-border-primary mt-2">
                 <Link
-                  href="/dashboard"
+                  href={isConnected ? "/dashboard" : "/dashboard/create"}
                   onClick={closeMobileMenu}
                   className="flex cta w-full items-center justify-center h-12 px-6 bg-accent text-accent-text font-bold rounded-xl text-base hover:bg-accent-hover active:bg-accent-active transition-all shadow-sm"
                 >
-                  Launch Token
+                  {isConnected ? "Dashboard" : "Launch Token"}
                 </Link>
               </div>
             </nav>

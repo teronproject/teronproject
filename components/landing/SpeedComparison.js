@@ -24,7 +24,7 @@ export default function SpeedComparison() {
               href="/dashboard/create"
               className="inline-flex items-center justify-center px-5 py-3 mt-3 rounded-full border border-white/10 hover:bg-white/5 text-[14px] font-medium text-text-primary transition-colors cta"
             >
-              Compare benchmarks
+              Launch your Token
             </Link>
           </div>
           

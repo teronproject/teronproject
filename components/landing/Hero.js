@@ -4,9 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
+import { useWallet } from "@/hooks/useWallet";
 import CanvasBackground from "@/components/landing/CanvasBackground";
 
 export default function Hero() {
+  const { isConnected } = useWallet();
   const [activeTab, setActiveTab] = useState("about");
 
   const tabs = [
@@ -42,19 +44,21 @@ export default function Hero() {
         </p>
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto px-4 sm:px-0">
           <Link
             href="/dashboard/create"
-            className="cta h-12 px-8 bg-surface-primary text-text-primary rounded-full text-[15px] font-semibold inline-flex items-center justify-center transition-all w-full sm:w-auto shadow-[0_0_0_1px_rgba(255,255,255,0.05)_inset,0_1px_2px_rgba(0,0,0,0.2)] hover:scale-[1.02]"
+            className="h-12 px-8 cta rounded-lg text-[15px] font-bold inline-flex items-center justify-center transition-all shadow-[0_0_10px_rgba(var(--color-accent),0.3)] hover:shadow-[0_0_20px_rgba(var(--color-accent),0.5)] w-full sm:w-auto"
           >
-            Create Your Token
+            Launch Token
           </Link>
-          <Link
-            href="/dashboard"
-            className="h-12 px-8 text-text-secondary hover:text-text-primary rounded-lg text-[15px] font-medium inline-flex items-center justify-center transition-colors w-full sm:w-auto border border-transparent hover:bg-white/5"
-          >
-            View Dashboard
-          </Link>
+          {isConnected && (
+            <Link
+              href="/dashboard"
+              className="h-12 px-8 text-text-secondary hover:text-text-primary rounded-lg text-[15px] font-medium inline-flex items-center justify-center transition-colors w-full sm:w-auto border border-transparent hover:bg-white/5"
+            >
+              View Dashboard
+            </Link>
+          )}
         </div>
       </div>
 

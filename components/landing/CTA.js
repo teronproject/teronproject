@@ -22,9 +22,9 @@ export default function CTA() {
         
         <Link
           href="/dashboard/create"
-          className="cta h-14 px-10 bg-white text-black font-semibold rounded-full text-[15px] inline-flex items-center justify-center transition-all hover:bg-gray-200 group shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
+          className="cta h-12 px-10 bg-white text-black font-semibold rounded-full text-[15px] inline-flex items-center justify-center transition-all hover:bg-gray-200 group shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)]"
         >
-          Start Building Now
+          Launch your Token
           <ArrowRight01Icon size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
         </Link>
       </div>
