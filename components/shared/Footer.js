@@ -80,7 +80,18 @@ function LiveLinks() {
       ),
       isCustom: true
     },
-    { name: "Soon...", url: null, isSoon: true, icon: "soon" },
+    { 
+      name: "Bitget Dapp", 
+      url: "https://web3.bitget.com/dapp", 
+      icon: (
+        <img 
+          src="https://cdn.jjdsn.site/bgw-web-pro-static/17c3dc65b04a52709561f1c2f7d0ccd8/img/f84b9173413a.png" 
+          alt="Bitget Dapp" 
+          className="h-[20px] sm:h-[24px] w-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
+        />
+      ),
+      isCustom: true
+    },
     { name: "Soon...", url: null, isSoon: true, icon: "soon" },
   ];
 
