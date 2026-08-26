@@ -129,7 +129,7 @@ export default async function TaskPublicPage({ params, searchParams }) {
               </div>
             )}
 
-            <Card.Body className="p-6 sm:p-8 space-y-6">
+            <div className="card-body p-6 sm:p-8 space-y-6">
               <div>
                 <div className="flex items-center gap-2 flex-wrap mb-2">
                   <Badge variant="accent" size="md">
@@ -187,7 +187,7 @@ export default async function TaskPublicPage({ params, searchParams }) {
                   <ArrowRight01Icon size={18} />
                 </Link>
               </div>
-            </Card.Body>
+            </div>
           </Card>
         </div>
       </main>

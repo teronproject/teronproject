@@ -9,6 +9,8 @@ async function checkAdmin(request) {
   return isAdmin(walletAddress);
 }
 
+const META_REGEX = /<!--teron_task_meta:([\s\S]*?)-->/;
+
 /**
  * GET /api/admin/tasks/completions
  * List all task completions, optionally filtered by status (PENDING, VERIFIED, REJECTED).
@@ -30,10 +32,9 @@ export async function GET(request) {
           select: {
             id: true,
             title: true,
+            description: true,
             rewardAmount: true,
             verificationMethod: true,
-            thumbnailUrl: true,
-            requireTelegram: true,
             externalUrl: true,
           },
         },
@@ -50,10 +51,30 @@ export async function GET(request) {
     });
 
     const formatted = completions.map((c) => {
-      // Extract telegram handle from proof string if telegramUsername wasn't stored separately
-      let tg = c.telegramUsername || c.user?.telegram || null;
-      if (!tg && c.proof && c.proof.includes("Telegram: ")) {
+      // Extract telegram handle from proof string or user profile
+      let tg = c.user?.telegram || null;
+      if (c.proof && c.proof.includes("Telegram: ")) {
         tg = c.proof.replace("Telegram: ", "").trim();
+      }
+
+      let imageUrl = null;
+      let requiresTelegram = false;
+      let cleanDesc = c.task?.description || "";
+
+      if (cleanDesc) {
+        const match = cleanDesc.match(META_REGEX);
+        if (match) {
+          try {
+            const parsed = JSON.parse(match[1]);
+            if (parsed.imageUrl) imageUrl = parsed.imageUrl;
+            if (parsed.requiresTelegram) requiresTelegram = true;
+          } catch (_) {}
+          cleanDesc = cleanDesc.replace(META_REGEX, "").trim();
+        }
+      }
+
+      if (!requiresTelegram && c.task?.externalUrl && c.task.externalUrl.includes("t.me")) {
+        requiresTelegram = true;
       }
 
       return {
@@ -61,8 +82,11 @@ export async function GET(request) {
         telegramUsername: tg,
         task: {
           ...c.task,
-          imageUrl: c.task?.thumbnailUrl || null,
-          requiresTelegram: c.task?.requireTelegram || false,
+          description: cleanDesc,
+          imageUrl,
+          thumbnailUrl: imageUrl,
+          requiresTelegram,
+          verificationMethod: requiresTelegram ? "MANUAL_TELEGRAM" : c.task?.verificationMethod,
         },
       };
     });
@@ -89,7 +113,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { completionId, action, adminNotes } = body;
+    const { completionId, action } = body;
 
     if (!completionId || !["VERIFIED", "REJECTED"].includes(action)) {
       return NextResponse.json(
@@ -98,7 +122,7 @@ export async function POST(request) {
       );
     }
 
-    const result = await reviewTaskCompletion(completionId, action, adminNotes);
+    const result = await reviewTaskCompletion(completionId, action);
     return NextResponse.json({ success: true, completion: result });
   } catch (error) {
     console.error("Admin review error:", error);
