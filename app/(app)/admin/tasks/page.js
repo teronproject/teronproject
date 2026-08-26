@@ -452,7 +452,6 @@ export default function AdminTasksPage() {
                 <div className="p-4 rounded-xl bg-surface-secondary border border-border-secondary space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="input-label mb-0 flex items-center gap-1.5 text-text-primary">
-                      <Image01Icon size={16} className="text-accent" />
                       Task OG Thumbnail Image
                     </label>
                     <span className="text-[11px] font-mono text-accent font-semibold">

@@ -673,7 +673,7 @@ export async function reviewTaskCompletion(completionId, status) {
       const [rawUpdated] = await prisma.$queryRaw`
         UPDATE "task_completions"
         SET 
-          "status" = CAST(${status} AS text),
+          "status" = ${status}::"TaskCompletionStatus",
           "verifiedAt" = CASE WHEN ${status} = 'VERIFIED' THEN NOW() ELSE "verifiedAt" END,
           "rejectedAt" = CASE WHEN ${status} = 'REJECTED' THEN NOW() ELSE "rejectedAt" END
         WHERE "id" = ${completionId}

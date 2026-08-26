@@ -61,7 +61,7 @@ export async function GET(request) {
           FROM "task_completions" c
           LEFT JOIN "tasks" t ON c."taskId" = t."id"
           LEFT JOIN "users" u ON c."userId" = u."id"
-          WHERE c."status"::text = ${status}
+          WHERE c."status" = ${status}::"TaskCompletionStatus"
           ORDER BY c."createdAt" DESC;
         `;
         
