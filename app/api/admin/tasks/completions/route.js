@@ -24,31 +24,76 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status") || "PENDING";
 
-    const completions = await prisma.taskCompletion.findMany({
-      where: { status },
-      orderBy: { createdAt: "desc" },
-      include: {
-        task: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            rewardAmount: true,
-            verificationMethod: true,
-            externalUrl: true,
+    let completions;
+    try {
+      completions = await prisma.taskCompletion.findMany({
+        where: { status },
+        orderBy: { createdAt: "desc" },
+        include: {
+          task: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              rewardAmount: true,
+              verificationMethod: true,
+              externalUrl: true,
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              walletAddress: true,
+              displayName: true,
+              avatar: true,
+              telegram: true,
+            },
           },
         },
-        user: {
-          select: {
-            id: true,
-            walletAddress: true,
-            displayName: true,
-            avatar: true,
-            telegram: true,
+      });
+    } catch (err) {
+      if (err.code === "P2022" || (err.message && err.message.includes("does not exist in the current database"))) {
+        const rawCompletions = await prisma.$queryRaw`
+          SELECT 
+            c.*, 
+            t."id" as "taskId", t."title", t."description", t."rewardAmount", t."verificationMethod", t."externalUrl",
+            u."id" as "userId", u."walletAddress", u."displayName", u."avatar", u."telegram"
+          FROM "task_completions" c
+          LEFT JOIN "tasks" t ON c."taskId" = t."id"
+          LEFT JOIN "users" u ON c."userId" = u."id"
+          WHERE c."status"::text = ${status}
+          ORDER BY c."createdAt" DESC;
+        `;
+        
+        completions = rawCompletions.map(r => ({
+          id: r.id,
+          userId: r.userId,
+          taskId: r.taskId,
+          status: r.status,
+          proof: r.proof,
+          createdAt: r.createdAt,
+          verifiedAt: r.verifiedAt,
+          rejectedAt: r.rejectedAt,
+          task: {
+            id: r.taskId,
+            title: r.title,
+            description: r.description,
+            rewardAmount: r.rewardAmount,
+            verificationMethod: r.verificationMethod,
+            externalUrl: r.externalUrl,
           },
-        },
-      },
-    });
+          user: {
+            id: r.userId,
+            walletAddress: r.walletAddress,
+            displayName: r.displayName,
+            avatar: r.avatar,
+            telegram: r.telegram,
+          }
+        }));
+      } else {
+        throw err;
+      }
+    }
 
     const formatted = completions.map((c) => {
       // Extract telegram handle from proof string or user profile

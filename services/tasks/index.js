@@ -355,20 +355,51 @@ export async function completeTask(userId, taskId, proof = null, telegramUsernam
  * @returns {Promise<object[]>}
  */
 export async function getTaskCompletions(userId) {
-  return prisma.taskCompletion.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-    include: {
-      task: {
-        select: {
-          title: true,
-          rewardAmount: true,
-          verificationMethod: true,
-          description: true,
+  try {
+    return await prisma.taskCompletion.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        task: {
+          select: {
+            title: true,
+            rewardAmount: true,
+            verificationMethod: true,
+            description: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (err) {
+    if (err.code === "P2022" || (err.message && err.message.includes("does not exist in the current database"))) {
+      const rawComps = await prisma.$queryRaw`
+        SELECT 
+          c.*, 
+          t."title", t."rewardAmount", t."verificationMethod", t."description"
+        FROM "task_completions" c
+        LEFT JOIN "tasks" t ON c."taskId" = t."id"
+        WHERE c."userId" = ${userId}
+        ORDER BY c."createdAt" DESC;
+      `;
+      return rawComps.map(r => ({
+        id: r.id,
+        userId: r.userId,
+        taskId: r.taskId,
+        status: r.status,
+        proof: r.proof,
+        createdAt: r.createdAt,
+        verifiedAt: r.verifiedAt,
+        rejectedAt: r.rejectedAt,
+        task: {
+          title: r.title,
+          rewardAmount: r.rewardAmount,
+          verificationMethod: r.verificationMethod,
+          description: r.description,
+        }
+      }));
+    }
+    throw err;
+  }
 }
 
 // ===================== Admin Functions =====================
@@ -594,21 +625,65 @@ export async function deleteTask(taskId) {
  * @param {"VERIFIED"|"REJECTED"} status
  */
 export async function reviewTaskCompletion(completionId, status) {
-  const completion = await prisma.taskCompletion.findUnique({
-    where: { id: completionId },
-    include: { task: true },
-  });
+  let completion;
+  try {
+    completion = await prisma.taskCompletion.findUnique({
+      where: { id: completionId },
+      include: { task: true },
+    });
+  } catch (err) {
+    if (err.code === "P2022" || (err.message && err.message.includes("does not exist in the current database"))) {
+      const [rawComp] = await prisma.$queryRaw`
+        SELECT c.*, t."title", t."rewardAmount", t."verificationMethod"
+        FROM "task_completions" c
+        JOIN "tasks" t ON c."taskId" = t."id"
+        WHERE c."id" = ${completionId}
+        LIMIT 1;
+      `;
+      if (rawComp) {
+        completion = {
+          id: rawComp.id,
+          userId: rawComp.userId,
+          taskId: rawComp.taskId,
+          status: rawComp.status,
+          task: {
+            rewardAmount: rawComp.rewardAmount
+          }
+        };
+      }
+    } else {
+      throw err;
+    }
+  }
 
   if (!completion) throw new Error("Completion not found");
   if (completion.status === "VERIFIED") throw new Error("Already verified");
 
-  const updated = await prisma.taskCompletion.update({
-    where: { id: completionId },
-    data: {
-      status,
-      ...(status === "VERIFIED" ? { verifiedAt: new Date() } : { rejectedAt: new Date() }),
-    },
-  });
+  let updated;
+  try {
+    updated = await prisma.taskCompletion.update({
+      where: { id: completionId },
+      data: {
+        status,
+        ...(status === "VERIFIED" ? { verifiedAt: new Date() } : { rejectedAt: new Date() }),
+      },
+    });
+  } catch (err) {
+    if (err.code === "P2022" || (err.message && err.message.includes("does not exist in the current database"))) {
+      const [rawUpdated] = await prisma.$queryRaw`
+        UPDATE "task_completions"
+        SET 
+          "status" = CAST(${status} AS text),
+          "verifiedAt" = CASE WHEN ${status} = 'VERIFIED' THEN NOW() ELSE "verifiedAt" END,
+          "rejectedAt" = CASE WHEN ${status} = 'REJECTED' THEN NOW() ELSE "rejectedAt" END
+        WHERE "id" = ${completionId}
+        RETURNING *;
+      `;
+      updated = rawUpdated;
+    } else {
+      throw err;
+    }
+  }
 
   // Grant reward if verified
   if (status === "VERIFIED") {
