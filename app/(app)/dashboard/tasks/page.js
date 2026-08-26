@@ -707,16 +707,16 @@ export default function TasksPage() {
                   <Button
                     size="sm"
                     onClick={() => handleCopyShareLink(shareModalTask)}
-                    className={copiedLink ? "bg-success text-white" : "cta"}
+                    className={copiedLink ? "bg-success text-white" : "cta p-5"}
                   >
                     {copiedLink ? (
                       <>
-                        <CheckmarkBadge01Icon size={14} className="mr-1" />
+                        <CheckmarkBadge01Icon size={14} className="mr-1 inline-block" />
                         Copied!
                       </>
                     ) : (
                       <>
-                        <Copy01Icon size={14} className="mr-1" />
+                        <Copy01Icon size={14} className="mr-1 inline-block" />
                         Copy
                       </>
                     )}
