@@ -95,7 +95,7 @@ export function useCloudinaryUpload({ type, walletAddress }) {
       } catch (err) {
         console.error("Cloudinary upload error:", err);
         setError(err.message);
-        return null;
+        throw err;
       } finally {
         setIsUploading(false);
       }

@@ -56,7 +56,7 @@ export default function StepMedia({ register, errors, watch, setValue }) {
       const url = await uploadLogo(file);
       if (url) setValue("logoUrl", url, { shouldValidate: true, shouldDirty: true });
     } catch (err) {
-      addToast({ variant: "error", message: "Failed to upload logo." });
+      addToast({ variant: "error", message: err.message || "Failed to upload logo." });
     } finally {
       // Clean up object URL to prevent memory leaks
       URL.revokeObjectURL(objectUrl);
@@ -87,7 +87,7 @@ export default function StepMedia({ register, errors, watch, setValue }) {
       const url = await uploadBanner(file);
       if (url) setValue("bannerUrl", url, { shouldValidate: true, shouldDirty: true });
     } catch (err) {
-      addToast({ variant: "error", message: "Failed to upload banner." });
+      addToast({ variant: "error", message: err.message || "Failed to upload banner." });
     } finally {
       URL.revokeObjectURL(objectUrl);
       setLocalBannerPreview(null);

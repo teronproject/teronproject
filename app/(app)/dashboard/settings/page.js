@@ -96,22 +96,26 @@ export default function SettingsPage() {
       return;
     }
 
-    const url = await uploadAvatar(file);
-    if (url) {
-      setAvatarUrl(url);
-      // Save avatar URL immediately
-      await fetch("/api/auth/profile", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "x-wallet-address": address,
-        },
-        body: JSON.stringify({ avatar: url }),
-      });
-      await refreshProfile();
-      addToast({ variant: "success", message: "Avatar uploaded!" });
-    } else {
-      addToast({ variant: "error", message: "Avatar upload failed" });
+    try {
+      const url = await uploadAvatar(file);
+      if (url) {
+        setAvatarUrl(url);
+        // Save avatar URL immediately
+        await fetch("/api/auth/profile", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-wallet-address": address,
+          },
+          body: JSON.stringify({ avatar: url }),
+        });
+        await refreshProfile();
+        addToast({ variant: "success", message: "Avatar uploaded!" });
+      } else {
+        addToast({ variant: "error", message: "Avatar upload failed" });
+      }
+    } catch (err) {
+      addToast({ variant: "error", message: err.message || "Avatar upload failed" });
     }
   };
 
