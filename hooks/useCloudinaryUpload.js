@@ -7,7 +7,7 @@ import { useState, useCallback } from "react";
  * Handles: signature fetching → client validation → direct upload → returns secure URL.
  *
  * @param {object} options
- * @param {"avatar"|"token-logo"|"token-banner"} options.type - Upload type
+ * @param {"avatar"|"token-logo"|"token-banner"|"task-image"} options.type - Upload type
  * @param {string} options.walletAddress - Connected wallet address for auth
  */
 export function useCloudinaryUpload({ type, walletAddress }) {

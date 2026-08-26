@@ -20,7 +20,7 @@ export async function POST(request) {
     const body = await request.json();
     const { type } = z
       .object({
-        type: z.enum(["avatar", "token-logo", "token-banner"]),
+        type: z.enum(["avatar", "token-logo", "token-banner", "task-image"]),
       })
       .parse(body);
 
@@ -38,6 +38,11 @@ export async function POST(request) {
       },
       "token-banner": {
         folder: "tokens/banners",
+        allowedFormats: ["jpg", "jpeg", "png", "webp"],
+        maxFileSize: 5 * 1024 * 1024, // 5MB
+      },
+      "task-image": {
+        folder: "tasks/og-images",
         allowedFormats: ["jpg", "jpeg", "png", "webp"],
         maxFileSize: 5 * 1024 * 1024, // 5MB
       },

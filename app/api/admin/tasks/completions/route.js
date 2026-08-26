@@ -32,6 +32,9 @@ export async function GET(request) {
             title: true,
             rewardAmount: true,
             verificationMethod: true,
+            thumbnailUrl: true,
+            requireTelegram: true,
+            externalUrl: true,
           },
         },
         user: {
@@ -40,12 +43,31 @@ export async function GET(request) {
             walletAddress: true,
             displayName: true,
             avatar: true,
+            telegram: true,
           },
         },
       },
     });
 
-    return NextResponse.json({ success: true, completions });
+    const formatted = completions.map((c) => {
+      // Extract telegram handle from proof string if telegramUsername wasn't stored separately
+      let tg = c.telegramUsername || c.user?.telegram || null;
+      if (!tg && c.proof && c.proof.includes("Telegram: ")) {
+        tg = c.proof.replace("Telegram: ", "").trim();
+      }
+
+      return {
+        ...c,
+        telegramUsername: tg,
+        task: {
+          ...c.task,
+          imageUrl: c.task?.thumbnailUrl || null,
+          requiresTelegram: c.task?.requireTelegram || false,
+        },
+      };
+    });
+
+    return NextResponse.json({ success: true, completions: formatted });
   } catch (error) {
     console.error("Admin completions list error:", error);
     return NextResponse.json(
@@ -58,7 +80,7 @@ export async function GET(request) {
 /**
  * POST /api/admin/tasks/completions
  * Approve or reject a task completion.
- * Body: { completionId, action: "VERIFIED" | "REJECTED" }
+ * Body: { completionId, action: "VERIFIED" | "REJECTED", adminNotes?: string }
  */
 export async function POST(request) {
   try {
@@ -67,7 +89,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { completionId, action } = body;
+    const { completionId, action, adminNotes } = body;
 
     if (!completionId || !["VERIFIED", "REJECTED"].includes(action)) {
       return NextResponse.json(
@@ -76,7 +98,7 @@ export async function POST(request) {
       );
     }
 
-    const result = await reviewTaskCompletion(completionId, action);
+    const result = await reviewTaskCompletion(completionId, action, adminNotes);
     return NextResponse.json({ success: true, completion: result });
   } catch (error) {
     console.error("Admin review error:", error);

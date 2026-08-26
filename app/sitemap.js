@@ -55,5 +55,24 @@ export default async function sitemap() {
     console.error("Sitemap: Failed to fetch tokens:", error.message);
   }
 
-  return [...staticEntries, ...tokenEntries];
+  // ── Dynamic task quest pages ──
+  let taskEntries = [];
+  try {
+    const tasks = await prisma.task.findMany({
+      where: { active: true },
+      select: { id: true, updatedAt: true },
+      take: 500,
+    });
+
+    taskEntries = tasks.map((task) => ({
+      url: `${BASE_URL}/tasks/${task.id}`,
+      lastModified: task.updatedAt || new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error("Sitemap: Failed to fetch tasks:", error.message);
+  }
+
+  return [...staticEntries, ...tokenEntries, ...taskEntries];
 }

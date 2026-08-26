@@ -6,6 +6,7 @@ import { z } from "zod";
 const completeTaskSchema = z.object({
   taskId: z.string().min(1, "Task ID is required"),
   proof: z.string().optional().nullable(),
+  telegramUsername: z.string().optional().nullable(),
 });
 
 export async function POST(request) {
@@ -27,15 +28,16 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { taskId, proof } = completeTaskSchema.parse(body);
+    const { taskId, proof, telegramUsername } = completeTaskSchema.parse(body);
 
-    const completion = await completeTask(user.id, taskId, proof);
+    const completion = await completeTask(user.id, taskId, proof, telegramUsername);
 
     return NextResponse.json({
       success: true,
       completion: {
         id: completion.id,
         status: completion.status,
+        telegramUsername: completion.telegramUsername,
         verifiedAt: completion.verifiedAt,
       },
     });
@@ -53,6 +55,7 @@ export async function POST(request) {
       "Task is no longer active",
       "Task already completed and verified",
       "Task completion is pending review",
+      "Telegram username is required to complete this task.",
     ].includes(message);
 
     return NextResponse.json(
