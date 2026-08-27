@@ -552,7 +552,7 @@ export default function TasksPage() {
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-text-primary">Telegram Verification</h3>
-                    <p className="text-[11px] text-text-tertiary">Join the channel & submit your handle</p>
+                    <p className="text-[11px] text-text-tertiary">Admins verify your participation.</p>
                   </div>
                 </div>
                 <div className="text-xs font-bold text-accent px-2.5 py-1 rounded-md bg-accent/10">
