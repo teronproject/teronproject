@@ -10,8 +10,6 @@ export default function robots() {
           "/api/",
           "/admin/",
           "/dashboard/",
-          "/swap/",
-          "/tasks/",
           "/_next/",
         ],
       },
