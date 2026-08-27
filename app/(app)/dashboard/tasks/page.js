@@ -562,27 +562,10 @@ export default function TasksPage() {
             </Card.Header>
 
             <form onSubmit={handleTelegramSubmit}>
-              <Card.Body className="space-y-4">
-                <div className="p-3 rounded-lg bg-surface-secondary border border-border-primary space-y-2">
-                  <p className="text-xs font-semibold text-text-primary">
-                    1. Join Official Community / Channel:
-                  </p>
-                  {telegramModalTask.externalUrl && (
-                    <a
-                      href={telegramModalTask.externalUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-2 px-3 rounded-lg bg-[#0088cc] hover:bg-[#0088cc]/90 text-white text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors shadow-sm"
-                    >
-                      <TelegramIcon size={16} />
-                      Open Telegram Channel / Group ↗
-                    </a>
-                  )}
-                </div>
-
+              <Card.Body className="space-y-5">
                 <div className="space-y-2">
-                  <label className="input-label text-xs">
-                    2. Your Telegram Username (@handle)
+                  <label className="input-label text-sm">
+                    1. Enter your Telegram Username (@handle)
                   </label>
                   <div className="relative">
                     <input
@@ -595,7 +578,16 @@ export default function TasksPage() {
                     />
                   </div>
                   <p className="text-[11px] text-text-tertiary">
-                    Admins verify your username before crediting the TERR reward.
+                    Required for admins to verify your participation.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-surface-secondary border border-border-primary space-y-2">
+                  <p className="text-xs font-bold text-text-primary">
+                    2. Start Quest & Submit
+                  </p>
+                  <p className="text-[11px] text-text-tertiary leading-relaxed">
+                    Once you've entered your handle, click Start. This will open the Telegram community and automatically submit your username for admin review.
                   </p>
                 </div>
               </Card.Body>
@@ -612,9 +604,10 @@ export default function TasksPage() {
                 <Button
                   type="submit"
                   isLoading={completingId === telegramModalTask.id}
+                  disabled={!telegramInput.trim()}
                   className="cta text-xs"
                 >
-                  Submit for Verification
+                  Start Quest & Verify
                 </Button>
               </Card.Footer>
             </form>
