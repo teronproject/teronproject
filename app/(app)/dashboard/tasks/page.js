@@ -21,6 +21,7 @@ import {
   Copy01Icon,
   CheckmarkBadge01Icon,
 } from "hugeicons-react";
+import Image from "next/image";
 
 export default function TasksPage() {
   const { address, isConnected } = useWallet();
@@ -407,8 +408,14 @@ export default function TasksPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-3 right-3">
-                      <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-md text-accent px-3 py-1.5 rounded-lg border border-accent/30 shadow-lg">
-                        <Coins01Icon size={14} variant="solid" />
+                      <div className="flex items-center  gap-1.5 bg-black/80 backdrop-blur-md text-accent px-2 py-1.5 rounded-lg border border-accent/30 shadow-lg">
+                      <Image
+                      src="/32.svg"
+                      alt="Coins01Icon"
+                      width={16}
+                      height={16}
+                        />
+                        {/* <Coins01Icon size={14} variant="solid" /> */}
                         <span className="font-bold text-xs">+{task.rewardAmount} TERR</span>
                       </div>
                     </div>
