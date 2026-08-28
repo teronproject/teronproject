@@ -58,6 +58,14 @@ export async function POST(request) {
         { status: 400 }
       );
     }
+    
+    if (error.message?.includes("System under heavy load")) {
+      return NextResponse.json(
+        { message: error.message },
+        { status: 429 }
+      );
+    }
+
     console.error("Wallet session error:", error);
     return NextResponse.json(
       { message: "Internal server error" },

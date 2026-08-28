@@ -36,6 +36,20 @@ export async function createOrResumeSession(walletAddress, referralCode = null) 
   let isNewUser = false;
 
   if (!user) {
+    // --- GLOBAL BOT PROTECTION ---
+    // Prevent bot scripts from inflating the database by creating thousands of fake wallets.
+    // Limit: Max 10 new accounts globally per minute.
+    const recentUsersCount = await prisma.user.count({
+      where: {
+        createdAt: { gte: new Date(Date.now() - 60000) }
+      }
+    });
+
+    if (recentUsersCount >= 10) {
+      throw new Error("System under heavy load. Temporary pause on new account creations to prevent spam. Please try again in a few minutes.");
+    }
+    // -----------------------------
+
     // New user — create with collision-safe unique referralCode
     const refCode = await generateUniqueReferralCode();
     try {
