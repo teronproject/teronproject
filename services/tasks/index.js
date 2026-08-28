@@ -290,6 +290,45 @@ export async function completeTask(userId, taskId, proof = null, telegramUsernam
     ? (telegramUsername.trim().startsWith("@") ? telegramUsername.trim() : `@${telegramUsername.trim()}`)
     : null;
 
+  // --- ADVANCED ANTI-BOT PROTECTION ---
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { createdAt: true }
+  });
+
+  if (!user) throw new Error("User not found");
+
+  // 1. New Wallet Cooldown (Blocks JIT Bot Wallets)
+  // Wallets must be at least 3 minutes old to complete tasks
+  if (Date.now() - new Date(user.createdAt).getTime() < 180000) {
+    throw new Error("New accounts must wait 3 minutes before completing quests to prevent spam.");
+  }
+
+  // 2. Strict Pattern Blocking (Check both cleanTg AND proof)
+  const botPattern = /@User0x[a-f0-9]{4,}/i;
+  if ((cleanTg && botPattern.test(cleanTg)) || (proof && botPattern.test(proof))) {
+    throw new Error("Automated bot behavior detected. Account flagged.");
+  }
+
+  // 3. Max Pending Queue Limit (Stops parallel flooding)
+  const pendingCount = await prisma.taskCompletion.count({
+    where: { userId, status: "PENDING" },
+  });
+  if (pendingCount >= 3) {
+    throw new Error("You have too many tasks pending review. Please wait for admins to verify them.");
+  }
+
+  // 4. Rate Limiting
+  const lastCompletion = await prisma.taskCompletion.findFirst({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (lastCompletion && (Date.now() - new Date(lastCompletion.createdAt).getTime()) < 15000) {
+    throw new Error("You are completing tasks too quickly. Please wait 15 seconds.");
+  }
+  // ------------------------------------
+
   // Check if already completed
   const existing = await prisma.taskCompletion.findUnique({
     where: { userId_taskId: { userId, taskId } },
