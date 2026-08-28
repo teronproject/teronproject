@@ -3,8 +3,29 @@ import { createOrResumeSession } from "@/services/auth";
 import { walletAddressSchema } from "@/lib/zod-schemas/user";
 import { z } from "zod";
 
+const rateLimitMap = new Map();
+
 export async function POST(request) {
   try {
+    // Basic In-Memory IP Rate Limiting to prevent bot account creation spam
+    const ip = request.headers.get("x-forwarded-for") || "unknown";
+    if (ip !== "unknown") {
+      const now = Date.now();
+      const windowData = rateLimitMap.get(ip) || [];
+      // keep only requests from the last 60 seconds
+      const recent = windowData.filter(timestamp => now - timestamp < 60000);
+      
+      if (recent.length >= 10) {
+        return NextResponse.json(
+          { message: "Too many requests. Please try again later." },
+          { status: 429 }
+        );
+      }
+      
+      recent.push(now);
+      rateLimitMap.set(ip, recent);
+    }
+
     const body = await request.json();
 
     // Validate request body

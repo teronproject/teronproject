@@ -56,6 +56,10 @@ export async function POST(request) {
       "Task already completed and verified",
       "Task completion is pending review",
       "Telegram username is required to complete this task.",
+      "New accounts must wait 3 minutes before completing quests to prevent spam.",
+      "Automated bot behavior detected. Account flagged.",
+      "You have too many tasks pending review. Please wait for admins to verify them.",
+      "You are completing tasks too quickly. Please wait 15 seconds.",
     ].includes(message);
 
     return NextResponse.json(
