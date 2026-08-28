@@ -40,9 +40,6 @@ export default function TurnstileOverlay({
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
             className="relative z-10 w-full max-w-md bg-[#0e0e0e] border border-white/10 rounded-2xl p-6 sm:p-7 shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden"
           >
-            {/* Ambient Background Glow */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#f3ba2f]/5 rounded-full blur-3xl pointer-events-none" />
 
             {/* Close button */}
             {onClose && (
@@ -57,12 +54,8 @@ export default function TurnstileOverlay({
 
             {/* Header Icon & Title */}
             <div className="flex flex-col items-center text-center space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shadow-[0_0_20px_rgba(243,186,47,0.15)]">
-                <SecurityCheckIcon size={26} />
-              </div>
-
               <div>
-                <h3 className="text-lg font-bold text-white tracking-tight">
+                <h3 className="text-lg title text-white tracking-tight">
                   Security Verification
                 </h3>
                 <p className="text-xs text-text-secondary mt-1 max-w-xs mx-auto leading-relaxed">
