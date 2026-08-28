@@ -7,8 +7,16 @@ import { useWallet } from "@/hooks/useWallet";
  * Shows connected address when connected, connect prompt when disconnected.
  */
 export default function WalletButton() {
-  const { address, isConnected, isConnecting, connect, connectors, disconnect } =
-    useWallet();
+  const {
+    address,
+    isConnected,
+    isConnecting,
+    connect,
+    connectors,
+    disconnect,
+    isVerified,
+    openVerificationModal,
+  } = useWallet();
 
   if (isConnected && address) {
     const truncated = `${address.slice(0, 6)}...${address.slice(-4)}`;
@@ -24,12 +32,22 @@ export default function WalletButton() {
     );
   }
 
+  const handleConnectClick = () => {
+    const connector = connectors[0];
+    if (!connector) return;
+
+    if (!isVerified) {
+      openVerificationModal(() => {
+        connect({ connector });
+      });
+    } else {
+      connect({ connector });
+    }
+  };
+
   return (
     <button
-      onClick={() => {
-        const connector = connectors[0];
-        if (connector) connect({ connector });
-      }}
+      onClick={handleConnectClick}
       disabled={isConnecting}
       className="inline-flex items-center justify-center h-10 px-6 bg-accent text-accent-text font-semibold rounded text-sm hover:bg-accent-hover active:bg-accent-active disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
     >

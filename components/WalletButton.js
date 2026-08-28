@@ -26,13 +26,23 @@ export default function WalletButton() {
     switchChain,
     userProfile,
     isProfileLoading,
+    isVerified,
+    openVerificationModal,
   } = useWallet();
   
   const { open } = useWeb3Modal();
 
   const { addToast } = useToastContext();
 
-
+  const handleConnectClick = () => {
+    if (!isVerified) {
+      openVerificationModal(() => {
+        open();
+      });
+    } else {
+      open();
+    }
+  };
 
   const handleDisconnect = () => {
     disconnect();
@@ -57,15 +67,13 @@ export default function WalletButton() {
   const truncateAddress = (addr) =>
     addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
 
-
-
   // If not connected — show "Connect Wallet" button
   if (!isConnected) {
     return (
       <Button
         variant="primary"
         size="md"
-        onClick={() => open()}
+        onClick={handleConnectClick}
         isLoading={isConnecting}
         className="cta"
       >

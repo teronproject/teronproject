@@ -29,12 +29,46 @@ export async function POST(request) {
     const body = await request.json();
 
     // Validate request body
-    const { address, referralCode } = z
+    const { address, referralCode, cfToken } = z
       .object({
         address: walletAddressSchema,
         referralCode: z.string().optional().nullable(),
+        cfToken: z.string().optional().nullable(),
       })
       .parse(body);
+
+    const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+    
+    // Only enforce Turnstile if the secret key is provided (so dev environments don't break if not set)
+    if (turnstileSecret && turnstileSecret !== "") {
+      if (!cfToken) {
+        return NextResponse.json(
+          { message: "Bot protection verification required (missing token)." },
+          { status: 403 }
+        );
+      }
+
+      // Verify the token with Cloudflare
+      const verifyRes = await fetch(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `secret=${encodeURIComponent(turnstileSecret)}&response=${encodeURIComponent(cfToken)}&remoteip=${encodeURIComponent(ip)}`,
+        }
+      );
+
+      const outcome = await verifyRes.json();
+      if (!outcome.success) {
+        console.warn("Turnstile failure:", outcome);
+        return NextResponse.json(
+          { message: "Bot verification failed. Please try again." },
+          { status: 403 }
+        );
+      }
+    }
 
     // Create or resume session (with optional referral code for new users)
     const user = await createOrResumeSession(address, referralCode || null);
@@ -58,14 +92,6 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-    
-    if (error.message?.includes("System under heavy load")) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 429 }
-      );
-    }
-
     console.error("Wallet session error:", error);
     return NextResponse.json(
       { message: "Internal server error" },

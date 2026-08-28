@@ -5,6 +5,7 @@ import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 import { BNB_CHAIN_ID, BNB_TESTNET_CHAIN_ID } from "@/lib/constants";
+import { useTurnstile } from "@/components/TurnstileProvider";
 
 /**
  * Custom hook for wallet connection state and actions.
@@ -15,6 +16,7 @@ export function useWallet() {
   const { connect, connectors, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
+  const { turnstileToken, isVerified, openVerificationModal, setTurnstileToken } = useTurnstile();
   const [userProfile, setUserProfile] = useState(null);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
 
@@ -64,9 +66,10 @@ export function useWallet() {
    * Sync wallet with the Teron backend.
    * Creates or resumes a DB session and returns the user profile.
    */
-  const syncSession = useCallback(async (walletAddress) => {
+  const syncSession = useCallback(async (walletAddress, token = null) => {
     if (!walletAddress) return null;
     try {
+      const activeToken = token || turnstileToken;
       // Check active referral code from URL or persistent storage
       let activeRefCode = referralCodeFromUrl;
       if (!activeRefCode && typeof window !== "undefined") {
@@ -79,6 +82,7 @@ export function useWallet() {
         body: JSON.stringify({
           address: walletAddress,
           referralCode: activeRefCode || null,
+          cfToken: activeToken, // Pass Turnstile token
         }),
       });
       const data = await res.json();
@@ -91,7 +95,7 @@ export function useWallet() {
       console.error("Session sync failed:", err);
       return null;
     }
-  }, [identifyUser, referralCodeFromUrl]);
+  }, [identifyUser, referralCodeFromUrl, turnstileToken]);
 
   const disconnectWallet = useCallback(() => {
     setUserProfile(null);
@@ -108,31 +112,45 @@ export function useWallet() {
     if (address) {
       setIsProfileLoading(true);
       try {
-        const profile = await syncSession(address);
+        const profile = await syncSession(address, turnstileToken);
         if (profile) setUserProfile(profile);
         return profile;
       } finally {
         setIsProfileLoading(false);
       }
     }
-  }, [address, syncSession]);
+  }, [address, syncSession, turnstileToken]);
 
   // Sync wallet with Teron database session on connect
   useEffect(() => {
     let isCancelled = false;
 
     if (isConnected && address) {
-      syncSession(address).then((profile) => {
-        if (!isCancelled && profile) {
-          setUserProfile(profile);
-        }
-      });
+      if (!turnstileToken) {
+        // If we don't have a token yet, prompt the Turnstile verification
+        openVerificationModal((token) => {
+          if (!isCancelled && token) {
+            syncSession(address, token).then((profile) => {
+              if (!isCancelled && profile) {
+                setUserProfile(profile);
+              }
+            });
+          }
+        });
+      } else {
+        // If we have a token, proceed with sync
+        syncSession(address, turnstileToken).then((profile) => {
+          if (!isCancelled && profile) {
+            setUserProfile(profile);
+          }
+        });
+      }
     }
 
     return () => {
       isCancelled = true;
     };
-  }, [isConnected, address, syncSession]);
+  }, [isConnected, address, syncSession, turnstileToken, openVerificationModal]);
 
   const activeUserProfile = isConnected && address ? userProfile : null;
 
@@ -156,5 +174,10 @@ export function useWallet() {
     isProfileLoading,
     isAdmin,
     refreshProfile,
+    // Turnstile
+    turnstileToken,
+    isVerified,
+    openVerificationModal,
+    setTurnstileToken,
   };
 }

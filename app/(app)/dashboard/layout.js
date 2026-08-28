@@ -8,11 +8,23 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import WalletButton from "@/components/WalletButton";
 import Footer from "@/components/shared/Footer";
 
+import dynamic from "next/dynamic";
+import { useTurnstile } from "@/components/TurnstileProvider";
+
+const Turnstile = dynamic(
+  () => import("@marsidev/react-turnstile").then((mod) => mod.Turnstile),
+  { ssr: false }
+);
+
 export default function DashboardLayout({ children }) {
   const { isConnected } = useWallet();
+  const { setTurnstileToken } = useTurnstile();
   const [isMounted, setIsMounted] = useState(false);
+  const siteKey =
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 
@@ -23,7 +35,7 @@ export default function DashboardLayout({ children }) {
   if (!isConnected) {
     return (
       <>
-      <div className="max-w-3xl mx-auto py-32 px-4 text-center space-y-6 min-h-[70vh] flex flex-col justify-center items-center">
+      <div className="max-w-3xl mx-auto py-24 sm:py-32 px-4 text-center space-y-6 min-h-[70vh] flex flex-col justify-center items-center">
         <div className="w-20 h-20 bg-surface-secondary border border-border-secondary rounded-full flex items-center justify-center text-text-tertiary shadow-sm">
           <LockPasswordIcon size={36} variant="stroke-rounded" />
         </div>
@@ -32,10 +44,23 @@ export default function DashboardLayout({ children }) {
             Connect Wallet to Access
           </h1>
           <p className="text-text-secondary text-sm max-w-md mx-auto">
-            You need to connect your Web3 wallet to deploy new tokens, manage existing ones, and view your dashboard.
+            You need to complete security verification and connect your Web3 wallet to deploy new tokens, manage existing ones, and view your dashboard.
           </p>
         </div>
-        <div className="pt-2">
+
+        {/* Cloudflare Turnstile Checkbox Box */}
+        <div className="pt-2 flex flex-col items-center gap-4">
+          <div className="min-h-[65px] flex items-center justify-center py-2 px-3 bg-surface-secondary/40 border border-white/5 rounded-xl">
+            <Turnstile
+              siteKey={siteKey}
+              onSuccess={(token) => setTurnstileToken(token)}
+              options={{
+                theme: "dark",
+                size: "normal",
+              }}
+            />
+          </div>
+
           <WalletButton />
         </div>
 

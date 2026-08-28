@@ -13,6 +13,7 @@ createWeb3Modal({
 });
 
 import { FeatureFlagProvider } from "@/components/FeatureFlagProvider";
+import { TurnstileProvider } from "@/components/TurnstileProvider";
 
 export function Providers({ children }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -21,7 +22,9 @@ export function Providers({ children }) {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <FeatureFlagProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <TurnstileProvider>{children}</TurnstileProvider>
+          </ToastProvider>
         </FeatureFlagProvider>
       </QueryClientProvider>
     </WagmiProvider>
